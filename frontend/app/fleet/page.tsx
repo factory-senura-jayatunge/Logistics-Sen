@@ -148,7 +148,7 @@ export default function FleetPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">En Route</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-info">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.enRoute}
               </div>
             </CardContent>
@@ -158,7 +158,7 @@ export default function FleetPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Idle</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-600">
+              <div className="text-2xl font-bold text-neutral">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.idle}
               </div>
             </CardContent>
@@ -168,7 +168,7 @@ export default function FleetPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">In Maintenance</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
+              <div className="text-2xl font-bold text-warning">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.maintenance}
               </div>
             </CardContent>
@@ -267,10 +267,10 @@ export default function FleetPage() {
                       value={vehicle.fuel_level}
                       className={`h-2 ${
                         vehicle.fuel_level < 30
-                          ? "[&>div]:bg-red-500"
+                          ? "[&>div]:bg-destructive"
                           : vehicle.fuel_level < 50
-                            ? "[&>div]:bg-yellow-500"
-                            : "[&>div]:bg-green-500"
+                            ? "[&>div]:bg-warning"
+                            : "[&>div]:bg-success"
                       }`}
                     />
                   </div>

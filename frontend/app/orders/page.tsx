@@ -27,18 +27,18 @@ import { getOrders, type Order } from "@/lib/api"
 import { NewOrderModal } from "@/components/new-order-modal"
 
 const statusColors: Record<string, string> = {
-  pending: "bg-gray-500/10 text-gray-600 border-gray-200",
-  confirmed: "bg-blue-500/10 text-blue-600 border-blue-200",
-  processing: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  shipped: "bg-purple-500/10 text-purple-600 border-purple-200",
-  delivered: "bg-green-500/10 text-green-600 border-green-200",
+  pending: "bg-neutral/10 text-neutral border-neutral/20",
+  confirmed: "bg-info/10 text-info border-info/20",
+  processing: "bg-warning/10 text-warning border-warning/20",
+  shipped: "bg-secondary/10 text-secondary border-secondary/20",
+  delivered: "bg-success/10 text-success border-success/20",
 }
 
 const priorityColors: Record<string, string> = {
-  low: "bg-slate-500/10 text-slate-600 border-slate-200",
-  medium: "bg-blue-500/10 text-blue-600 border-blue-200",
-  high: "bg-orange-500/10 text-orange-600 border-orange-200",
-  critical: "bg-red-500/10 text-red-600 border-red-200",
+  low: "bg-muted text-muted-foreground border-border",
+  medium: "bg-info/10 text-info border-info/20",
+  high: "bg-warning/10 text-warning border-warning/20",
+  critical: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 function formatDate(dateString: string): string {

@@ -5,56 +5,56 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Status color maps
+// Status color maps using theme colors
 export const shipmentStatusColors: Record<string, string> = {
-  delivered: "bg-green-500/10 text-green-600 border-green-200",
-  in_transit: "bg-blue-500/10 text-blue-600 border-blue-200",
-  delayed: "bg-red-500/10 text-red-600 border-red-200",
-  processing: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  pending: "bg-gray-500/10 text-gray-600 border-gray-200",
+  delivered: "bg-success/10 text-success border-success/20",
+  in_transit: "bg-info/10 text-info border-info/20",
+  delayed: "bg-destructive/10 text-destructive border-destructive/20",
+  processing: "bg-warning/10 text-warning border-warning/20",
+  pending: "bg-neutral/10 text-neutral border-neutral/20",
 }
 
 export const orderStatusColors: Record<string, string> = {
-  pending: "bg-gray-500/10 text-gray-600 border-gray-200",
-  confirmed: "bg-blue-500/10 text-blue-600 border-blue-200",
-  processing: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  shipped: "bg-purple-500/10 text-purple-600 border-purple-200",
-  delivered: "bg-green-500/10 text-green-600 border-green-200",
+  pending: "bg-neutral/10 text-neutral border-neutral/20",
+  confirmed: "bg-info/10 text-info border-info/20",
+  processing: "bg-warning/10 text-warning border-warning/20",
+  shipped: "bg-secondary/10 text-secondary border-secondary/20",
+  delivered: "bg-success/10 text-success border-success/20",
 }
 
 export const priorityColors: Record<string, string> = {
-  low: "bg-slate-500/10 text-slate-600 border-slate-200",
-  medium: "bg-blue-500/10 text-blue-600 border-blue-200",
-  high: "bg-orange-500/10 text-orange-600 border-orange-200",
-  critical: "bg-red-500/10 text-red-600 border-red-200",
+  low: "bg-muted text-muted-foreground border-border",
+  medium: "bg-info/10 text-info border-info/20",
+  high: "bg-warning/10 text-warning border-warning/20",
+  critical: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 export const inventoryStatusColors: Record<string, string> = {
-  in_stock: "bg-green-500/10 text-green-600 border-green-200",
-  low_stock: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  out_of_stock: "bg-red-500/10 text-red-600 border-red-200",
+  in_stock: "bg-success/10 text-success border-success/20",
+  low_stock: "bg-warning/10 text-warning border-warning/20",
+  out_of_stock: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 export const facilityTypeColors: Record<string, string> = {
-  distribution: "bg-blue-500/10 text-blue-600 border-blue-200",
-  hub: "bg-purple-500/10 text-purple-600 border-purple-200",
-  fulfillment: "bg-green-500/10 text-green-600 border-green-200",
-  warehouse: "bg-orange-500/10 text-orange-600 border-orange-200",
-  port: "bg-cyan-500/10 text-cyan-600 border-cyan-200",
+  distribution: "bg-info/10 text-info border-info/20",
+  hub: "bg-secondary/10 text-secondary border-secondary/20",
+  fulfillment: "bg-success/10 text-success border-success/20",
+  warehouse: "bg-warning/10 text-warning border-warning/20",
+  port: "bg-primary/10 text-primary border-primary/20",
 }
 
 export const facilityStatusColors: Record<string, string> = {
-  operational: "bg-green-500/10 text-green-600 border-green-200",
-  maintenance: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  offline: "bg-red-500/10 text-red-600 border-red-200",
+  operational: "bg-success/10 text-success border-success/20",
+  maintenance: "bg-warning/10 text-warning border-warning/20",
+  offline: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 export const vehicleStatusColors: Record<string, string> = {
-  en_route: "bg-blue-500/10 text-blue-600 border-blue-200",
-  loading: "bg-purple-500/10 text-purple-600 border-purple-200",
-  idle: "bg-gray-500/10 text-gray-600 border-gray-200",
-  maintenance: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  offline: "bg-red-500/10 text-red-600 border-red-200",
+  en_route: "bg-info/10 text-info border-info/20",
+  loading: "bg-secondary/10 text-secondary border-secondary/20",
+  idle: "bg-neutral/10 text-neutral border-neutral/20",
+  maintenance: "bg-warning/10 text-warning border-warning/20",
+  offline: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 // Formatters

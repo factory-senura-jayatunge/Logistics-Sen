@@ -24,10 +24,10 @@ import {
 } from "@/lib/api"
 
 const notificationTypeColors: Record<string, string> = {
-  info: "bg-blue-500",
-  warning: "bg-yellow-500",
-  error: "bg-red-500",
-  success: "bg-green-500",
+  info: "bg-info",
+  warning: "bg-warning",
+  error: "bg-destructive",
+  success: "bg-success",
 }
 
 function formatTimeAgo(dateString: string): string {

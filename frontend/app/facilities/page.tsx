@@ -97,7 +97,7 @@ export default function FacilitiesPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Operational</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-success">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.operational}
               </div>
             </CardContent>
@@ -107,7 +107,7 @@ export default function FacilitiesPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Under Maintenance</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
+              <div className="text-2xl font-bold text-warning">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.maintenance}
               </div>
             </CardContent>
@@ -151,13 +151,13 @@ export default function FacilitiesPage() {
                       <div 
                         className={`flex items-center justify-center w-7 h-7 rounded-full shadow-md ${
                           facility.status === "operational" 
-                            ? "bg-green-500" 
+                            ? "bg-success" 
                             : facility.status === "maintenance"
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
+                              ? "bg-warning"
+                              : "bg-destructive"
                         }`}
                       >
-                        <Building2 className="h-4 w-4 text-white" />
+                        <Building2 className="h-4 w-4 text-background" />
                       </div>
                     }
                     iconAnchor={[14, 14]}
@@ -257,10 +257,10 @@ export default function FacilitiesPage() {
                     value={facility.capacity_percentage}
                     className={`h-2 ${
                       facility.capacity_percentage > 80
-                        ? "[&>div]:bg-red-500"
+                        ? "[&>div]:bg-destructive"
                         : facility.capacity_percentage > 60
-                          ? "[&>div]:bg-yellow-500"
-                          : "[&>div]:bg-green-500"
+                          ? "[&>div]:bg-warning"
+                          : "[&>div]:bg-success"
                     }`}
                   />
                 </div>

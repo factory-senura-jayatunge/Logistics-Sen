@@ -26,9 +26,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getInventoryItems, getFacilities, type InventoryItem, type Facility } from "@/lib/api"
 
 const statusColors: Record<string, string> = {
-  in_stock: "bg-green-500/10 text-green-600 border-green-200",
-  low_stock: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  out_of_stock: "bg-red-500/10 text-red-600 border-red-200",
+  in_stock: "bg-success/10 text-success border-success/20",
+  low_stock: "bg-warning/10 text-warning border-warning/20",
+  out_of_stock: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 function formatCurrency(value: number): string {
@@ -151,7 +151,7 @@ export default function InventoryPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Items</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+              <AlertTriangle className="h-4 w-4 text-warning" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -163,7 +163,7 @@ export default function InventoryPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Out of Stock</CardTitle>
-              <Archive className="h-4 w-4 text-red-500" />
+              <Archive className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">

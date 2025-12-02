@@ -21,14 +21,17 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Map, MapTileLayer, MapMarker, MapZoomControl, MapPolyline } from "@/components/ui/map"
+import type { LatLngExpression } from "leaflet"
 import { getVehicle, type VehicleDetail } from "@/lib/api"
 import {
   vehicleStatusColors,
   facilityTypeColors,
   formatDateTime,
 } from "@/lib/utils"
+import { getCoordinatesForLocation, interpolateRoute } from "@/lib/locations"
 import { VehicleModal } from "@/components/new-vehicle-modal"
 
 const typeIcons: Record<string, React.ElementType> = {
@@ -43,6 +46,114 @@ const typeLabels: Record<string, string> = {
   ship: "Ship",
   plane: "Aircraft",
   train: "Train",
+}
+
+function VehicleMap({ vehicle }: { vehicle: VehicleDetail }) {
+  const currentCoords = getCoordinatesForLocation(vehicle.current_location)
+  const destinationCoords = vehicle.destination
+    ? getCoordinatesForLocation(vehicle.destination)
+    : null
+
+  const isEnRoute = vehicle.status === "en_route" && destinationCoords
+  const showRouteLine = isEnRoute && vehicle.type !== "truck"
+  const routePoints = showRouteLine && currentCoords && destinationCoords
+    ? interpolateRoute(currentCoords, destinationCoords)
+    : null
+
+  const vehiclePosition = isEnRoute && currentCoords && destinationCoords
+    ? [
+        currentCoords[0] + (destinationCoords[0] - currentCoords[0]) * 0.4,
+        currentCoords[1] + (destinationCoords[1] - currentCoords[1]) * 0.4,
+      ] as [number, number]
+    : currentCoords
+
+  if (!currentCoords) {
+    return (
+      <div className="h-[250px] rounded-md bg-muted flex items-center justify-center">
+        <p className="text-sm text-muted-foreground">Location coordinates not available</p>
+      </div>
+    )
+  }
+
+  const center: LatLngExpression = isEnRoute && destinationCoords && vehiclePosition
+    ? [
+        (Math.min(currentCoords[0], destinationCoords[0], vehiclePosition[0]) + 
+         Math.max(currentCoords[0], destinationCoords[0], vehiclePosition[0])) / 2,
+        (Math.min(currentCoords[1], destinationCoords[1], vehiclePosition[1]) + 
+         Math.max(currentCoords[1], destinationCoords[1], vehiclePosition[1])) / 2,
+      ]
+    : currentCoords
+
+  const zoom = (() => {
+    if (!isEnRoute || !destinationCoords) return 10
+    const latDiff = Math.abs(currentCoords[0] - destinationCoords[0])
+    const lngDiff = Math.abs(currentCoords[1] - destinationCoords[1])
+    const maxDiff = Math.max(latDiff, lngDiff)
+    if (maxDiff > 30) return 3
+    if (maxDiff > 15) return 4
+    if (maxDiff > 8) return 5
+    if (maxDiff > 4) return 6
+    return 7
+  })()
+
+  const Icon = typeIcons[vehicle.type] || Truck
+
+  return (
+    <Map center={center} zoom={zoom} className="h-[250px]">
+      <MapTileLayer />
+      <MapZoomControl />
+
+      {showRouteLine && routePoints && (
+        <MapPolyline
+          positions={routePoints as LatLngExpression[]}
+          pathOptions={{
+            color: "var(--color-info)",
+            weight: 3,
+            opacity: 0.7,
+            dashArray: "10, 10",
+          }}
+        />
+      )}
+
+      <MapMarker
+        position={currentCoords as LatLngExpression}
+        icon={
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-info shadow-md border-2 border-background">
+            <MapPin className="h-3 w-3 text-info-foreground" />
+          </div>
+        }
+        iconAnchor={[12, 12]}
+      />
+
+      {isEnRoute && destinationCoords && (
+        <MapMarker
+          position={destinationCoords as LatLngExpression}
+          icon={
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-success shadow-md border-2 border-background">
+              <Navigation className="h-3 w-3 text-success-foreground" />
+            </div>
+          }
+          iconAnchor={[12, 12]}
+        />
+      )}
+
+      {vehiclePosition && (
+        <MapMarker
+          position={vehiclePosition as LatLngExpression}
+          icon={
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg border-2 border-background ${
+              vehicle.status === "en_route" ? "bg-info" :
+              vehicle.status === "idle" ? "bg-neutral" :
+              vehicle.status === "maintenance" ? "bg-warning" : "bg-info"
+            }`}>
+              <Icon className="h-4 w-4 text-background" />
+            </div>
+          }
+          iconAnchor={[16, 16]}
+        />
+      )}
+    </Map>
+  )
 }
 
 export default function VehicleDetailPage() {
@@ -187,10 +298,10 @@ export default function VehicleDetailPage() {
               value={vehicle.fuel_level}
               className={`h-2 mt-2 ${
                 vehicle.fuel_level < 30
-                  ? "[&>div]:bg-red-500"
+                  ? "[&>div]:bg-destructive"
                   : vehicle.fuel_level < 50
-                    ? "[&>div]:bg-yellow-500"
-                    : "[&>div]:bg-green-500"
+                    ? "[&>div]:bg-warning"
+                    : "[&>div]:bg-success"
               }`}
             />
           </CardContent>
@@ -205,50 +316,43 @@ export default function VehicleDetailPage() {
                 <MapPin className="h-5 w-5" />
                 Location & Route
               </CardTitle>
+              <CardDescription>
+                {vehicle.status === "en_route" && vehicle.destination
+                  ? `En route from ${vehicle.current_location} to ${vehicle.destination}`
+                  : `Current location: ${vehicle.current_location}`}
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="space-y-4">
+              <VehicleMap vehicle={vehicle} />
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Current Location</p>
-                  <p className="text-lg font-medium flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-blue-500" />
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-info" />
                     {vehicle.current_location}
                   </p>
                 </div>
                 {vehicle.destination && (
-                  <>
-                    <div className="flex items-center gap-4 py-2">
-                      <div className="h-px flex-1 bg-border" />
-                      <Truck className="h-4 w-4 text-muted-foreground" />
-                      <div className="h-px flex-1 bg-border" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Destination</p>
-                      <p className="text-lg font-medium flex items-center gap-2">
-                        <Navigation className="h-4 w-4 text-green-500" />
-                        {vehicle.destination}
-                      </p>
-                    </div>
-                  </>
-                )}
-                {vehicle.eta && (
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground mb-1">Estimated Arrival</p>
-                    <p className="text-lg font-medium flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-orange-500" />
-                      {vehicle.eta}
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Destination</p>
+                    <p className="text-sm font-medium flex items-center gap-2">
+                      <Navigation className="h-4 w-4 text-success" />
+                      {vehicle.destination}
                     </p>
                   </div>
                 )}
-                {!vehicle.destination && !vehicle.eta && vehicle.status === "idle" && (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Vehicle is currently idle with no assigned route
-                  </p>
-                )}
               </div>
+              {vehicle.eta && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Estimated Arrival</p>
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-warning" />
+                    {vehicle.eta}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
-
         </div>
 
         <div className="space-y-6">

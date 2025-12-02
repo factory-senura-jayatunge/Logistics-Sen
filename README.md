@@ -2,15 +2,19 @@
 
 Enterprise logistics management platform demo application.
 
+> **Demo Script Available**: See [DEMO_SCRIPT.md](./DEMO_SCRIPT.md) for a guided walkthrough of demonstrating Factory CLI capabilities with this application.
+
 ## Architecture Overview
 
 **Monorepo** using pnpm workspaces with:
+
 - **Backend**: Python FastAPI (port 8000)
 - **Frontend**: Next.js 16 with React 19 (port 3000)
 
 ## Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 16, React 19
 - **Styling**: Tailwind CSS 4, Radix UI, shadcn/ui, Lucide icons
 - **Maps**: Leaflet + react-leaflet
@@ -18,6 +22,7 @@ Enterprise logistics management platform demo application.
 - **Theme**: next-themes
 
 ### Backend
+
 - **Framework**: FastAPI with uvicorn
 - **ORM**: SQLAlchemy 2.0
 - **Database**: SQLite
@@ -36,9 +41,9 @@ pnpm seed
 pnpm dev
 ```
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
+- Frontend: <http://localhost:3000>
+- Backend API: <http://localhost:8000>
+- API Docs: <http://localhost:8000/docs>
 
 ## Scripts
 
@@ -55,7 +60,7 @@ pnpm dev
 
 ## Project Structure
 
-```
+```txt
 acme-logistics/
 ├── frontend/                    # Next.js application
 │   ├── app/                     # App router pages

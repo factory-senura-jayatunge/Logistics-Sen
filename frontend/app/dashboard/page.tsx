@@ -32,11 +32,11 @@ import {
 import { formatTimeAgo } from "@/lib/utils"
 
 const statusColors: Record<string, string> = {
-  delivered: "bg-green-500/10 text-green-600 border-green-200",
-  in_transit: "bg-blue-500/10 text-blue-600 border-blue-200",
-  delayed: "bg-red-500/10 text-red-600 border-red-200",
-  processing: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  pending: "bg-gray-500/10 text-gray-600 border-gray-200",
+  delivered: "bg-success/10 text-success border-success/20",
+  in_transit: "bg-info/10 text-info border-info/20",
+  delayed: "bg-destructive/10 text-destructive border-destructive/20",
+  processing: "bg-warning/10 text-warning border-warning/20",
+  pending: "bg-neutral/10 text-neutral border-neutral/20",
 }
 
 const statusChartColors: Record<string, string> = {

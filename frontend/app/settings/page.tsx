@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,11 +31,11 @@ const teamMembers = [
 ]
 
 const roleColors: Record<string, string> = {
-  Admin: "bg-purple-500/10 text-purple-600 border-purple-200",
-  "Operations Manager": "bg-blue-500/10 text-blue-600 border-blue-200",
-  Dispatcher: "bg-green-500/10 text-green-600 border-green-200",
-  "Warehouse Staff": "bg-orange-500/10 text-orange-600 border-orange-200",
-  Driver: "bg-cyan-500/10 text-cyan-600 border-cyan-200",
+  Admin: "bg-secondary/10 text-secondary border-secondary/20",
+  "Operations Manager": "bg-info/10 text-info border-info/20",
+  Dispatcher: "bg-success/10 text-success border-success/20",
+  "Warehouse Staff": "bg-warning/10 text-warning border-warning/20",
+  Driver: "bg-primary/10 text-primary border-primary/20",
 }
 
 export default function SettingsPage() {
@@ -273,6 +274,13 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Link 
+        href="/demo_script" 
+        className="fixed bottom-4 right-4 text-xs text-muted-foreground/30 hover:text-muted-foreground transition-colors"
+      >
+        Demo Script
+      </Link>
     </div>
   )
 }

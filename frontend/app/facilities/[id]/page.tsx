@@ -175,10 +175,10 @@ export default function FacilityDetailPage() {
               value={facility.capacity_percentage}
               className={`h-2 mt-2 ${
                 facility.capacity_percentage > 80
-                  ? "[&>div]:bg-red-500"
+                  ? "[&>div]:bg-destructive"
                   : facility.capacity_percentage > 60
-                    ? "[&>div]:bg-yellow-500"
-                    : "[&>div]:bg-green-500"
+                    ? "[&>div]:bg-warning"
+                    : "[&>div]:bg-success"
               }`}
             />
           </CardContent>
@@ -214,11 +214,11 @@ export default function FacilityDetailPage() {
                 </CardTitle>
                 <CardDescription>
                   {inventoryStats.total} items • {inventoryStats.lowStock > 0 && (
-                    <span className="text-yellow-600">{inventoryStats.lowStock} low stock</span>
+                    <span className="text-warning">{inventoryStats.lowStock} low stock</span>
                   )}
                   {inventoryStats.lowStock > 0 && inventoryStats.outOfStock > 0 && " • "}
                   {inventoryStats.outOfStock > 0 && (
-                    <span className="text-red-600">{inventoryStats.outOfStock} out of stock</span>
+                    <span className="text-destructive">{inventoryStats.outOfStock} out of stock</span>
                   )}
                 </CardDescription>
               </div>
@@ -313,10 +313,10 @@ export default function FacilityDetailPage() {
                             value={vehicle.fuel_level}
                             className={`h-2 w-16 ${
                               vehicle.fuel_level < 30
-                                ? "[&>div]:bg-red-500"
+                                ? "[&>div]:bg-destructive"
                                 : vehicle.fuel_level < 50
-                                  ? "[&>div]:bg-yellow-500"
-                                  : "[&>div]:bg-green-500"
+                                  ? "[&>div]:bg-warning"
+                                  : "[&>div]:bg-success"
                             }`}
                           />
                           <span className="text-xs">{vehicle.fuel_level}%</span>

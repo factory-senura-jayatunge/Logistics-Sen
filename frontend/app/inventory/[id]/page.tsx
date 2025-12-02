@@ -26,15 +26,15 @@ import { getInventoryItem, type InventoryItem } from "@/lib/api"
 import { EditInventoryItemModal } from "@/components/edit-inventory-item-modal"
 
 const statusColors: Record<string, string> = {
-  in_stock: "bg-green-500/10 text-green-600 border-green-200",
-  low_stock: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  out_of_stock: "bg-red-500/10 text-red-600 border-red-200",
+  in_stock: "bg-success/10 text-success border-success/20",
+  low_stock: "bg-warning/10 text-warning border-warning/20",
+  out_of_stock: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 const statusIcons: Record<string, React.ReactNode> = {
-  in_stock: <TrendingUp className="h-4 w-4 text-green-500" />,
-  low_stock: <AlertTriangle className="h-4 w-4 text-yellow-500" />,
-  out_of_stock: <TrendingDown className="h-4 w-4 text-red-500" />,
+  in_stock: <TrendingUp className="h-4 w-4 text-success" />,
+  low_stock: <AlertTriangle className="h-4 w-4 text-warning" />,
+  out_of_stock: <TrendingDown className="h-4 w-4 text-destructive" />,
 }
 
 function formatDate(dateString: string): string {
@@ -229,10 +229,10 @@ export default function InventoryDetailPage() {
                   value={stockLevel} 
                   className={`h-3 ${
                     item.status === "out_of_stock" 
-                      ? "[&>div]:bg-red-500" 
+                      ? "[&>div]:bg-destructive" 
                       : item.status === "low_stock" 
-                        ? "[&>div]:bg-yellow-500" 
-                        : "[&>div]:bg-green-500"
+                        ? "[&>div]:bg-warning" 
+                        : "[&>div]:bg-success"
                   }`}
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
@@ -279,10 +279,10 @@ export default function InventoryDetailPage() {
                 {item.status === "low_stock" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                      <div className="h-3 w-3 rounded-full bg-warning" />
                     </div>
                     <div>
-                      <p className="font-medium text-yellow-600">Low Stock Alert</p>
+                      <p className="font-medium text-warning">Low Stock Alert</p>
                       <p className="text-sm text-muted-foreground">
                         Quantity ({item.quantity}) is below reorder point ({item.reorder_point})
                       </p>
@@ -292,10 +292,10 @@ export default function InventoryDetailPage() {
                 {item.status === "out_of_stock" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-red-500" />
+                      <div className="h-3 w-3 rounded-full bg-destructive" />
                     </div>
                     <div>
-                      <p className="font-medium text-red-600">Out of Stock</p>
+                      <p className="font-medium text-destructive">Out of Stock</p>
                       <p className="text-sm text-muted-foreground">
                         Item needs immediate restocking
                       </p>
@@ -305,10 +305,10 @@ export default function InventoryDetailPage() {
                 {item.status === "in_stock" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-green-500" />
+                      <div className="h-3 w-3 rounded-full bg-success" />
                     </div>
                     <div>
-                      <p className="font-medium text-green-600">Stock Healthy</p>
+                      <p className="font-medium text-success">Stock Healthy</p>
                       <p className="text-sm text-muted-foreground">
                         Quantity is above reorder threshold
                       </p>

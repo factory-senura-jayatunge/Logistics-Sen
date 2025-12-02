@@ -23,18 +23,18 @@ import { Separator } from "@/components/ui/separator"
 import { getShipment, type ShipmentDetail } from "@/lib/api"
 
 const statusColors: Record<string, string> = {
-  delivered: "bg-green-500/10 text-green-600 border-green-200",
-  in_transit: "bg-blue-500/10 text-blue-600 border-blue-200",
-  delayed: "bg-red-500/10 text-red-600 border-red-200",
-  processing: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
-  pending: "bg-gray-500/10 text-gray-600 border-gray-200",
+  delivered: "bg-success/10 text-success border-success/20",
+  in_transit: "bg-info/10 text-info border-info/20",
+  delayed: "bg-destructive/10 text-destructive border-destructive/20",
+  processing: "bg-warning/10 text-warning border-warning/20",
+  pending: "bg-neutral/10 text-neutral border-neutral/20",
 }
 
 const priorityColors: Record<string, string> = {
-  low: "bg-slate-500/10 text-slate-600 border-slate-200",
-  medium: "bg-blue-500/10 text-blue-600 border-blue-200",
-  high: "bg-orange-500/10 text-orange-600 border-orange-200",
-  critical: "bg-red-500/10 text-red-600 border-red-200",
+  low: "bg-muted text-muted-foreground border-border",
+  medium: "bg-info/10 text-info border-info/20",
+  high: "bg-warning/10 text-warning border-warning/20",
+  critical: "bg-destructive/10 text-destructive border-destructive/20",
 }
 
 function formatDate(dateString: string | null): string {
@@ -251,10 +251,10 @@ export default function ShipmentDetailPage() {
                 {shipment.status === "delivered" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-green-500" />
+                      <div className="h-3 w-3 rounded-full bg-success" />
                     </div>
                     <div>
-                      <p className="font-medium text-green-600">Delivered</p>
+                      <p className="font-medium text-success">Delivered</p>
                       <p className="text-sm text-muted-foreground">Package delivered successfully</p>
                     </div>
                   </div>
