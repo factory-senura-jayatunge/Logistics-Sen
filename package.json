@@ -1,0 +1,22 @@
+{
+  "name": "acme-logistics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Enterprise logistics management platform demo",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "cd backend && .venv/bin/uvicorn main:app --reload --port 8000",
+    "build": "pnpm --filter frontend build",
+    "lint": "pnpm --filter frontend lint",
+    "setup": "pnpm setup:backend && pnpm setup:frontend",
+    "setup:backend": "cd backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt",
+    "setup:frontend": "pnpm --filter frontend install",
+    "seed": "cd backend && .venv/bin/python seed.py",
+    "db:reset": "cd backend && rm -f acme_logistics.db && .venv/bin/python seed.py"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
