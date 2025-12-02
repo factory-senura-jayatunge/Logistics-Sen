@@ -29,6 +29,7 @@ import {
   facilityTypeColors,
   formatDateTime,
 } from "@/lib/utils"
+import { VehicleModal } from "@/components/new-vehicle-modal"
 
 const typeIcons: Record<string, React.ElementType> = {
   truck: Truck,
@@ -50,6 +51,7 @@ export default function VehicleDetailPage() {
   const [vehicle, setVehicle] = useState<VehicleDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [editModalOpen, setEditModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -148,18 +150,23 @@ export default function VehicleDetailPage() {
             </div>
           </div>
         </div>
+        <Button variant="outline" onClick={() => setEditModalOpen(true)}>
+          Edit Vehicle
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Vehicle Type</CardTitle>
-            <Icon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{typeLabels[vehicle.type] || vehicle.type}</div>
-          </CardContent>
-        </Card>
+      <VehicleModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        vehicle={vehicle}
+        onSuccess={async () => {
+          const id = parseInt(params.id as string)
+          const data = await getVehicle(id)
+          setVehicle(data)
+        }}
+      />
+
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Driver</CardTitle>
@@ -186,17 +193,6 @@ export default function VehicleDetailPage() {
                     : "[&>div]:bg-green-500"
               }`}
             />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Status</CardTitle>
-            <Navigation className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <Badge variant="outline" className={`text-lg px-3 py-1 ${vehicleStatusColors[vehicle.status]}`}>
-              {vehicle.status.replace("_", " ")}
-            </Badge>
           </CardContent>
         </Card>
       </div>
@@ -317,18 +313,8 @@ export default function VehicleDetailPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Database ID</span>
-                <span className="font-medium">{vehicle.id}</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Vehicle ID</span>
-                <span className="font-medium">{vehicle.vehicle_id}</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Name</span>
-                <span className="font-medium">{vehicle.name}</span>
+                <span className="text-muted-foreground">Type</span>
+                <span className="font-medium">{typeLabels[vehicle.type] || vehicle.type}</span>
               </div>
               <Separator />
               <div className="flex justify-between text-sm">

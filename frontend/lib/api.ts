@@ -96,6 +96,13 @@ export async function getLowStockItems() {
   return fetchApi<InventoryItem[]>("/api/v1/inventory/low-stock");
 }
 
+export async function updateInventoryItem(id: number, data: UpdateInventoryItemData) {
+  return fetchApi<InventoryItem>(`/api/v1/inventory/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
 // Facilities
 export async function getFacilities() {
   return fetchApi<Facility[]>("/api/v1/facilities");
@@ -116,6 +123,20 @@ export async function getVehicles(params?: { type?: string; status?: string }) {
 
 export async function getVehicle(id: number) {
   return fetchApi<VehicleDetail>(`/api/v1/vehicles/${id}`);
+}
+
+export async function createVehicle(data: CreateVehicleData) {
+  return fetchApi<Vehicle>("/api/v1/vehicles", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateVehicle(id: number, data: CreateVehicleData) {
+  return fetchApi<Vehicle>(`/api/v1/vehicles/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
 }
 
 // Users
@@ -360,4 +381,27 @@ export interface ShipmentStatusBreakdown {
 export interface ShipmentVolumeData {
   date: string;
   count: number;
+}
+
+export interface UpdateInventoryItemData {
+  sku: string;
+  name: string;
+  category: string;
+  facility_id: number;
+  quantity: number;
+  reorder_point: number;
+  unit_price: number;
+  status: string;
+}
+
+export interface CreateVehicleData {
+  vehicle_id: string;
+  name: string;
+  type: string;
+  driver: string;
+  facility_id?: number;
+  current_location: string;
+  destination?: string;
+  status: string;
+  fuel_level: number;
 }

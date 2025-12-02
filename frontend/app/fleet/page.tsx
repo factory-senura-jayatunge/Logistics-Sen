@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select"
 import { getVehicles, type Vehicle } from "@/lib/api"
 import { vehicleStatusColors } from "@/lib/utils"
+import { VehicleModal } from "@/components/new-vehicle-modal"
 
 const typeIcons: Record<string, React.ElementType> = {
   truck: Truck,
@@ -33,6 +34,7 @@ export default function FleetPage() {
   const [showStats, setShowStats] = useState(true)
   const [typeFilter, setTypeFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -111,12 +113,22 @@ export default function FleetPage() {
           >
             <BarChart3 className="h-4 w-4" />
           </Button>
-          <Button>
+          <Button onClick={() => setModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Vehicle
           </Button>
         </div>
       </div>
+
+      <VehicleModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onSuccess={() => {
+          setModalOpen(false)
+          setTypeFilter("all")
+          setStatusFilter("all")
+        }}
+      />
 
       {showStats && (
         <div className="grid gap-4 md:grid-cols-4">

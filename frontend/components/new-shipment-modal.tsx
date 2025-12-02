@@ -126,7 +126,7 @@ export function NewShipmentModal({ open, onOpenChange, onSuccess }: NewShipmentM
                   setFormData({ ...formData, customer_id: parseInt(value) })
                 }
               >
-                <SelectTrigger id="customer">
+                <SelectTrigger id="customer" className="w-full [&>span]:truncate">
                   <SelectValue placeholder="Select a customer" />
                 </SelectTrigger>
                 <SelectContent>
@@ -165,7 +165,7 @@ export function NewShipmentModal({ open, onOpenChange, onSuccess }: NewShipmentM
                   value={formData.carrier}
                   onValueChange={(value) => setFormData({ ...formData, carrier: value })}
                 >
-                  <SelectTrigger id="carrier">
+                  <SelectTrigger id="carrier" className="w-full [&>span]:truncate">
                     <SelectValue placeholder="Select carrier" />
                   </SelectTrigger>
                   <SelectContent>
@@ -198,7 +198,7 @@ export function NewShipmentModal({ open, onOpenChange, onSuccess }: NewShipmentM
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value })}
               >
-                <SelectTrigger id="status">
+                <SelectTrigger id="status" className="w-full [&>span]:truncate">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

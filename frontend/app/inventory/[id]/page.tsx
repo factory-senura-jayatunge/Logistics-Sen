@@ -23,6 +23,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Progress } from "@/components/ui/progress"
 import { getInventoryItem, type InventoryItem } from "@/lib/api"
+import { EditInventoryItemModal } from "@/components/edit-inventory-item-modal"
 
 const statusColors: Record<string, string> = {
   in_stock: "bg-green-500/10 text-green-600 border-green-200",
@@ -68,6 +69,7 @@ export default function InventoryDetailPage() {
   const [item, setItem] = useState<InventoryItem | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [editModalOpen, setEditModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchItem() {
@@ -167,7 +169,7 @@ export default function InventoryDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">Edit Item</Button>
+          <Button variant="outline" onClick={() => setEditModalOpen(true)}>Edit Item</Button>
           <Button>Reorder Stock</Button>
         </div>
       </div>
@@ -402,6 +404,15 @@ export default function InventoryDetailPage() {
           </Card>
         </div>
       </div>
+
+      <EditInventoryItemModal
+        item={item}
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        onSuccess={(updatedItem) => {
+          setItem({ ...item, ...updatedItem, facility: item.facility })
+        }}
+      />
     </div>
   )
 }
