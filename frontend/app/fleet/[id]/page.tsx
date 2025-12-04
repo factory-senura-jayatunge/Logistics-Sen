@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Navigation,
   Clock,
+  Zap,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -25,7 +26,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Map, MapTileLayer, MapMarker, MapZoomControl, MapPolyline } from "@/components/ui/map"
 import type { LatLngExpression } from "leaflet"
-import { getVehicle, type VehicleDetail } from "@/lib/api"
+import { getVehicle, updateVehicle, type VehicleDetail } from "@/lib/api"
 import {
   vehicleStatusColors,
   facilityTypeColors,
@@ -163,6 +164,59 @@ export default function VehicleDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editModalOpen, setEditModalOpen] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+
+  const refreshVehicle = async () => {
+    const id = parseInt(params.id as string)
+    const data = await getVehicle(id)
+    setVehicle(data)
+  }
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!vehicle || actionLoading) return
+    setActionLoading(newStatus)
+    try {
+      await updateVehicle(vehicle.id, {
+        vehicle_id: vehicle.vehicle_id,
+        name: vehicle.name,
+        type: vehicle.type,
+        driver: vehicle.driver,
+        facility_id: vehicle.facility_id ?? undefined,
+        current_location: vehicle.current_location,
+        destination: vehicle.destination ?? undefined,
+        status: newStatus,
+        fuel_level: vehicle.fuel_level,
+      })
+      await refreshVehicle()
+    } catch (err) {
+      console.error("Failed to update status:", err)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleRefuel = async () => {
+    if (!vehicle || actionLoading) return
+    setActionLoading("refuel")
+    try {
+      await updateVehicle(vehicle.id, {
+        vehicle_id: vehicle.vehicle_id,
+        name: vehicle.name,
+        type: vehicle.type,
+        driver: vehicle.driver,
+        facility_id: vehicle.facility_id ?? undefined,
+        current_location: vehicle.current_location,
+        destination: vehicle.destination ?? undefined,
+        status: vehicle.status,
+        fuel_level: 100,
+      })
+      await refreshVehicle()
+    } catch (err) {
+      console.error("Failed to refuel:", err)
+    } finally {
+      setActionLoading(null)
+    }
+  }
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -270,11 +324,7 @@ export default function VehicleDetailPage() {
         open={editModalOpen}
         onOpenChange={setEditModalOpen}
         vehicle={vehicle}
-        onSuccess={async () => {
-          const id = parseInt(params.id as string)
-          const data = await getVehicle(id)
-          setVehicle(data)
-        }}
+        onSuccess={refreshVehicle}
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -356,6 +406,60 @@ export default function VehicleDetailPage() {
         </div>
 
         <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Set Status</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant={vehicle.status === "en_route" ? "default" : "outline"}
+                    onClick={() => handleStatusChange("en_route")}
+                    disabled={actionLoading !== null}
+                  >
+                    {actionLoading === "en_route" ? "..." : "En Route"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={vehicle.status === "idle" ? "default" : "outline"}
+                    onClick={() => handleStatusChange("idle")}
+                    disabled={actionLoading !== null}
+                  >
+                    {actionLoading === "idle" ? "..." : "Idle"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={vehicle.status === "maintenance" ? "default" : "outline"}
+                    onClick={() => handleStatusChange("maintenance")}
+                    disabled={actionLoading !== null}
+                  >
+                    {actionLoading === "maintenance" ? "..." : "Maintenance"}
+                  </Button>
+                </div>
+              </div>
+              <Separator />
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Fuel</p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleRefuel}
+                  disabled={actionLoading !== null || vehicle.fuel_level === 100}
+                  className="w-full"
+                >
+                  <Fuel className="h-4 w-4 mr-2" />
+                  {actionLoading === "refuel" ? "Refueling..." : "Mark as Refueled"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {vehicle.facility ? (
             <Card
               className="cursor-pointer hover:shadow-md transition-shadow"
