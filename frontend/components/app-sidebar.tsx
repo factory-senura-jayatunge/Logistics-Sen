@@ -1,7 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
+import { useTheme } from "next-themes"
 import {
   LayoutDashboard,
   Package,
@@ -12,6 +14,9 @@ import {
   Settings,
   LogOut,
   ChevronUp,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react"
 
 import {
@@ -32,6 +37,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
@@ -50,13 +59,27 @@ const settingsItems = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
 
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Package className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center">
+            <Image
+              src="/logo-black-transparent.svg"
+              alt="Acme Logistics"
+              width={32}
+              height={32}
+              className="dark:hidden"
+            />
+            <Image
+              src="/logo-white-transparent.svg"
+              alt="Acme Logistics"
+              width={32}
+              height={32}
+              className="hidden dark:block"
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Acme Logistics</span>
@@ -138,6 +161,30 @@ export function AppSidebar() {
                 <DropdownMenuItem>
                   <span>Account Settings</span>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span>Theme</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Light</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <Moon className="mr-2 h-4 w-4" />
+                        <span>Dark</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("system")}>
+                        <Monitor className="mr-2 h-4 w-4" />
+                        <span>System</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <LogOut className="mr-2 h-4 w-4" />

@@ -121,8 +121,44 @@ export default function DemoScriptPage() {
         </div>
 
         <div className="space-y-4">
-          <Section title="Prerequisites" defaultOpen={true}>
-            <p className="text-zinc-600 mb-4">Before starting the demo, ensure everything is set up:</p>
+          <Section title="First-Time Setup" defaultOpen={true}>
+            <p className="text-zinc-600 mb-4">If you just cloned the repository, follow these steps to get started:</p>
+            
+            <div className="space-y-4">
+              <div>
+                <p className="font-medium text-zinc-800 mb-2">1. Clone the repository:</p>
+                <CodeBlock>{`git clone <repository-url>
+cd logistics-app`}</CodeBlock>
+              </div>
+
+              <div>
+                <p className="font-medium text-zinc-800 mb-2">2. Install dependencies:</p>
+                <CodeBlock>pnpm install</CodeBlock>
+              </div>
+
+              <div>
+                <p className="font-medium text-zinc-800 mb-2">3. Set up the database and seed data:</p>
+                <CodeBlock>{`pnpm setup
+pnpm seed`}</CodeBlock>
+              </div>
+
+              <div>
+                <p className="font-medium text-zinc-800 mb-2">4. Install Factory CLI (if not already installed):</p>
+                <CodeBlock>{`# Visit https://factory.ai to install the CLI
+# Verify installation:
+droid --version`}</CodeBlock>
+              </div>
+
+              <div>
+                <p className="font-medium text-zinc-800 mb-2">5. Start the development servers:</p>
+                <CodeBlock>pnpm dev</CodeBlock>
+                <p className="text-zinc-500 text-sm mt-2">This starts both the frontend (port 3000) and backend (port 8000).</p>
+              </div>
+            </div>
+          </Section>
+
+          <Section title="Pre-Demo Checklist" defaultOpen={true}>
+            <p className="text-zinc-600 mb-4">Before starting the demo, ensure everything is ready:</p>
             
             <div className="space-y-4">
               <div>
@@ -131,7 +167,7 @@ export default function DemoScriptPage() {
               </div>
 
               <div>
-                <p className="font-medium text-zinc-800 mb-2">2. Factory CLI is installed:</p>
+                <p className="font-medium text-zinc-800 mb-2">2. Factory CLI is available:</p>
                 <CodeBlock>droid --version</CodeBlock>
               </div>
 
@@ -144,7 +180,7 @@ export default function DemoScriptPage() {
               </div>
 
               <div>
-                <p className="font-medium text-zinc-800 mb-2">4. Reset any previous changes:</p>
+                <p className="font-medium text-zinc-800 mb-2">4. Reset any previous demo changes:</p>
                 <CodeBlock>{`git checkout .
 git clean -fd`}</CodeBlock>
               </div>
@@ -153,7 +189,7 @@ git clean -fd`}</CodeBlock>
 
           <Section title="Demo Story" defaultOpen={true}>
             <Callout type="quote">
-              "Imagine you're a developer at Acme Logistics. Your product manager just came to you with a request: they want fleet managers to be able to see vehicle locations on a map when viewing vehicle details. Let's see how Factory can help us build this feature in minutes, not hours."
+              &quot;Imagine you&apos;re a developer at Acme Logistics. Your fleet managers are frustrated - every time they need to update a vehicle&apos;s status or mark it as refueled, they have to open an edit form and fill out multiple fields. They&apos;ve asked for quick action buttons to speed up their workflow. Let&apos;s see how Factory can help us build this feature in minutes, not hours.&quot;
             </Callout>
           </Section>
 
@@ -242,16 +278,25 @@ the buttons while the API request is in progress.`}</CodeBlock>
           <Section title="Part 4: Wrap Up" time="1-2 min">
             <h3 className="font-semibold text-zinc-900 mb-3">Summarize the Demo</h3>
             <ul className="list-disc list-inside space-y-2 text-zinc-600">
-              <li>"In just a few minutes, we added a complete map feature"</li>
-              <li>"Factory handled coordinate systems, component integration, and edge cases"</li>
-              <li>"The code follows our existing patterns and uses our component library"</li>
-              <li>"A feature that might take an hour or more was done in minutes"</li>
+              <li>&quot;In just a few minutes, we added a complete Quick Actions panel&quot;</li>
+              <li>&quot;Factory understood our API patterns and created the right endpoint calls&quot;</li>
+              <li>&quot;The code follows our existing patterns and uses our component library&quot;</li>
+              <li>&quot;A feature that might take 30+ minutes was done in just a few&quot;</li>
             </ul>
+
+            <div className="mt-4">
+              <h3 className="font-semibold text-zinc-900 mb-3">Key Takeaways</h3>
+              <ul className="list-disc list-inside space-y-2 text-zinc-600">
+                <li>Factory analyzes your entire codebase to understand patterns and conventions</li>
+                <li>It writes production-ready code, not just snippets or examples</li>
+                <li>You can iterate naturally, refining the output like working with a colleague</li>
+              </ul>
+            </div>
 
             <div className="mt-4">
               <h3 className="font-semibold text-zinc-900 mb-3">Call to Action</h3>
               <Callout type="quote">
-                "This is the power of Factory - AI that understands your codebase and writes production code. It's like having a senior developer who knows your entire codebase available 24/7."
+                &quot;This is the power of Factory - AI that understands your codebase and writes production code. It&apos;s like having a senior developer who knows your entire codebase available 24/7.&quot;
               </Callout>
             </div>
           </Section>
