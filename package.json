@@ -28,12 +28,7 @@
     "lint-staged": "^15.2.10"
   },
   "lint-staged": {
-    "frontend/**/*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "frontend/**/*.{json,css,md}": [
-      "prettier --write"
-    ]
+    "frontend/**/*.{ts,tsx,js,jsx}": "cd frontend && eslint --fix",
+    "frontend/**/*.{ts,tsx,js,jsx,json,css,md}": "cd frontend && prettier --write --ignore-unknown"
   }
 }
