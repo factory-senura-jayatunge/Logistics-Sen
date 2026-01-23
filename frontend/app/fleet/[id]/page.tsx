@@ -27,6 +27,7 @@ import { Separator } from "@/components/ui/separator"
 import { Map, MapTileLayer, MapMarker, MapZoomControl, MapPolyline } from "@/components/ui/map"
 import type { LatLngExpression } from "leaflet"
 import { getVehicle, updateVehicle, type VehicleDetail } from "@/lib/api"
+import { toast } from "sonner"
 import {
   vehicleStatusColors,
   facilityTypeColors,
@@ -188,8 +189,10 @@ export default function VehicleDetailPage() {
         fuel_level: vehicle.fuel_level,
       })
       await refreshVehicle()
+      toast.success(`Status updated to ${newStatus.replace("_", " ")}`)
     } catch (err) {
       console.error("Failed to update status:", err)
+      toast.error("Failed to update status")
     } finally {
       setActionLoading(null)
     }
@@ -211,8 +214,10 @@ export default function VehicleDetailPage() {
         fuel_level: 100,
       })
       await refreshVehicle()
+      toast.success("Vehicle refueled to 100%")
     } catch (err) {
       console.error("Failed to refuel:", err)
+      toast.error("Failed to refuel vehicle")
     } finally {
       setActionLoading(null)
     }
