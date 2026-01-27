@@ -57,7 +57,7 @@ const settingsItems = [{ title: "Settings", href: "/settings", icon: Settings }]
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
 
   return (
     <Sidebar>

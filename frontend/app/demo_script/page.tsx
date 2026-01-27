@@ -38,7 +38,7 @@ function CopyButton({ text }: { text: string }) {
   )
 }
 
-function CodeBlock({ children, language = "bash" }: { children: string; language?: string }) {
+function CodeBlock({ children, language: _language = "bash" }: { children: string; language?: string }) {
   return (
     <div className="relative">
       <pre className="overflow-x-auto rounded-lg bg-zinc-900 p-4 pr-12 font-mono text-sm text-zinc-100">
@@ -256,20 +256,20 @@ git clean -fd`}</CodeBlock>
                 </a>
               </li>
               <li>Click on any vehicle card to view its details</li>
-              <li>Point out the current features and what's missing</li>
+              <li>Point out the current features and what&apos;s missing</li>
             </ol>
 
             <Callout type="tip">
               <strong>Talking Points:</strong>
               <ul className="mt-2 list-inside list-disc space-y-1">
                 <li>
-                  "Here's our vehicle detail page with vehicle info, driver, fuel level, and a map"
+                  &quot;Here&apos;s our vehicle detail page with vehicle info, driver, fuel level, and a map&quot;
                 </li>
                 <li>
-                  "To change the vehicle status or fuel level, we have to click Edit and fill out a
-                  form"
+                  &quot;To change the vehicle status or fuel level, we have to click Edit and fill out a
+                  form&quot;
                 </li>
-                <li>"Let's use Factory to add quick action buttons for common operations"</li>
+                <li>&quot;Let&apos;s use Factory to add quick action buttons for common operations&quot;</li>
               </ul>
             </Callout>
           </Section>
@@ -294,17 +294,17 @@ Use the existing Card components and match the page's current styling.`}</CodeBl
               </div>
 
               <div>
-                <h3 className="mb-3 font-semibold text-zinc-900">Narrate What's Happening</h3>
+                <h3 className="mb-3 font-semibold text-zinc-900">Narrate What&apos;s Happening</h3>
                 <Callout type="tip">
                   As Factory works, explain:
                   <ul className="mt-2 list-inside list-disc space-y-1">
-                    <li>"Factory is analyzing the codebase to understand our patterns..."</li>
+                    <li>&quot;Factory is analyzing the codebase to understand our patterns...&quot;</li>
                     <li>
-                      "It's looking at the existing API client to understand how we make
-                      requests..."
+                      &quot;It&apos;s looking at the existing API client to understand how we make
+                      requests...&quot;
                     </li>
-                    <li>"It found our Card components and is matching the existing styling..."</li>
-                    <li>"Notice how it follows our existing code conventions..."</li>
+                    <li>&quot;It found our Card components and is matching the existing styling...&quot;</li>
+                    <li>&quot;Notice how it follows our existing code conventions...&quot;</li>
                   </ul>
                 </Callout>
               </div>
@@ -330,8 +330,8 @@ Use the existing Card components and match the page's current styling.`}</CodeBl
                     Actions panel
                   </li>
                   <li>
-                    <strong>Demo the actions</strong> - click status buttons, click "Mark as
-                    Refueled"
+                    <strong>Demo the actions</strong> - click status buttons, click &quot;Mark as
+                    Refueled&quot;
                   </li>
                 </ol>
               </div>
@@ -351,9 +351,9 @@ the buttons while the API request is in progress.`}</CodeBlock>
               <Callout type="tip">
                 <strong>Key Points:</strong>
                 <ul className="mt-2 list-inside list-disc space-y-1">
-                  <li>"Factory understands context and existing code patterns"</li>
-                  <li>"It creates production-ready code, not just snippets"</li>
-                  <li>"We can iterate naturally, like working with a senior developer"</li>
+                  <li>&quot;Factory understands context and existing code patterns&quot;</li>
+                  <li>&quot;It creates production-ready code, not just snippets&quot;</li>
+                  <li>&quot;We can iterate naturally, like working with a senior developer&quot;</li>
                 </ul>
               </Callout>
             </div>
@@ -421,7 +421,7 @@ git status`}</CodeBlock>
           <Section title="Troubleshooting">
             <div className="space-y-4">
               <div>
-                <p className="font-medium text-zinc-800">Application won't start</p>
+                <p className="font-medium text-zinc-800">Application won&apos;t start</p>
                 <CodeBlock>{`pnpm setup
 pnpm seed
 pnpm dev`}</CodeBlock>
