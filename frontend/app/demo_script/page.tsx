@@ -38,7 +38,13 @@ function CopyButton({ text }: { text: string }) {
   )
 }
 
-function CodeBlock({ children, language: _language = "bash" }: { children: string; language?: string }) {
+function CodeBlock({
+  children,
+  language: _language = "bash",
+}: {
+  children: string
+  language?: string
+}) {
   return (
     <div className="relative">
       <pre className="overflow-x-auto rounded-lg bg-zinc-900 p-4 pr-12 font-mono text-sm text-zinc-100">
@@ -263,13 +269,17 @@ git clean -fd`}</CodeBlock>
               <strong>Talking Points:</strong>
               <ul className="mt-2 list-inside list-disc space-y-1">
                 <li>
-                  &quot;Here&apos;s our vehicle detail page with vehicle info, driver, fuel level, and a map&quot;
+                  &quot;Here&apos;s our vehicle detail page with vehicle info, driver, fuel level,
+                  and a map&quot;
                 </li>
                 <li>
-                  &quot;To change the vehicle status or fuel level, we have to click Edit and fill out a
-                  form&quot;
+                  &quot;To change the vehicle status or fuel level, we have to click Edit and fill
+                  out a form&quot;
                 </li>
-                <li>&quot;Let&apos;s use Factory to add quick action buttons for common operations&quot;</li>
+                <li>
+                  &quot;Let&apos;s use Factory to add quick action buttons for common
+                  operations&quot;
+                </li>
               </ul>
             </Callout>
           </Section>
@@ -298,12 +308,17 @@ Use the existing Card components and match the page's current styling.`}</CodeBl
                 <Callout type="tip">
                   As Factory works, explain:
                   <ul className="mt-2 list-inside list-disc space-y-1">
-                    <li>&quot;Factory is analyzing the codebase to understand our patterns...&quot;</li>
+                    <li>
+                      &quot;Factory is analyzing the codebase to understand our patterns...&quot;
+                    </li>
                     <li>
                       &quot;It&apos;s looking at the existing API client to understand how we make
                       requests...&quot;
                     </li>
-                    <li>&quot;It found our Card components and is matching the existing styling...&quot;</li>
+                    <li>
+                      &quot;It found our Card components and is matching the existing
+                      styling...&quot;
+                    </li>
                     <li>&quot;Notice how it follows our existing code conventions...&quot;</li>
                   </ul>
                 </Callout>
@@ -353,7 +368,9 @@ the buttons while the API request is in progress.`}</CodeBlock>
                 <ul className="mt-2 list-inside list-disc space-y-1">
                   <li>&quot;Factory understands context and existing code patterns&quot;</li>
                   <li>&quot;It creates production-ready code, not just snippets&quot;</li>
-                  <li>&quot;We can iterate naturally, like working with a senior developer&quot;</li>
+                  <li>
+                    &quot;We can iterate naturally, like working with a senior developer&quot;
+                  </li>
                 </ul>
               </Callout>
             </div>
