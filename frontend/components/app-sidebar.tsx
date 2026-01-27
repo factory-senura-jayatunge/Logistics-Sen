@@ -53,17 +53,15 @@ const navItems = [
   { title: "Fleet", href: "/fleet", icon: Truck },
 ]
 
-const settingsItems = [
-  { title: "Settings", href: "/settings", icon: Settings },
-]
+const settingsItems = [{ title: "Settings", href: "/settings", icon: Settings }]
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border">
+      <SidebarHeader className="border-sidebar-border border-b">
         <div className="flex items-center gap-2 px-2 py-2">
           <div className="flex h-8 w-8 items-center justify-center">
             <Image
@@ -83,7 +81,7 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Acme Logistics</span>
-            <span className="text-xs text-muted-foreground">Enterprise</span>
+            <span className="text-muted-foreground text-xs">Enterprise</span>
           </div>
         </div>
       </SidebarHeader>
@@ -94,11 +92,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.href}
-                    tooltip={item.title}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
                     <Link href={item.href}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
@@ -115,11 +109,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.href}
-                    tooltip={item.title}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
                     <Link href={item.href}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
@@ -131,7 +121,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border">
+      <SidebarFooter className="border-sidebar-border border-t">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -141,11 +131,9 @@ export function AppSidebar() {
                     <AvatarImage src="/avatars/user.png" alt="User" />
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col flex-1 text-left text-sm">
+                  <div className="flex flex-1 flex-col text-left text-sm">
                     <span className="font-medium">John Doe</span>
-                    <span className="text-xs text-muted-foreground">
-                      Operations Manager
-                    </span>
+                    <span className="text-muted-foreground text-xs">Operations Manager</span>
                   </div>
                   <ChevronUp className="ml-auto h-4 w-4" />
                 </SidebarMenuButton>
@@ -164,8 +152,8 @@ export function AppSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
-                    <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <Sun className="mr-2 h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                    <Moon className="absolute mr-2 h-4 w-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
                     <span>Theme</span>
                   </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>

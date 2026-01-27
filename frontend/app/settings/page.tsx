@@ -24,10 +24,34 @@ import {
 
 const teamMembers = [
   { id: 1, name: "John Doe", email: "john.doe@acmelogistics.com", role: "Admin", status: "active" },
-  { id: 2, name: "Sarah Williams", email: "sarah.w@acmelogistics.com", role: "Operations Manager", status: "active" },
-  { id: 3, name: "Mike Johnson", email: "mike.j@acmelogistics.com", role: "Dispatcher", status: "active" },
-  { id: 4, name: "Emily Chen", email: "emily.c@acmelogistics.com", role: "Warehouse Staff", status: "active" },
-  { id: 5, name: "Robert Brown", email: "robert.b@acmelogistics.com", role: "Driver", status: "inactive" },
+  {
+    id: 2,
+    name: "Sarah Williams",
+    email: "sarah.w@acmelogistics.com",
+    role: "Operations Manager",
+    status: "active",
+  },
+  {
+    id: 3,
+    name: "Mike Johnson",
+    email: "mike.j@acmelogistics.com",
+    role: "Dispatcher",
+    status: "active",
+  },
+  {
+    id: 4,
+    name: "Emily Chen",
+    email: "emily.c@acmelogistics.com",
+    role: "Warehouse Staff",
+    status: "active",
+  },
+  {
+    id: 5,
+    name: "Robert Brown",
+    email: "robert.b@acmelogistics.com",
+    role: "Driver",
+    status: "inactive",
+  },
 ]
 
 const roleColors: Record<string, string> = {
@@ -67,8 +91,10 @@ export default function SettingsPage() {
                   <AvatarFallback className="text-lg">JD</AvatarFallback>
                 </Avatar>
                 <div>
-                  <Button variant="outline" size="sm">Change Photo</Button>
-                  <p className="text-xs text-muted-foreground mt-1">JPG, PNG or GIF. Max 2MB.</p>
+                  <Button variant="outline" size="sm">
+                    Change Photo
+                  </Button>
+                  <p className="text-muted-foreground mt-1 text-xs">JPG, PNG or GIF. Max 2MB.</p>
                 </div>
               </div>
               <Separator />
@@ -153,7 +179,9 @@ export default function SettingsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">Edit</Button>
+                        <Button variant="ghost" size="sm">
+                          Edit
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -173,33 +201,47 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between py-2">
                 <div>
                   <p className="font-medium">Email Notifications</p>
-                  <p className="text-sm text-muted-foreground">Receive updates via email</p>
+                  <p className="text-muted-foreground text-sm">Receive updates via email</p>
                 </div>
-                <Button variant="outline" size="sm">Enabled</Button>
+                <Button variant="outline" size="sm">
+                  Enabled
+                </Button>
               </div>
               <Separator />
               <div className="flex items-center justify-between py-2">
                 <div>
                   <p className="font-medium">Shipment Alerts</p>
-                  <p className="text-sm text-muted-foreground">Get notified about shipment status changes</p>
+                  <p className="text-muted-foreground text-sm">
+                    Get notified about shipment status changes
+                  </p>
                 </div>
-                <Button variant="outline" size="sm">Enabled</Button>
+                <Button variant="outline" size="sm">
+                  Enabled
+                </Button>
               </div>
               <Separator />
               <div className="flex items-center justify-between py-2">
                 <div>
                   <p className="font-medium">Inventory Alerts</p>
-                  <p className="text-sm text-muted-foreground">Low stock and reorder notifications</p>
+                  <p className="text-muted-foreground text-sm">
+                    Low stock and reorder notifications
+                  </p>
                 </div>
-                <Button variant="outline" size="sm">Enabled</Button>
+                <Button variant="outline" size="sm">
+                  Enabled
+                </Button>
               </div>
               <Separator />
               <div className="flex items-center justify-between py-2">
                 <div>
                   <p className="font-medium">Daily Summary</p>
-                  <p className="text-sm text-muted-foreground">Receive a daily operations summary</p>
+                  <p className="text-muted-foreground text-sm">
+                    Receive a daily operations summary
+                  </p>
                 </div>
-                <Button variant="outline" size="sm">Disabled</Button>
+                <Button variant="outline" size="sm">
+                  Disabled
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -275,9 +317,9 @@ export default function SettingsPage() {
         </TabsContent>
       </Tabs>
 
-      <Link 
-        href="/demo_script" 
-        className="fixed bottom-4 right-4 text-xs text-muted-foreground/30 hover:text-muted-foreground transition-colors"
+      <Link
+        href="/demo_script"
+        className="text-muted-foreground/30 hover:text-muted-foreground fixed right-4 bottom-4 text-xs transition-colors"
       >
         Demo Script
       </Link>

@@ -26,11 +26,7 @@ import { Separator } from "@/components/ui/separator"
 import { Map, MapTileLayer, MapMarker, MapZoomControl, MapPolyline } from "@/components/ui/map"
 import type { LatLngExpression } from "leaflet"
 import { getVehicle, type VehicleDetail } from "@/lib/api"
-import {
-  vehicleStatusColors,
-  facilityTypeColors,
-  formatDateTime,
-} from "@/lib/utils"
+import { vehicleStatusColors, facilityTypeColors, formatDateTime } from "@/lib/utils"
 import { getCoordinatesForLocation, interpolateRoute } from "@/lib/locations"
 import { VehicleModal } from "@/components/new-vehicle-modal"
 
@@ -56,33 +52,38 @@ function VehicleMap({ vehicle }: { vehicle: VehicleDetail }) {
 
   const isEnRoute = vehicle.status === "en_route" && destinationCoords
   const showRouteLine = isEnRoute && vehicle.type !== "truck"
-  const routePoints = showRouteLine && currentCoords && destinationCoords
-    ? interpolateRoute(currentCoords, destinationCoords)
-    : null
+  const routePoints =
+    showRouteLine && currentCoords && destinationCoords
+      ? interpolateRoute(currentCoords, destinationCoords)
+      : null
 
-  const vehiclePosition = isEnRoute && currentCoords && destinationCoords
-    ? [
-        currentCoords[0] + (destinationCoords[0] - currentCoords[0]) * 0.4,
-        currentCoords[1] + (destinationCoords[1] - currentCoords[1]) * 0.4,
-      ] as [number, number]
-    : currentCoords
+  const vehiclePosition =
+    isEnRoute && currentCoords && destinationCoords
+      ? ([
+          currentCoords[0] + (destinationCoords[0] - currentCoords[0]) * 0.4,
+          currentCoords[1] + (destinationCoords[1] - currentCoords[1]) * 0.4,
+        ] as [number, number])
+      : currentCoords
 
   if (!currentCoords) {
     return (
-      <div className="h-[250px] rounded-md bg-muted flex items-center justify-center">
-        <p className="text-sm text-muted-foreground">Location coordinates not available</p>
+      <div className="bg-muted flex h-[250px] items-center justify-center rounded-md">
+        <p className="text-muted-foreground text-sm">Location coordinates not available</p>
       </div>
     )
   }
 
-  const center: LatLngExpression = isEnRoute && destinationCoords && vehiclePosition
-    ? [
-        (Math.min(currentCoords[0], destinationCoords[0], vehiclePosition[0]) + 
-         Math.max(currentCoords[0], destinationCoords[0], vehiclePosition[0])) / 2,
-        (Math.min(currentCoords[1], destinationCoords[1], vehiclePosition[1]) + 
-         Math.max(currentCoords[1], destinationCoords[1], vehiclePosition[1])) / 2,
-      ]
-    : currentCoords
+  const center: LatLngExpression =
+    isEnRoute && destinationCoords && vehiclePosition
+      ? [
+          (Math.min(currentCoords[0], destinationCoords[0], vehiclePosition[0]) +
+            Math.max(currentCoords[0], destinationCoords[0], vehiclePosition[0])) /
+            2,
+          (Math.min(currentCoords[1], destinationCoords[1], vehiclePosition[1]) +
+            Math.max(currentCoords[1], destinationCoords[1], vehiclePosition[1])) /
+            2,
+        ]
+      : currentCoords
 
   const zoom = (() => {
     if (!isEnRoute || !destinationCoords) return 10
@@ -118,8 +119,8 @@ function VehicleMap({ vehicle }: { vehicle: VehicleDetail }) {
       <MapMarker
         position={currentCoords as LatLngExpression}
         icon={
-          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-info shadow-md border-2 border-background">
-            <MapPin className="h-3 w-3 text-info-foreground" />
+          <div className="bg-info border-background flex h-6 w-6 items-center justify-center rounded-full border-2 shadow-md">
+            <MapPin className="text-info-foreground h-3 w-3" />
           </div>
         }
         iconAnchor={[12, 12]}
@@ -129,8 +130,8 @@ function VehicleMap({ vehicle }: { vehicle: VehicleDetail }) {
         <MapMarker
           position={destinationCoords as LatLngExpression}
           icon={
-            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-success shadow-md border-2 border-background">
-              <Navigation className="h-3 w-3 text-success-foreground" />
+            <div className="bg-success border-background flex h-6 w-6 items-center justify-center rounded-full border-2 shadow-md">
+              <Navigation className="text-success-foreground h-3 w-3" />
             </div>
           }
           iconAnchor={[12, 12]}
@@ -141,12 +142,18 @@ function VehicleMap({ vehicle }: { vehicle: VehicleDetail }) {
         <MapMarker
           position={vehiclePosition as LatLngExpression}
           icon={
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg border-2 border-background ${
-              vehicle.status === "en_route" ? "bg-info" :
-              vehicle.status === "idle" ? "bg-neutral" :
-              vehicle.status === "maintenance" ? "bg-warning" : "bg-info"
-            }`}>
-              <Icon className="h-4 w-4 text-background" />
+            <div
+              className={`border-background flex h-8 w-8 items-center justify-center rounded-full border-2 shadow-lg ${
+                vehicle.status === "en_route"
+                  ? "bg-info"
+                  : vehicle.status === "idle"
+                    ? "bg-neutral"
+                    : vehicle.status === "maintenance"
+                      ? "bg-warning"
+                      : "bg-info"
+              }`}
+            >
+              <Icon className="text-background h-4 w-4" />
             </div>
           }
           iconAnchor={[16, 16]}
@@ -191,9 +198,9 @@ export default function VehicleDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load vehicle</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -247,7 +254,7 @@ export default function VehicleDetailPage() {
             </Link>
           </Button>
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-muted">
+            <div className="bg-muted rounded-lg p-3">
               <Icon className="h-6 w-6" />
             </div>
             <div>
@@ -280,23 +287,23 @@ export default function VehicleDetailPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Driver</CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">Driver</CardTitle>
+            <User className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold truncate">{vehicle.driver}</div>
+            <div className="truncate text-2xl font-bold">{vehicle.driver}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Fuel Level</CardTitle>
-            <Fuel className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">Fuel Level</CardTitle>
+            <Fuel className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{vehicle.fuel_level}%</div>
             <Progress
               value={vehicle.fuel_level}
-              className={`h-2 mt-2 ${
+              className={`mt-2 h-2 ${
                 vehicle.fuel_level < 30
                   ? "[&>div]:bg-destructive"
                   : vehicle.fuel_level < 50
@@ -309,7 +316,7 @@ export default function VehicleDetailPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6 md:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -326,17 +333,17 @@ export default function VehicleDetailPage() {
               <VehicleMap vehicle={vehicle} />
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Current Location</p>
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-info" />
+                  <p className="text-muted-foreground mb-1 text-sm">Current Location</p>
+                  <p className="flex items-center gap-2 text-sm font-medium">
+                    <MapPin className="text-info h-4 w-4" />
                     {vehicle.current_location}
                   </p>
                 </div>
                 {vehicle.destination && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Destination</p>
-                    <p className="text-sm font-medium flex items-center gap-2">
-                      <Navigation className="h-4 w-4 text-success" />
+                    <p className="text-muted-foreground mb-1 text-sm">Destination</p>
+                    <p className="flex items-center gap-2 text-sm font-medium">
+                      <Navigation className="text-success h-4 w-4" />
                       {vehicle.destination}
                     </p>
                   </div>
@@ -344,9 +351,9 @@ export default function VehicleDetailPage() {
               </div>
               {vehicle.eta && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Estimated Arrival</p>
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-warning" />
+                  <p className="text-muted-foreground mb-1 text-sm">Estimated Arrival</p>
+                  <p className="flex items-center gap-2 text-sm font-medium">
+                    <Clock className="text-warning h-4 w-4" />
                     {vehicle.eta}
                   </p>
                 </div>
@@ -358,7 +365,7 @@ export default function VehicleDetailPage() {
         <div className="space-y-6">
           {vehicle.facility ? (
             <Card
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer transition-shadow hover:shadow-md"
               onClick={() => router.push(`/facilities/${vehicle.facility!.id}`)}
             >
               <CardHeader>
@@ -382,14 +389,18 @@ export default function VehicleDetailPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Location</span>
-                    <span className="font-medium">{vehicle.facility.city}, {vehicle.facility.state}</span>
+                    <span className="font-medium">
+                      {vehicle.facility.city}, {vehicle.facility.state}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Capacity</span>
                     <span className="font-medium">{vehicle.facility.capacity_percentage}%</span>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground text-center pt-2">Click to view facility details</p>
+                <p className="text-muted-foreground pt-2 text-center text-xs">
+                  Click to view facility details
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -401,7 +412,7 @@ export default function VehicleDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground text-center py-4">
+                <p className="text-muted-foreground py-4 text-center text-sm">
                   No facility assigned to this vehicle
                 </p>
               </CardContent>

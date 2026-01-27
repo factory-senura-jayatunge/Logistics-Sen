@@ -104,9 +104,9 @@ export default function OrdersPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load orders</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -115,8 +115,8 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex h-full flex-col">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Orders</h1>
           <p className="text-muted-foreground">Manage customer orders and fulfillment</p>
@@ -137,50 +137,60 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      <NewOrderModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onSuccess={fetchOrders}
-      />
+      <NewOrderModal open={modalOpen} onOpenChange={setModalOpen} onSuccess={fetchOrders} />
 
       {showStats && (
-        <div className="grid gap-4 md:grid-cols-4 flex-shrink-0 mb-6">
+        <div className="mb-6 grid flex-shrink-0 gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Pending Orders</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Pending Orders
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-12" /> : stats.pending}</div>
+              <div className="text-2xl font-bold">
+                {loading ? <Skeleton className="h-8 w-12" /> : stats.pending}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Processing</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Processing
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-12" /> : stats.processing}</div>
+              <div className="text-2xl font-bold">
+                {loading ? <Skeleton className="h-8 w-12" /> : stats.processing}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Shipped</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">Shipped</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-12" /> : stats.shipped}</div>
+              <div className="text-2xl font-bold">
+                {loading ? <Skeleton className="h-8 w-12" /> : stats.shipped}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Value</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Total Value
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-16" /> : formatCurrency(stats.totalValue)}</div>
+              <div className="text-2xl font-bold">
+                {loading ? <Skeleton className="h-8 w-16" /> : formatCurrency(stats.totalValue)}
+              </div>
             </CardContent>
           </Card>
         </div>
       )}
 
-      <Card className="flex-1 flex flex-col min-h-0">
+      <Card className="flex min-h-0 flex-1 flex-col">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle>All Orders ({filteredOrders.length})</CardTitle>
@@ -227,18 +237,32 @@ export default function OrdersPage() {
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-12" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : filteredOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-muted-foreground py-8 text-center">
                     No orders found
                   </TableCell>
                 </TableRow>
@@ -246,7 +270,7 @@ export default function OrdersPage() {
                 filteredOrders.map((order) => (
                   <TableRow
                     key={order.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="hover:bg-muted/50 cursor-pointer"
                     onClick={() => router.push(`/orders/${order.id}`)}
                   >
                     <TableCell className="font-medium">{order.order_number}</TableCell>
@@ -255,12 +279,18 @@ export default function OrdersPage() {
                     <TableCell>{formatCurrency(order.total_value)}</TableCell>
                     <TableCell>{formatDate(order.created_at)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={priorityColors[order.priority] || priorityColors.medium}>
+                      <Badge
+                        variant="outline"
+                        className={priorityColors[order.priority] || priorityColors.medium}
+                      >
                         {order.priority}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={statusColors[order.status] || statusColors.pending}>
+                      <Badge
+                        variant="outline"
+                        className={statusColors[order.status] || statusColors.pending}
+                      >
                         {order.status}
                       </Badge>
                     </TableCell>

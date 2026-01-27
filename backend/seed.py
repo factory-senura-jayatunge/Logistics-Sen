@@ -237,7 +237,7 @@ def seed_database():
     db.flush()
 
     # Seed notifications
-    notification_templates = [
+    _notification_templates = [  # noqa: F841
         {"title": "Shipment {0} delayed", "type": "warning", "category": "shipment", "ref_type": "shipment"},
         {"title": "Order {0} confirmed", "type": "success", "category": "order", "ref_type": "order"},
         {"title": "Low stock alert: {0}", "type": "warning", "category": "inventory", "ref_type": "inventory"},

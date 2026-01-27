@@ -59,7 +59,7 @@ def get_shipment_status_breakdown(db: Session = Depends(get_db)):
         models.Shipment.status,
         func.count(models.Shipment.id).label("count")
     ).group_by(models.Shipment.status).all()
-    
+
     return [{"status": status, "count": count} for status, count in results]
 
 
@@ -67,7 +67,7 @@ def get_shipment_status_breakdown(db: Session = Depends(get_db)):
 def get_shipment_volume(days: int = 30, db: Session = Depends(get_db)):
     """Get daily shipment counts for the last N days"""
     start_date = datetime.utcnow() - timedelta(days=days)
-    
+
     results = db.query(
         func.date(models.Shipment.created_at).label("date"),
         func.count(models.Shipment.id).label("count")
@@ -78,5 +78,5 @@ def get_shipment_volume(days: int = 30, db: Session = Depends(get_db)):
     ).order_by(
         func.date(models.Shipment.created_at)
     ).all()
-    
+
     return [{"date": str(date), "count": count} for date, count in results]

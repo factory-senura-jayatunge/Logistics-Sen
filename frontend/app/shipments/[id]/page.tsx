@@ -98,9 +98,9 @@ export default function ShipmentDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load shipment</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -154,19 +154,20 @@ export default function ShipmentDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold">{shipment.tracking_number}</h1>
-              <Badge variant="outline" className={statusColors[shipment.status] || statusColors.pending}>
+              <Badge
+                variant="outline"
+                className={statusColors[shipment.status] || statusColors.pending}
+              >
                 {shipment.status.replace("_", " ")}
               </Badge>
             </div>
-            <p className="text-muted-foreground">
-              Created {formatDateTime(shipment.created_at)}
-            </p>
+            <p className="text-muted-foreground">Created {formatDateTime(shipment.created_at)}</p>
           </div>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6 md:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -177,35 +178,35 @@ export default function ShipmentDetailPage() {
             <CardContent>
               <div className="flex items-center gap-4">
                 <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Origin</p>
+                  <p className="text-muted-foreground text-sm">Origin</p>
                   <p className="text-lg font-medium">{shipment.origin}</p>
                 </div>
                 <div className="flex-shrink-0">
-                  <div className="h-px w-16 bg-border relative">
-                    <Truck className="h-4 w-4 absolute -top-2 left-1/2 -translate-x-1/2 text-muted-foreground" />
+                  <div className="bg-border relative h-px w-16">
+                    <Truck className="text-muted-foreground absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2" />
                   </div>
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-sm text-muted-foreground">Destination</p>
+                  <p className="text-muted-foreground text-sm">Destination</p>
                   <p className="text-lg font-medium">{shipment.destination}</p>
                 </div>
               </div>
               <Separator className="my-4" />
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Truck className="h-3 w-3" /> Carrier
                   </p>
                   <p className="font-medium">{shipment.carrier}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Weight className="h-3 w-3" /> Weight
                   </p>
                   <p className="font-medium">{shipment.weight_kg.toLocaleString()} kg</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Calendar className="h-3 w-3" /> ETA
                   </p>
                   <p className="font-medium">{formatDate(shipment.eta)}</p>
@@ -226,24 +227,27 @@ export default function ShipmentDetailPage() {
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-primary" />
-                    <div className="h-full w-px bg-border" />
+                    <div className="bg-primary h-3 w-3 rounded-full" />
+                    <div className="bg-border h-full w-px" />
                   </div>
                   <div className="pb-4">
                     <p className="font-medium">Shipment Created</p>
-                    <p className="text-sm text-muted-foreground">{formatDateTime(shipment.created_at)}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {formatDateTime(shipment.created_at)}
+                    </p>
                   </div>
                 </div>
                 {shipment.status !== "pending" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-primary" />
-                      <div className="h-full w-px bg-border" />
+                      <div className="bg-primary h-3 w-3 rounded-full" />
+                      <div className="bg-border h-full w-px" />
                     </div>
                     <div className="pb-4">
                       <p className="font-medium">Status Updated</p>
-                      <p className="text-sm text-muted-foreground">
-                        Changed to {shipment.status.replace("_", " ")} - {formatDateTime(shipment.updated_at)}
+                      <p className="text-muted-foreground text-sm">
+                        Changed to {shipment.status.replace("_", " ")} -{" "}
+                        {formatDateTime(shipment.updated_at)}
                       </p>
                     </div>
                   </div>
@@ -251,22 +255,24 @@ export default function ShipmentDetailPage() {
                 {shipment.status === "delivered" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-success" />
+                      <div className="bg-success h-3 w-3 rounded-full" />
                     </div>
                     <div>
-                      <p className="font-medium text-success">Delivered</p>
-                      <p className="text-sm text-muted-foreground">Package delivered successfully</p>
+                      <p className="text-success font-medium">Delivered</p>
+                      <p className="text-muted-foreground text-sm">
+                        Package delivered successfully
+                      </p>
                     </div>
                   </div>
                 )}
                 {shipment.status !== "delivered" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full border-2 border-muted-foreground/30" />
+                      <div className="border-muted-foreground/30 h-3 w-3 rounded-full border-2" />
                     </div>
                     <div>
-                      <p className="font-medium text-muted-foreground">Pending Delivery</p>
-                      <p className="text-sm text-muted-foreground">Awaiting delivery</p>
+                      <p className="text-muted-foreground font-medium">Pending Delivery</p>
+                      <p className="text-muted-foreground text-sm">Awaiting delivery</p>
                     </div>
                   </div>
                 )}
@@ -286,17 +292,17 @@ export default function ShipmentDetailPage() {
             <CardContent className="space-y-3">
               <div>
                 <p className="font-medium">{shipment.customer.name}</p>
-                <p className="text-sm text-muted-foreground">{shipment.customer.email}</p>
+                <p className="text-muted-foreground text-sm">{shipment.customer.email}</p>
               </div>
               {shipment.customer.phone && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p className="text-muted-foreground text-sm">Phone</p>
                   <p className="text-sm">{shipment.customer.phone}</p>
                 </div>
               )}
               {shipment.customer.address && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="text-muted-foreground text-sm">Address</p>
                   <p className="text-sm">{shipment.customer.address}</p>
                 </div>
               )}
@@ -305,7 +311,7 @@ export default function ShipmentDetailPage() {
 
           {shipment.order && (
             <Card
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer transition-shadow hover:shadow-md"
               onClick={() => router.push(`/orders/${shipment.order!.id}`)}
             >
               <CardHeader>
@@ -317,7 +323,10 @@ export default function ShipmentDetailPage() {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="font-medium">{shipment.order.order_number}</p>
-                  <Badge variant="outline" className={priorityColors[shipment.order.priority] || priorityColors.medium}>
+                  <Badge
+                    variant="outline"
+                    className={priorityColors[shipment.order.priority] || priorityColors.medium}
+                  >
                     {shipment.order.priority}
                   </Badge>
                 </div>
@@ -337,10 +346,14 @@ export default function ShipmentDetailPage() {
                   </div>
                   <div>
                     <p className="text-muted-foreground">Created</p>
-                    <p className="font-medium">{formatDateTime(shipment.order.created_at).split(",")[0]}</p>
+                    <p className="font-medium">
+                      {formatDateTime(shipment.order.created_at).split(",")[0]}
+                    </p>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground text-center pt-2">Click to view order details</p>
+                <p className="text-muted-foreground pt-2 text-center text-xs">
+                  Click to view order details
+                </p>
               </CardContent>
             </Card>
           )}

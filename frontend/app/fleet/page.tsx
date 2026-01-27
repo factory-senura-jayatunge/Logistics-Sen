@@ -63,9 +63,9 @@ export default function FleetPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load fleet</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -134,8 +134,10 @@ export default function FleetPage() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Vehicles</CardTitle>
-              <Truck className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Total Vehicles
+              </CardTitle>
+              <Truck className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -145,30 +147,32 @@ export default function FleetPage() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">En Route</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">En Route</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-info">
+              <div className="text-info text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.enRoute}
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Idle</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">Idle</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-neutral">
+              <div className="text-neutral text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.idle}
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">In Maintenance</CardTitle>
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                In Maintenance
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-warning">
+              <div className="text-warning text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.maintenance}
               </div>
             </CardContent>
@@ -186,7 +190,7 @@ export default function FleetPage() {
                     <Skeleton className="h-8 w-8 rounded-lg" />
                     <div>
                       <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-3 w-32 mt-1" />
+                      <Skeleton className="mt-1 h-3 w-32" />
                     </div>
                   </div>
                   <Skeleton className="h-5 w-16" />
@@ -200,7 +204,7 @@ export default function FleetPage() {
             </Card>
           ))
         ) : vehicles.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-muted-foreground">
+          <div className="text-muted-foreground col-span-full py-12 text-center">
             No vehicles found matching the selected filters
           </div>
         ) : (
@@ -209,13 +213,13 @@ export default function FleetPage() {
             return (
               <Card
                 key={vehicle.id}
-                className="cursor-pointer hover:shadow-md transition-shadow"
+                className="cursor-pointer transition-shadow hover:shadow-md"
                 onClick={() => router.push(`/fleet/${vehicle.id}`)}
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-muted">
+                      <div className="bg-muted rounded-lg p-2">
                         <Icon className="h-4 w-4" />
                       </div>
                       <div>
@@ -236,7 +240,9 @@ export default function FleetPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Location</span>
-                      <span className="font-medium text-right max-w-[150px] truncate">{vehicle.current_location}</span>
+                      <span className="max-w-[150px] truncate text-right font-medium">
+                        {vehicle.current_location}
+                      </span>
                     </div>
                     {vehicle.destination && (
                       <div className="flex justify-between text-sm">
@@ -259,7 +265,7 @@ export default function FleetPage() {
                     )}
                   </div>
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
+                    <div className="mb-1 flex justify-between text-sm">
                       <span className="text-muted-foreground">Fuel Level</span>
                       <span>{vehicle.fuel_level}%</span>
                     </div>

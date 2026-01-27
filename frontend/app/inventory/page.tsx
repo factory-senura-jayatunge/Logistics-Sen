@@ -91,9 +91,9 @@ export default function InventoryPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load inventory</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -102,8 +102,8 @@ export default function InventoryPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex h-full flex-col">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Inventory</h1>
           <p className="text-muted-foreground">Monitor stock levels across all warehouses</p>
@@ -135,59 +135,67 @@ export default function InventoryPage() {
       </div>
 
       {showStats && (
-        <div className="grid gap-4 md:grid-cols-4 flex-shrink-0 mb-6">
+        <div className="mb-6 grid flex-shrink-0 gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total SKUs</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Total SKUs
+              </CardTitle>
+              <Package className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats.totalSkus.toLocaleString()}
               </div>
-              <p className="text-xs text-muted-foreground">Across all facilities</p>
+              <p className="text-muted-foreground text-xs">Across all facilities</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Items</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-warning" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Low Stock Items
+              </CardTitle>
+              <AlertTriangle className="text-warning h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.lowStock}
               </div>
-              <p className="text-xs text-muted-foreground">Require attention</p>
+              <p className="text-muted-foreground text-xs">Require attention</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Out of Stock</CardTitle>
-              <Archive className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Out of Stock
+              </CardTitle>
+              <Archive className="text-destructive h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.outOfStock}
               </div>
-              <p className="text-xs text-muted-foreground">Need immediate reorder</p>
+              <p className="text-muted-foreground text-xs">Need immediate reorder</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Inventory Value</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Inventory Value
+              </CardTitle>
+              <TrendingUp className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-20" /> : formatCurrency(stats.totalValue)}
               </div>
-              <p className="text-xs text-muted-foreground">Total stock value</p>
+              <p className="text-muted-foreground text-xs">Total stock value</p>
             </CardContent>
           </Card>
         </div>
       )}
 
-      <Card className="flex-1 flex flex-col min-h-0">
+      <Card className="flex min-h-0 flex-1 flex-col">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
@@ -220,19 +228,35 @@ export default function InventoryPage() {
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-12" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : filteredItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-muted-foreground py-8 text-center">
                     No inventory items found
                   </TableCell>
                 </TableRow>
@@ -240,7 +264,7 @@ export default function InventoryPage() {
                 filteredItems.map((item) => (
                   <TableRow
                     key={item.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="hover:bg-muted/50 cursor-pointer"
                     onClick={() => router.push(`/inventory/${item.id}`)}
                   >
                     <TableCell className="font-medium">{item.sku}</TableCell>
@@ -251,7 +275,10 @@ export default function InventoryPage() {
                     <TableCell className="text-right">{item.reorder_point}</TableCell>
                     <TableCell className="text-right">{formatCurrency(item.unit_price)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={statusColors[item.status] || statusColors.in_stock}>
+                      <Badge
+                        variant="outline"
+                        className={statusColors[item.status] || statusColors.in_stock}
+                      >
                         {item.status.replace("_", " ")}
                       </Badge>
                     </TableCell>

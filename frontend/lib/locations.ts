@@ -52,21 +52,21 @@ export const locationCoordinates: Record<string, [number, number]> = {
 
 export const transportLocations: Record<string, [number, number]> = {
   "Interstate 95, NJ": [40.2171, -74.7429],
-  "Highway 66, TX": [35.2220, -101.8313],
+  "Highway 66, TX": [35.222, -101.8313],
   "I-10, CA": [33.9425, -117.4297],
   "Atlantic Ocean": [30.0, -70.0],
   "Pacific Ocean": [35.0, -140.0],
-  "Port of Miami": [25.7742, -80.1670],
-  "Port of Los Angeles": [33.7361, -118.2650],
-  "Port of Seattle": [47.5815, -122.3550],
+  "Port of Miami": [25.7742, -80.167],
+  "Port of Los Angeles": [33.7361, -118.265],
+  "Port of Seattle": [47.5815, -122.355],
   "Over Pacific": [37.0, -150.0],
   "JFK Airport": [40.6413, -73.7781],
   "LAX Airport": [33.9416, -118.4085],
   "ORD Airport": [41.9742, -87.9073],
-  "Nebraska": [41.4925, -99.9018],
-  "Kansas": [39.0119, -98.4842],
+  Nebraska: [41.4925, -99.9018],
+  Kansas: [39.0119, -98.4842],
   "Chicago Rail Yard": [41.8525, -87.6514],
-  "LA Intermodal": [33.9700, -118.2400],
+  "LA Intermodal": [33.97, -118.24],
   "Houston Terminal": [29.7752, -95.3103],
   "Brooklyn, NY": [40.6782, -73.9442],
 }
@@ -91,18 +91,18 @@ export function getCoordinatesForLocation(location: string): [number, number] | 
   return null
 }
 
-export function interpolateRoute(start: [number, number], end: [number, number]): [number, number][] {
+export function interpolateRoute(
+  start: [number, number],
+  end: [number, number]
+): [number, number][] {
   const route: [number, number][] = [start]
   const numPoints = 20
-  
+
   for (let i = 1; i < numPoints; i++) {
     const t = i / numPoints
-    route.push([
-      start[0] + (end[0] - start[0]) * t,
-      start[1] + (end[1] - start[1]) * t,
-    ])
+    route.push([start[0] + (end[0] - start[0]) * t, start[1] + (end[1] - start[1]) * t])
   }
-  
+
   route.push(end)
   return route
 }

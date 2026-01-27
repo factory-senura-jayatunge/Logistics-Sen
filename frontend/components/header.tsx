@@ -84,9 +84,7 @@ export function Header() {
   const handleMarkAsRead = async (id: number) => {
     try {
       await markNotificationAsRead(id)
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-      )
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
       setUnreadCount((prev) => Math.max(0, prev - 1))
     } catch (error) {
       console.error("Failed to mark notification as read:", error)
@@ -121,18 +119,18 @@ export function Header() {
   }
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background px-4">
+    <header className="bg-background flex h-14 items-center gap-4 border-b px-4">
       <SidebarTrigger />
       <Separator orientation="vertical" className="h-6" />
       <div className="flex-1">
         <Button
           variant="outline"
-          className="relative h-9 w-full max-w-md justify-start text-sm text-muted-foreground"
+          className="text-muted-foreground relative h-9 w-full max-w-md justify-start text-sm"
           onClick={openCommandMenu}
         >
           <Search className="mr-2 h-4 w-4" />
           <span>Search...</span>
-          <kbd className="pointer-events-none absolute right-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+          <kbd className="bg-muted pointer-events-none absolute right-2 hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
             <span className="text-xs">⌘</span>K
           </kbd>
         </Button>
@@ -144,7 +142,7 @@ export function Header() {
             {unreadCount > 0 && (
               <Badge
                 variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs"
               >
                 {unreadCount > 9 ? "9+" : unreadCount}
               </Badge>
@@ -159,47 +157,49 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-auto py-1 px-2 text-xs"
+                className="h-auto px-2 py-1 text-xs"
                 onClick={handleMarkAllAsRead}
               >
-                <Check className="h-3 w-3 mr-1" />
+                <Check className="mr-1 h-3 w-3" />
                 Mark all read
               </Button>
             )}
           </div>
           <DropdownMenuSeparator />
           {notifications.length === 0 ? (
-            <div className="p-4 text-sm text-muted-foreground text-center">
-              No notifications
-            </div>
+            <div className="text-muted-foreground p-4 text-center text-sm">No notifications</div>
           ) : (
             notifications.map((notification) => (
               <DropdownMenuItem
                 key={notification.id}
-                className="flex flex-col items-start gap-1 p-3 cursor-pointer"
+                className="flex cursor-pointer flex-col items-start gap-1 p-3"
                 onClick={() => handleNotificationClick(notification)}
               >
-                <div className="flex items-center gap-2 w-full">
+                <div className="flex w-full items-center gap-2">
                   {!notification.read && (
-                    <div className={`h-2 w-2 rounded-full ${notificationTypeColors[notification.type] || "bg-primary"}`} />
+                    <div
+                      className={`h-2 w-2 rounded-full ${notificationTypeColors[notification.type] || "bg-primary"}`}
+                    />
                   )}
-                  <span className={`font-medium text-sm flex-1 ${notification.read ? "text-muted-foreground" : ""}`}>
+                  <span
+                    className={`flex-1 text-sm font-medium ${notification.read ? "text-muted-foreground" : ""}`}
+                  >
                     {notification.title}
                   </span>
                 </div>
                 {notification.message && (
-                  <p className="text-xs text-muted-foreground line-clamp-2 pl-4">
+                  <p className="text-muted-foreground line-clamp-2 pl-4 text-xs">
                     {notification.message}
                   </p>
                 )}
-                <span className="text-xs text-muted-foreground pl-4">
+                <span className="text-muted-foreground pl-4 text-xs">
                   {formatTimeAgo(notification.created_at)}
                 </span>
               </DropdownMenuItem>
             ))
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="justify-center text-sm text-muted-foreground">
+          <DropdownMenuItem className="text-muted-foreground justify-center text-sm">
             View all notifications
           </DropdownMenuItem>
         </DropdownMenuContent>
