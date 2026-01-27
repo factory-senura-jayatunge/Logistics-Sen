@@ -101,6 +101,36 @@ acme-logistics/
 - Pydantic v2 schemas for validation
 - Format with Black, lint with Ruff
 
+## Naming Conventions
+
+Naming conventions are enforced via ESLint (frontend) and Ruff (backend).
+
+### Frontend (TypeScript/React)
+| Element | Convention | Example |
+|---------|------------|---------|
+| Variables | camelCase | `userName`, `isLoading` |
+| Functions | camelCase or PascalCase (components) | `fetchData()`, `UserCard()` |
+| Parameters | camelCase | `userId`, `orderData` |
+| Types/Interfaces | PascalCase | `Customer`, `OrderStatus` |
+| Enums | PascalCase | `ShipmentStatus` |
+| Enum members | UPPER_CASE or PascalCase | `PENDING`, `InTransit` |
+| Constants | UPPER_CASE or camelCase | `MAX_RETRIES`, `apiBaseUrl` |
+| React components | PascalCase | `DashboardPage`, `OrderTable` |
+
+### Backend (Python)
+| Element | Convention | Example |
+|---------|------------|---------|
+| Variables | snake_case | `user_name`, `is_loading` |
+| Functions | snake_case | `fetch_data()`, `get_user_by_id()` |
+| Classes | PascalCase | `Customer`, `OrderService` |
+| Constants | UPPER_CASE | `MAX_RETRIES`, `API_VERSION` |
+| Module names | snake_case | `order_service.py` |
+| Private members | _snake_case | `_internal_cache` |
+
+Enforced via:
+- **ESLint**: `@typescript-eslint/naming-convention` rule (frontend)
+- **Ruff**: pep8-naming (`N`) rules (backend)
+
 ## API Endpoints
 
 All endpoints prefixed with `/api/v1/`:
