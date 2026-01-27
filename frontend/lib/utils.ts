@@ -101,7 +101,8 @@ export function formatWeight(kg: number): string {
 
 export function formatTimeAgo(dateString: string): string {
   // Append Z if no timezone indicator to treat as UTC
-  const normalized = dateString.endsWith("Z") || dateString.includes("+") ? dateString : dateString + "Z"
+  const normalized =
+    dateString.endsWith("Z") || dateString.includes("+") ? dateString : dateString + "Z"
   const date = new Date(normalized)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()

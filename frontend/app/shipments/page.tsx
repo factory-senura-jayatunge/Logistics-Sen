@@ -88,9 +88,9 @@ export default function ShipmentsPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load shipments</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -99,8 +99,8 @@ export default function ShipmentsPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex h-full flex-col">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Shipments</h1>
           <p className="text-muted-foreground">Manage and track all shipments</p>
@@ -111,13 +111,9 @@ export default function ShipmentsPage() {
         </Button>
       </div>
 
-      <NewShipmentModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onSuccess={fetchShipments}
-      />
+      <NewShipmentModal open={modalOpen} onOpenChange={setModalOpen} onSuccess={fetchShipments} />
 
-      <Card className="flex-1 flex flex-col min-h-0">
+      <Card className="flex min-h-0 flex-1 flex-col">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle>All Shipments ({filteredShipments.length})</CardTitle>
@@ -165,19 +161,35 @@ export default function ShipmentsPage() {
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : filteredShipments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-muted-foreground py-8 text-center">
                     No shipments found
                   </TableCell>
                 </TableRow>
@@ -185,7 +197,7 @@ export default function ShipmentsPage() {
                 filteredShipments.map((shipment) => (
                   <TableRow
                     key={shipment.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="hover:bg-muted/50 cursor-pointer"
                     onClick={() => router.push(`/shipments/${shipment.id}`)}
                   >
                     <TableCell className="font-medium">{shipment.tracking_number}</TableCell>
@@ -196,7 +208,10 @@ export default function ShipmentsPage() {
                     <TableCell>{formatWeight(shipment.weight_kg)}</TableCell>
                     <TableCell>{formatDate(shipment.eta)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={statusColors[shipment.status] || statusColors.pending}>
+                      <Badge
+                        variant="outline"
+                        className={statusColors[shipment.status] || statusColors.pending}
+                      >
                         {shipment.status.replace("_", " ")}
                       </Badge>
                     </TableCell>

@@ -112,9 +112,9 @@ export default function OrderDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load order</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -168,22 +168,26 @@ export default function OrderDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold">{order.order_number}</h1>
-              <Badge variant="outline" className={statusColors[order.status] || statusColors.pending}>
+              <Badge
+                variant="outline"
+                className={statusColors[order.status] || statusColors.pending}
+              >
                 {order.status}
               </Badge>
-              <Badge variant="outline" className={priorityColors[order.priority] || priorityColors.medium}>
+              <Badge
+                variant="outline"
+                className={priorityColors[order.priority] || priorityColors.medium}
+              >
                 {order.priority} priority
               </Badge>
             </div>
-            <p className="text-muted-foreground">
-              Created {formatDateTime(order.created_at)}
-            </p>
+            <p className="text-muted-foreground">Created {formatDateTime(order.created_at)}</p>
           </div>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6 md:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -192,27 +196,27 @@ export default function OrderDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Package className="h-3 w-3" /> Items
                   </p>
                   <p className="text-2xl font-bold">{order.items_count}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <DollarSign className="h-3 w-3" /> Total Value
                   </p>
                   <p className="text-2xl font-bold">{formatCurrency(order.total_value)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Truck className="h-3 w-3" /> Shipments
                   </p>
                   <p className="text-2xl font-bold">{order.shipments.length}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Calendar className="h-3 w-3" /> Last Updated
                   </p>
                   <p className="text-sm font-medium">{formatDateTime(order.updated_at)}</p>
@@ -245,7 +249,7 @@ export default function OrderDetailPage() {
                     {order.shipments.map((shipment) => (
                       <TableRow
                         key={shipment.id}
-                        className="cursor-pointer hover:bg-muted/50"
+                        className="hover:bg-muted/50 cursor-pointer"
                         onClick={() => router.push(`/shipments/${shipment.id}`)}
                       >
                         <TableCell className="font-medium">{shipment.tracking_number}</TableCell>
@@ -253,7 +257,12 @@ export default function OrderDetailPage() {
                         <TableCell>{shipment.destination}</TableCell>
                         <TableCell>{shipment.carrier}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={shipmentStatusColors[shipment.status] || shipmentStatusColors.pending}>
+                          <Badge
+                            variant="outline"
+                            className={
+                              shipmentStatusColors[shipment.status] || shipmentStatusColors.pending
+                            }
+                          >
                             {shipment.status.replace("_", " ")}
                           </Badge>
                         </TableCell>
@@ -277,23 +286,25 @@ export default function OrderDetailPage() {
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-primary" />
-                    <div className="h-full w-px bg-border" />
+                    <div className="bg-primary h-3 w-3 rounded-full" />
+                    <div className="bg-border h-full w-px" />
                   </div>
                   <div className="pb-4">
                     <p className="font-medium">Order Created</p>
-                    <p className="text-sm text-muted-foreground">{formatDateTime(order.created_at)}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {formatDateTime(order.created_at)}
+                    </p>
                   </div>
                 </div>
                 {order.status !== "pending" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-primary" />
-                      <div className="h-full w-px bg-border" />
+                      <div className="bg-primary h-3 w-3 rounded-full" />
+                      <div className="bg-border h-full w-px" />
                     </div>
                     <div className="pb-4">
                       <p className="font-medium">Status Updated</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Changed to {order.status} - {formatDateTime(order.updated_at)}
                       </p>
                     </div>
@@ -302,21 +313,21 @@ export default function OrderDetailPage() {
                 {order.status === "delivered" ? (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-success" />
+                      <div className="bg-success h-3 w-3 rounded-full" />
                     </div>
                     <div>
-                      <p className="font-medium text-success">Delivered</p>
-                      <p className="text-sm text-muted-foreground">Order completed successfully</p>
+                      <p className="text-success font-medium">Delivered</p>
+                      <p className="text-muted-foreground text-sm">Order completed successfully</p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full border-2 border-muted-foreground/30" />
+                      <div className="border-muted-foreground/30 h-3 w-3 rounded-full border-2" />
                     </div>
                     <div>
-                      <p className="font-medium text-muted-foreground">Pending Completion</p>
-                      <p className="text-sm text-muted-foreground">Awaiting fulfillment</p>
+                      <p className="text-muted-foreground font-medium">Pending Completion</p>
+                      <p className="text-muted-foreground text-sm">Awaiting fulfillment</p>
                     </div>
                   </div>
                 )}
@@ -336,17 +347,17 @@ export default function OrderDetailPage() {
             <CardContent className="space-y-3">
               <div>
                 <p className="font-medium">{order.customer.name}</p>
-                <p className="text-sm text-muted-foreground">{order.customer.email}</p>
+                <p className="text-muted-foreground text-sm">{order.customer.email}</p>
               </div>
               {order.customer.phone && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p className="text-muted-foreground text-sm">Phone</p>
                   <p className="text-sm">{order.customer.phone}</p>
                 </div>
               )}
               {order.customer.address && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="text-muted-foreground text-sm">Address</p>
                   <p className="text-sm">{order.customer.address}</p>
                 </div>
               )}
