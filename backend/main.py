@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import engine, Base
-from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search
+from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search, analytics
 from app.logging import logger
 import time
 
@@ -33,6 +33,7 @@ app.include_router(vehicles.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(notifications.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
+app.include_router(analytics.router, prefix="/api/v1")
 
 
 @app.middleware("http")

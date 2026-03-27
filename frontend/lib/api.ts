@@ -174,6 +174,29 @@ export async function search(query: string, limit = 10) {
   return fetchApi<SearchResult[]>(`/api/v1/search?q=${encodeURIComponent(query)}&limit=${limit}`)
 }
 
+// Analytics
+export async function getDeliveryTrends(days = 90) {
+  return fetchApi<DeliveryTrend[]>(`/api/v1/analytics/delivery-trends?days=${days}`)
+}
+
+export async function getCarrierPerformance() {
+  return fetchApi<CarrierPerformance[]>("/api/v1/analytics/carrier-performance")
+}
+
+export async function getFacilityUtilization() {
+  return fetchApi<FacilityUtilization[]>("/api/v1/analytics/facility-utilization")
+}
+
+export async function getCustomerOrderFrequency(limit = 10) {
+  return fetchApi<CustomerOrderFrequency[]>(
+    `/api/v1/analytics/customer-order-frequency?limit=${limit}`,
+  )
+}
+
+export function getAnalyticsCsvUrl(report: string) {
+  return `${API_BASE_URL}/api/v1/analytics/export/csv?report=${report}`
+}
+
 // Types
 export interface DashboardStats {
   total_shipments: number
@@ -404,4 +427,45 @@ export interface CreateVehicleData {
   destination?: string
   status: string
   fuel_level: number
+}
+
+export interface DeliveryTrend {
+  week: string
+  total: number
+  delivered: number
+  delayed: number
+  on_time_rate: number
+}
+
+export interface CarrierPerformance {
+  carrier: string
+  total_shipments: number
+  delivered: number
+  delayed: number
+  in_transit: number
+  avg_weight: number
+  on_time_rate: number
+}
+
+export interface FacilityUtilization {
+  id: number
+  name: string
+  code: string
+  type: string
+  city: string
+  state: string
+  capacity_percentage: number
+  staff_count: number
+  status: string
+  inventory_items: number
+  total_stock: number
+  vehicles: number
+}
+
+export interface CustomerOrderFrequency {
+  customer_id: number
+  customer_name: string
+  order_count: number
+  total_value: number
+  avg_order_value: number
 }

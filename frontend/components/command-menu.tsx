@@ -10,6 +10,7 @@ import {
   Users,
   Settings,
   LayoutDashboard,
+  BarChart3,
   Box,
 } from "lucide-react"
 import {
@@ -30,6 +31,7 @@ const navigationItems = [
   { name: "Inventory", icon: Package, href: "/inventory" },
   { name: "Facilities", icon: Warehouse, href: "/facilities" },
   { name: "Fleet", icon: Truck, href: "/fleet" },
+  { name: "Reports", icon: BarChart3, href: "/reports" },
   { name: "Settings", icon: Settings, href: "/settings" },
 ]
 

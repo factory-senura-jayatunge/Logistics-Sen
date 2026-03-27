@@ -11,6 +11,7 @@ import {
   Warehouse,
   Building2,
   Truck,
+  BarChart3,
   Settings,
   LogOut,
   ChevronUp,
@@ -51,6 +52,7 @@ const navItems = [
   { title: "Inventory", href: "/inventory", icon: Warehouse },
   { title: "Facilities", href: "/facilities", icon: Building2 },
   { title: "Fleet", href: "/fleet", icon: Truck },
+  { title: "Reports", href: "/reports", icon: BarChart3 },
 ]
 
 const settingsItems = [{ title: "Settings", href: "/settings", icon: Settings }]
