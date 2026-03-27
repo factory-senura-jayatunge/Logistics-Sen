@@ -5,9 +5,11 @@ This module provides a configured logger for the Acme Logistics backend
 with structured JSON output for better observability and log aggregation.
 """
 
+from __future__ import annotations
+
 import logging
 import sys
-from typing import Any
+from typing import Any, Optional
 
 import structlog
 
@@ -56,7 +58,7 @@ def configure_logging(log_level: str = "INFO", json_logs: bool = True) -> None:
     )
 
 
-def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
+def get_logger(name: Optional[str] = None) -> structlog.stdlib.BoundLogger:
     """
     Get a configured structlog logger.
 
