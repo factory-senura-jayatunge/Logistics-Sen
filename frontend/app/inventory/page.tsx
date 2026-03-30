@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Package, AlertTriangle, TrendingUp, Archive, BarChart3 } from "lucide-react"
+import { Package, AlertTriangle, TrendingUp, Archive, BarChart3, BrainCircuit, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -23,7 +23,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getInventoryItems, getFacilities, type InventoryItem, type Facility } from "@/lib/api"
+import { Progress } from "@/components/ui/progress"
+import {
+  getInventoryItems,
+  getFacilities,
+  getStockoutAlerts,
+  type InventoryItem,
+  type Facility,
+  type ForecastItem,
+} from "@/lib/api"
 
 const statusColors: Record<string, string> = {
   in_stock: "bg-success/10 text-success border-success/20",
@@ -46,6 +54,7 @@ export default function InventoryPage() {
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [stockoutAlerts, setStockoutAlerts] = useState<ForecastItem[]>([])
   const [facilityFilter, setFacilityFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [showStats, setShowStats] = useState(true)
@@ -53,14 +62,16 @@ export default function InventoryPage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
-      const [itemsData, facilitiesData] = await Promise.all([
+      const [itemsData, facilitiesData, alertsData] = await Promise.all([
         getInventoryItems({
           facility_id: facilityFilter === "all" ? undefined : parseInt(facilityFilter),
         }),
         getFacilities(),
+        getStockoutAlerts(14).catch(() => ({ alerts: [] })),
       ])
       setItems(itemsData)
       setFacilities(facilitiesData)
+      setStockoutAlerts(alertsData.alerts)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load inventory")
     } finally {
@@ -193,6 +204,75 @@ export default function InventoryPage() {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {stockoutAlerts.length > 0 && (
+        <Card className="mb-6 flex-shrink-0 border-warning/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <BrainCircuit className="text-warning h-5 w-5" />
+              Predictive Stockout Alerts
+            </CardTitle>
+            <CardDescription>
+              Items predicted to need reordering within the next 14 days
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {stockoutAlerts.slice(0, 6).map((alert) => (
+                <div
+                  key={alert.item_id}
+                  className="flex items-center gap-3 rounded-lg border p-3"
+                >
+                  <div
+                    className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      alert.risk_level === "critical"
+                        ? "bg-destructive/10 text-destructive"
+                        : "bg-warning/10 text-warning"
+                    }`}
+                  >
+                    {alert.risk_level === "critical" ? (
+                      <AlertTriangle className="h-4 w-4" />
+                    ) : (
+                      <Clock className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{alert.name}</p>
+                    <p className="text-muted-foreground text-xs">{alert.sku}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <Progress
+                        value={Math.min(
+                          (alert.current_quantity / Math.max(alert.reorder_point, 1)) * 100,
+                          100,
+                        )}
+                        className="h-1.5 flex-1"
+                      />
+                      <span className="text-xs font-medium">
+                        {alert.current_quantity}/{alert.reorder_point}
+                      </span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between">
+                      <span className="text-muted-foreground text-xs">
+                        ~{Math.round(alert.days_until_stockout)}d until stockout
+                      </span>
+                      {alert.suggested_reorder_qty > 0 && (
+                        <Badge variant="outline" className="text-xs">
+                          Reorder {alert.suggested_reorder_qty}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {stockoutAlerts.length > 6 && (
+              <p className="text-muted-foreground mt-3 text-center text-xs">
+                +{stockoutAlerts.length - 6} more items need attention
+              </p>
+            )}
+          </CardContent>
+        </Card>
       )}
 
       <Card className="flex min-h-0 flex-1 flex-col">

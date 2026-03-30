@@ -1,7 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import engine, Base
-from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search, analytics
+from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search, analytics, route_planning, forecasting
+from app.ws.manager import ws_manager
+from app.db.database import SessionLocal
+from app.models import models
 from app.logging import logger
 import time
 
@@ -34,6 +37,8 @@ app.include_router(users.router, prefix="/api/v1")
 app.include_router(notifications.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
+app.include_router(route_planning.router, prefix="/api/v1")
+app.include_router(forecasting.router, prefix="/api/v1")
 
 
 @app.middleware("http")
@@ -51,6 +56,16 @@ async def log_requests(request: Request, call_next):
         duration_ms=round(process_time * 1000, 2),
     )
     return response
+
+
+@app.websocket("/ws/shipments/{shipment_id}")
+async def shipment_websocket(websocket: WebSocket, shipment_id: int):
+    await ws_manager.connect(websocket, shipment_id)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        ws_manager.disconnect(websocket, shipment_id)
 
 
 @app.get("/")

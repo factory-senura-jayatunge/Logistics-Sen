@@ -14,6 +14,8 @@ import {
   AlertTriangle,
   Clock,
   FileText,
+  Wifi,
+  WifiOff,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { getShipment, type ShipmentDetail } from "@/lib/api"
+import { useShipmentWebSocket } from "@/hooks/use-shipment-ws"
 
 const statusColors: Record<string, string> = {
   delivered: "bg-success/10 text-success border-success/20",
@@ -70,6 +73,13 @@ export default function ShipmentDetailPage() {
   const [shipment, setShipment] = useState<ShipmentDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { lastUpdate, isConnected } = useShipmentWebSocket(shipment?.id ?? null)
+
+  useEffect(() => {
+    if (lastUpdate) {
+      setShipment((prev) => (prev ? { ...prev, status: lastUpdate.new_status } : prev))
+    }
+  }, [lastUpdate])
 
   useEffect(() => {
     async function fetchShipment() {
@@ -161,7 +171,18 @@ export default function ShipmentDetailPage() {
                 {shipment.status.replace("_", " ")}
               </Badge>
             </div>
-            <p className="text-muted-foreground">Created {formatDateTime(shipment.created_at)}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground">Created {formatDateTime(shipment.created_at)}</p>
+              {isConnected ? (
+                <span className="text-success flex items-center gap-1 text-xs">
+                  <Wifi className="h-3 w-3" /> Live
+                </span>
+              ) : (
+                <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <WifiOff className="h-3 w-3" /> Offline
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

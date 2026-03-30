@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.db.database import get_db
 from app.models import models
 from app.schemas import schemas
+from app.ws.manager import ws_manager
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
 
@@ -64,12 +65,20 @@ def update_shipment(shipment_id: int, shipment: schemas.ShipmentCreate, db: Sess
 
 
 @router.patch("/{shipment_id}/status")
-def update_shipment_status(shipment_id: int, status: str = Query(...), db: Session = Depends(get_db)):
+async def update_shipment_status(shipment_id: int, status: str = Query(...), db: Session = Depends(get_db)):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
     if not db_shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
+    old_status = db_shipment.status
     db_shipment.status = status
     db.commit()
+    await ws_manager.broadcast_status_update(shipment_id, {
+        "type": "status_update",
+        "shipment_id": shipment_id,
+        "old_status": old_status,
+        "new_status": status,
+        "tracking_number": db_shipment.tracking_number,
+    })
     return {"message": f"Shipment status updated to {status}"}
 
 
