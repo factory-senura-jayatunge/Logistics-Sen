@@ -370,7 +370,9 @@ export default function OrdersPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.includes(order.id)}
-                        onCheckedChange={(checked: boolean | "indeterminate") => handleSelectOne(order.id, !!checked)}
+                        onCheckedChange={(checked: boolean | "indeterminate") =>
+                          handleSelectOne(order.id, !!checked)
+                        }
                         aria-label={`Select order ${order.order_number}`}
                       />
                     </TableCell>

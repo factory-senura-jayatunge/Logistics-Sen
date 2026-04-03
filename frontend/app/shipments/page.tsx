@@ -308,7 +308,9 @@ export default function ShipmentsPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.includes(shipment.id)}
-                        onCheckedChange={(checked: boolean | "indeterminate") => handleSelectOne(shipment.id, !!checked)}
+                        onCheckedChange={(checked: boolean | "indeterminate") =>
+                          handleSelectOne(shipment.id, !!checked)
+                        }
                         aria-label={`Select shipment ${shipment.tracking_number}`}
                       />
                     </TableCell>

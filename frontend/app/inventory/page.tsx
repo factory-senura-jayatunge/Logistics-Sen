@@ -373,7 +373,9 @@ export default function InventoryPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.includes(item.id)}
-                        onCheckedChange={(checked: boolean | "indeterminate") => handleSelectOne(item.id, !!checked)}
+                        onCheckedChange={(checked: boolean | "indeterminate") =>
+                          handleSelectOne(item.id, !!checked)
+                        }
                         aria-label={`Select item ${item.sku}`}
                       />
                     </TableCell>
