@@ -132,24 +132,20 @@ export function CSVImportModal({
           {result && (
             <div
               className={`flex items-center gap-2 rounded-md p-3 text-sm ${
-                result.imported > 0
-                  ? "bg-success/10 text-success"
-                  : "bg-warning/10 text-warning"
+                result.imported > 0 ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
               }`}
             >
               <CheckCircle2 className="h-4 w-4" />
               Imported {result.imported}, skipped {result.skipped}
               {result.errors.length > 0 && (
-                <span className="text-muted-foreground ml-2">
-                  ({result.errors.length} errors)
-                </span>
+                <span className="text-muted-foreground ml-2">({result.errors.length} errors)</span>
               )}
             </div>
           )}
 
           {!file ? (
             <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+              className={`rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
                 dragOver ? "border-primary bg-primary/5" : "border-border"
               }`}
               onDragOver={(e) => {
@@ -160,9 +156,7 @@ export function CSVImportModal({
               onDrop={handleDrop}
             >
               <Upload className="text-muted-foreground mx-auto mb-4 h-10 w-10" />
-              <p className="text-muted-foreground mb-2">
-                Drag and drop a CSV file here, or
-              </p>
+              <p className="text-muted-foreground mb-2">Drag and drop a CSV file here, or</p>
               <label>
                 <input
                   type="file"
@@ -229,8 +223,8 @@ export function CSVImportModal({
               )}
 
               {result?.errors && result.errors.length > 0 && (
-                <div className="rounded-md border border-destructive/20">
-                  <div className="text-destructive border-b border-destructive/20 p-2 text-xs font-medium">
+                <div className="border-destructive/20 rounded-md border">
+                  <div className="text-destructive border-destructive/20 border-b p-2 text-xs font-medium">
                     Errors ({result.errors.length})
                   </div>
                   <div className="max-h-32 overflow-auto p-2 text-xs">

@@ -124,9 +124,13 @@ export function BulkActionsToolbar({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {selectedCount} {entityName}{selectedCount === 1 ? "" : "s"}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Delete {selectedCount} {entityName}
+              {selectedCount === 1 ? "" : "s"}?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the selected {entityName.toLowerCase()}
+              This action cannot be undone. This will permanently delete the selected{" "}
+              {entityName.toLowerCase()}
               {selectedCount === 1 ? "" : "s"}.
             </AlertDialogDescription>
           </AlertDialogHeader>
