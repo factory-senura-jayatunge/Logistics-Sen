@@ -111,7 +111,7 @@ export default function InventoryPage() {
     totalValue: items.reduce((sum, i) => sum + i.quantity * i.unit_price, 0),
   }
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = (checked: boolean | "indeterminate") => {
     if (checked) {
       setSelectedIds(filteredItems.map((i) => i.id))
     } else {
@@ -373,7 +373,7 @@ export default function InventoryPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.includes(item.id)}
-                        onCheckedChange={(checked) => handleSelectOne(item.id, !!checked)}
+                        onCheckedChange={(checked: boolean | "indeterminate") => handleSelectOne(item.id, !!checked)}
                         aria-label={`Select item ${item.sku}`}
                       />
                     </TableCell>

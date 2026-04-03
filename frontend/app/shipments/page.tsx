@@ -107,7 +107,7 @@ export default function ShipmentsPage() {
     )
   })
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = (checked: boolean | "indeterminate") => {
     if (checked) {
       setSelectedIds(filteredShipments.map((s) => s.id))
     } else {
@@ -308,7 +308,7 @@ export default function ShipmentsPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.includes(shipment.id)}
-                        onCheckedChange={(checked) => handleSelectOne(shipment.id, !!checked)}
+                        onCheckedChange={(checked: boolean | "indeterminate") => handleSelectOne(shipment.id, !!checked)}
                         aria-label={`Select shipment ${shipment.tracking_number}`}
                       />
                     </TableCell>
