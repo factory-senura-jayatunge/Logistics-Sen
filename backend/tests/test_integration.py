@@ -208,6 +208,56 @@ class TestSearchIntegration:
         response = client.get("/api/v1/search")
         assert response.status_code == 422
 
+    def test_search_by_order_number(self, client):
+        """Search by order number to cover order search branch."""
+        orders = client.get("/api/v1/orders").json()
+        if orders:
+            order_num = orders[0]["order_number"]
+            results = client.get(f"/api/v1/search?q={order_num}").json()
+            types = [r["type"] for r in results]
+            assert "order" in types
+
+    def test_search_by_tracking_number(self, client):
+        """Search by tracking number to cover shipment search branch."""
+        shipments = client.get("/api/v1/shipments").json()
+        if shipments:
+            tracking = shipments[0]["tracking_number"]
+            results = client.get(f"/api/v1/search?q={tracking}").json()
+            types = [r["type"] for r in results]
+            assert "shipment" in types
+
+    def test_search_by_inventory_sku(self, client):
+        """Search by SKU to cover inventory search branch."""
+        items = client.get("/api/v1/inventory").json()
+        if items:
+            sku = items[0]["sku"]
+            results = client.get(f"/api/v1/search?q={sku}").json()
+            types = [r["type"] for r in results]
+            assert "inventory" in types
+
+    def test_search_by_vehicle_id(self, client):
+        """Search by vehicle ID to cover vehicle search branch."""
+        vehicles = client.get("/api/v1/vehicles").json()
+        if vehicles:
+            vid = vehicles[0]["vehicle_id"]
+            results = client.get(f"/api/v1/search?q={vid}").json()
+            types = [r["type"] for r in results]
+            assert "vehicle" in types
+
+    def test_search_by_facility_code(self, client):
+        """Search by facility code to cover facility search branch."""
+        facilities = client.get("/api/v1/facilities").json()
+        if facilities:
+            code = facilities[0]["code"]
+            results = client.get(f"/api/v1/search?q={code}").json()
+            types = [r["type"] for r in results]
+            assert "facility" in types
+
+    def test_search_no_results(self, client):
+        """Search with nonsense query should return empty list."""
+        results = client.get("/api/v1/search?q=zzzzxxxxxnonexistent99999").json()
+        assert results == []
+
 
 class TestFilteringWorkflows:
     """Test filtering and pagination across endpoints."""
