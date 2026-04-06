@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.routes import (
+    bulk,
     customers,
     dashboard,
     facilities,
@@ -46,6 +47,7 @@ app.include_router(vehicles.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(notifications.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
+app.include_router(bulk.router, prefix="/api/v1")
 
 
 @app.middleware("http")

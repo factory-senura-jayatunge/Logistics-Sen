@@ -293,3 +293,25 @@ class SearchResult(BaseModel):
     title: str
     subtitle: str
     url: str
+
+
+# Bulk Operation Schemas
+class BulkDeleteRequest(BaseModel):
+    ids: list[int]
+
+
+class BulkStatusUpdateRequest(BaseModel):
+    ids: list[int]
+    status: str
+
+
+class BulkOperationResult(BaseModel):
+    success_count: int
+    failed_count: int
+    errors: list[dict] = []
+
+
+class CSVImportResult(BaseModel):
+    imported: int
+    skipped: int
+    errors: list[dict] = []
