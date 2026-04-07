@@ -8,7 +8,9 @@ def test_get_dashboard_stats_empty(client):
     assert data["total_facilities"] == 0
 
 
-def test_get_dashboard_stats_with_data(client, sample_shipment, sample_order, sample_vehicle, sample_facility):
+def test_get_dashboard_stats_with_data(
+    client, sample_shipment, sample_order, sample_vehicle, sample_facility
+):
     response = client.get("/api/v1/dashboard/stats")
     assert response.status_code == 200
     data = response.json()
@@ -22,20 +24,93 @@ def test_get_dashboard_stats_counts_by_status(client, test_db, sample_customer, 
     from app.models.models import InventoryItem, Order, Shipment, Vehicle
 
     # Create shipments with different statuses
-    test_db.add(Shipment(tracking_number="TRK-1", customer_id=sample_customer.id, origin="A", destination="B", carrier="X", weight_kg=10, status="in_transit"))
-    test_db.add(Shipment(tracking_number="TRK-2", customer_id=sample_customer.id, origin="A", destination="B", carrier="X", weight_kg=10, status="delivered"))
-    test_db.add(Shipment(tracking_number="TRK-3", customer_id=sample_customer.id, origin="A", destination="B", carrier="X", weight_kg=10, status="delayed"))
+    test_db.add(
+        Shipment(
+            tracking_number="TRK-1",
+            customer_id=sample_customer.id,
+            origin="A",
+            destination="B",
+            carrier="X",
+            weight_kg=10,
+            status="in_transit",
+        )
+    )
+    test_db.add(
+        Shipment(
+            tracking_number="TRK-2",
+            customer_id=sample_customer.id,
+            origin="A",
+            destination="B",
+            carrier="X",
+            weight_kg=10,
+            status="delivered",
+        )
+    )
+    test_db.add(
+        Shipment(
+            tracking_number="TRK-3",
+            customer_id=sample_customer.id,
+            origin="A",
+            destination="B",
+            carrier="X",
+            weight_kg=10,
+            status="delayed",
+        )
+    )
 
     # Create orders with pending status
-    test_db.add(Order(order_number="ORD-1", customer_id=sample_customer.id, items_count=1, total_value=100, status="pending"))
-    test_db.add(Order(order_number="ORD-2", customer_id=sample_customer.id, items_count=1, total_value=100, status="shipped"))
+    test_db.add(
+        Order(
+            order_number="ORD-1",
+            customer_id=sample_customer.id,
+            items_count=1,
+            total_value=100,
+            status="pending",
+        )
+    )
+    test_db.add(
+        Order(
+            order_number="ORD-2",
+            customer_id=sample_customer.id,
+            items_count=1,
+            total_value=100,
+            status="shipped",
+        )
+    )
 
     # Create vehicles with en_route status
-    test_db.add(Vehicle(vehicle_id="VH-1", name="Truck 1", type="truck", driver="D1", current_location="L1", status="en_route"))
-    test_db.add(Vehicle(vehicle_id="VH-2", name="Truck 2", type="truck", driver="D2", current_location="L2", status="idle"))
+    test_db.add(
+        Vehicle(
+            vehicle_id="VH-1",
+            name="Truck 1",
+            type="truck",
+            driver="D1",
+            current_location="L1",
+            status="en_route",
+        )
+    )
+    test_db.add(
+        Vehicle(
+            vehicle_id="VH-2",
+            name="Truck 2",
+            type="truck",
+            driver="D2",
+            current_location="L2",
+            status="idle",
+        )
+    )
 
     # Create low stock inventory item
-    test_db.add(InventoryItem(sku="SKU-1", name="Item", category="Cat", facility_id=sample_facility.id, quantity=5, status="low_stock"))
+    test_db.add(
+        InventoryItem(
+            sku="SKU-1",
+            name="Item",
+            category="Cat",
+            facility_id=sample_facility.id,
+            quantity=5,
+            status="low_stock",
+        )
+    )
 
     test_db.commit()
 
@@ -62,14 +137,16 @@ def test_get_recent_shipments_limit(client, test_db, sample_customer):
     from app.models.models import Shipment
 
     for i in range(10):
-        test_db.add(Shipment(
-            tracking_number=f"TRK-{i}",
-            customer_id=sample_customer.id,
-            origin="A",
-            destination="B",
-            carrier="X",
-            weight_kg=10,
-        ))
+        test_db.add(
+            Shipment(
+                tracking_number=f"TRK-{i}",
+                customer_id=sample_customer.id,
+                origin="A",
+                destination="B",
+                carrier="X",
+                weight_kg=10,
+            )
+        )
     test_db.commit()
 
     response = client.get("/api/v1/dashboard/recent-shipments?limit=3")
@@ -81,9 +158,39 @@ def test_get_recent_shipments_limit(client, test_db, sample_customer):
 def test_get_shipment_status_breakdown(client, test_db, sample_customer):
     from app.models.models import Shipment
 
-    test_db.add(Shipment(tracking_number="TRK-1", customer_id=sample_customer.id, origin="A", destination="B", carrier="X", weight_kg=10, status="pending"))
-    test_db.add(Shipment(tracking_number="TRK-2", customer_id=sample_customer.id, origin="A", destination="B", carrier="X", weight_kg=10, status="pending"))
-    test_db.add(Shipment(tracking_number="TRK-3", customer_id=sample_customer.id, origin="A", destination="B", carrier="X", weight_kg=10, status="delivered"))
+    test_db.add(
+        Shipment(
+            tracking_number="TRK-1",
+            customer_id=sample_customer.id,
+            origin="A",
+            destination="B",
+            carrier="X",
+            weight_kg=10,
+            status="pending",
+        )
+    )
+    test_db.add(
+        Shipment(
+            tracking_number="TRK-2",
+            customer_id=sample_customer.id,
+            origin="A",
+            destination="B",
+            carrier="X",
+            weight_kg=10,
+            status="pending",
+        )
+    )
+    test_db.add(
+        Shipment(
+            tracking_number="TRK-3",
+            customer_id=sample_customer.id,
+            origin="A",
+            destination="B",
+            carrier="X",
+            weight_kg=10,
+            status="delivered",
+        )
+    )
     test_db.commit()
 
     response = client.get("/api/v1/dashboard/shipment-status-breakdown")

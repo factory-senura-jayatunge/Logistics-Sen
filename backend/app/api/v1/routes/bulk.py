@@ -14,6 +14,7 @@ router = APIRouter(prefix="/bulk", tags=["bulk"])
 
 # ============ ORDERS ============
 
+
 @router.post("/orders/delete", response_model=schemas.BulkOperationResult)
 def bulk_delete_orders(request: schemas.BulkDeleteRequest, db: Session = Depends(get_db)):
     success_count = 0
@@ -73,20 +74,31 @@ def export_orders(db: Session = Depends(get_db)):
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow(
-        ["id", "order_number", "customer_id", "items_count", "total_value", "priority", "status", "created_at"]
+        [
+            "id",
+            "order_number",
+            "customer_id",
+            "items_count",
+            "total_value",
+            "priority",
+            "status",
+            "created_at",
+        ]
     )
 
     for order in orders:
-        writer.writerow([
-            order.id,
-            order.order_number,
-            order.customer_id,
-            order.items_count,
-            order.total_value,
-            order.priority,
-            order.status,
-            order.created_at.isoformat(),
-        ])
+        writer.writerow(
+            [
+                order.id,
+                order.order_number,
+                order.customer_id,
+                order.items_count,
+                order.total_value,
+                order.priority,
+                order.status,
+                order.created_at.isoformat(),
+            ]
+        )
 
     output.seek(0)
     return StreamingResponse(
@@ -134,6 +146,7 @@ async def import_orders(file: UploadFile = File(...), db: Session = Depends(get_
 
 
 # ============ SHIPMENTS ============
+
 
 @router.post("/shipments/delete", response_model=schemas.BulkOperationResult)
 def bulk_delete_shipments(request: schemas.BulkDeleteRequest, db: Session = Depends(get_db)):
@@ -193,25 +206,38 @@ def export_shipments(db: Session = Depends(get_db)):
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "id", "tracking_number", "customer_id", "order_id", "origin", "destination",
-        "carrier", "weight_kg", "status", "eta", "created_at"
-    ])
+    writer.writerow(
+        [
+            "id",
+            "tracking_number",
+            "customer_id",
+            "order_id",
+            "origin",
+            "destination",
+            "carrier",
+            "weight_kg",
+            "status",
+            "eta",
+            "created_at",
+        ]
+    )
 
     for shipment in shipments:
-        writer.writerow([
-            shipment.id,
-            shipment.tracking_number,
-            shipment.customer_id,
-            shipment.order_id or "",
-            shipment.origin,
-            shipment.destination,
-            shipment.carrier,
-            shipment.weight_kg,
-            shipment.status,
-            shipment.eta.isoformat() if shipment.eta else "",
-            shipment.created_at.isoformat(),
-        ])
+        writer.writerow(
+            [
+                shipment.id,
+                shipment.tracking_number,
+                shipment.customer_id,
+                shipment.order_id or "",
+                shipment.origin,
+                shipment.destination,
+                shipment.carrier,
+                shipment.weight_kg,
+                shipment.status,
+                shipment.eta.isoformat() if shipment.eta else "",
+                shipment.created_at.isoformat(),
+            ]
+        )
 
     output.seek(0)
     return StreamingResponse(
@@ -262,6 +288,7 @@ async def import_shipments(file: UploadFile = File(...), db: Session = Depends(g
 
 # ============ INVENTORY ============
 
+
 @router.post("/inventory/delete", response_model=schemas.BulkOperationResult)
 def bulk_delete_inventory(request: schemas.BulkDeleteRequest, db: Session = Depends(get_db)):
     success_count = 0
@@ -293,24 +320,36 @@ def export_inventory(db: Session = Depends(get_db)):
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "id", "sku", "name", "category", "facility_id", "quantity",
-        "reorder_point", "unit_price", "status", "created_at"
-    ])
+    writer.writerow(
+        [
+            "id",
+            "sku",
+            "name",
+            "category",
+            "facility_id",
+            "quantity",
+            "reorder_point",
+            "unit_price",
+            "status",
+            "created_at",
+        ]
+    )
 
     for item in items:
-        writer.writerow([
-            item.id,
-            item.sku,
-            item.name,
-            item.category,
-            item.facility_id,
-            item.quantity,
-            item.reorder_point,
-            item.unit_price,
-            item.status,
-            item.created_at.isoformat(),
-        ])
+        writer.writerow(
+            [
+                item.id,
+                item.sku,
+                item.name,
+                item.category,
+                item.facility_id,
+                item.quantity,
+                item.reorder_point,
+                item.unit_price,
+                item.status,
+                item.created_at.isoformat(),
+            ]
+        )
 
     output.seek(0)
     return StreamingResponse(

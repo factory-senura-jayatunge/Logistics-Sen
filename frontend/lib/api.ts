@@ -220,7 +220,7 @@ export async function getFacilityUtilization() {
 
 export async function getCustomerOrderFrequency(limit = 10) {
   return fetchApi<CustomerOrderFrequency[]>(
-    `/api/v1/analytics/customer-order-frequency?limit=${limit}`,
+    `/api/v1/analytics/customer-order-frequency?limit=${limit}`
   )
 }
 
@@ -244,7 +244,7 @@ export async function getDemandForecast(daysAhead = 30) {
 
 export async function getStockoutAlerts(thresholdDays = 14) {
   return fetchApi<StockoutAlerts>(
-    `/api/v1/forecasting/stockout-alerts?threshold_days=${thresholdDays}`,
+    `/api/v1/forecasting/stockout-alerts?threshold_days=${thresholdDays}`
   )
 }
 

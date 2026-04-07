@@ -114,9 +114,7 @@ export default function RoutesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Route Planner</h1>
-        <p className="text-muted-foreground">
-          Optimize delivery routes and manage fleet dispatch
-        </p>
+        <p className="text-muted-foreground">Optimize delivery routes and manage fleet dispatch</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -230,9 +228,7 @@ export default function RoutesPage() {
           <Card>
             <CardHeader>
               <CardTitle>Shipments by Region</CardTitle>
-              <CardDescription>
-                Pending shipments grouped by destination region
-              </CardDescription>
+              <CardDescription>Pending shipments grouped by destination region</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -285,9 +281,7 @@ export default function RoutesPage() {
               </CardHeader>
               <CardContent>
                 {selectedRoute.message ? (
-                  <p className="text-muted-foreground py-4 text-center">
-                    {selectedRoute.message}
-                  </p>
+                  <p className="text-muted-foreground py-4 text-center">{selectedRoute.message}</p>
                 ) : (
                   <div className="space-y-3">
                     {selectedRoute.stops.map((stop, index) => (

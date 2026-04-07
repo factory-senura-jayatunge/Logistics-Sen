@@ -1,7 +1,8 @@
 import math
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from app.db.database import get_db
 from app.models import models
 
@@ -9,12 +10,15 @@ router = APIRouter(prefix="/routes", tags=["route-planning"])
 
 
 def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    R = 6371
+    earth_radius_km = 6371
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    a = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    )
     c = 2 * math.asin(math.sqrt(a))
-    return R * c
+    return earth_radius_km * c
 
 
 def nearest_neighbor_route(locations: list[dict]) -> list[dict]:
@@ -30,8 +34,10 @@ def nearest_neighbor_route(locations: list[dict]) -> list[dict]:
         nearest = min(
             unvisited,
             key=lambda i: haversine(
-                locations[current]["latitude"], locations[current]["longitude"],
-                locations[i]["latitude"], locations[i]["longitude"],
+                locations[current]["latitude"],
+                locations[current]["longitude"],
+                locations[i]["latitude"],
+                locations[i]["longitude"],
             ),
         )
         route.append(nearest)
@@ -42,8 +48,10 @@ def nearest_neighbor_route(locations: list[dict]) -> list[dict]:
     total_distance = 0.0
     for i in range(len(ordered) - 1):
         total_distance += haversine(
-            ordered[i]["latitude"], ordered[i]["longitude"],
-            ordered[i + 1]["latitude"], ordered[i + 1]["longitude"],
+            ordered[i]["latitude"],
+            ordered[i]["longitude"],
+            ordered[i + 1]["latitude"],
+            ordered[i + 1]["longitude"],
         )
 
     for idx, loc in enumerate(ordered):
@@ -61,43 +69,64 @@ def optimize_route(
     if not vehicle:
         return {"error": "Vehicle not found"}
 
-    pending_shipments = db.query(models.Shipment).filter(
-        models.Shipment.status.in_(["pending", "processing"])
-    ).limit(10).all()
+    pending_shipments = (
+        db.query(models.Shipment)
+        .filter(models.Shipment.status.in_(["pending", "processing"]))
+        .limit(10)
+        .all()
+    )
 
     if not pending_shipments:
-        return {"vehicle": vehicle.name, "stops": [], "total_distance_km": 0, "message": "No pending shipments to route"}
+        return {
+            "vehicle": vehicle.name,
+            "stops": [],
+            "total_distance_km": 0,
+            "message": "No pending shipments to route",
+        }
 
-    facilities = db.query(models.Facility).filter(
-        models.Facility.latitude.isnot(None),
-        models.Facility.longitude.isnot(None),
-    ).all()
+    facilities = (
+        db.query(models.Facility)
+        .filter(
+            models.Facility.latitude.isnot(None),
+            models.Facility.longitude.isnot(None),
+        )
+        .all()
+    )
 
     facility_lookup = {}
     for f in facilities:
-        facility_lookup[f.city.lower()] = {"latitude": f.latitude, "longitude": f.longitude, "name": f.name, "code": f.code}
+        facility_lookup[f.city.lower()] = {
+            "latitude": f.latitude,
+            "longitude": f.longitude,
+            "name": f.name,
+            "code": f.code,
+        }
 
     stops = []
     if vehicle.facility:
-        stops.append({
-            "type": "origin",
-            "name": vehicle.facility.name,
-            "location": vehicle.current_location,
-            "latitude": vehicle.facility.latitude or 39.8283,
-            "longitude": vehicle.facility.longitude or -98.5795,
-            "shipment_id": None,
-            "tracking_number": None,
-        })
+        stops.append(
+            {
+                "type": "origin",
+                "name": vehicle.facility.name,
+                "location": vehicle.current_location,
+                "latitude": vehicle.facility.latitude or 39.8283,
+                "longitude": vehicle.facility.longitude or -98.5795,
+                "shipment_id": None,
+                "tracking_number": None,
+            }
+        )
     else:
-        stops.append({
-            "type": "origin",
-            "name": "Current Location",
-            "location": vehicle.current_location,
-            "latitude": 39.8283,
-            "longitude": -98.5795,
-            "shipment_id": None,
-            "tracking_number": None,
-        })
+        stops.append(
+            {
+                "type": "origin",
+                "name": "Current Location",
+                "location": vehicle.current_location,
+                "latitude": 39.8283,
+                "longitude": -98.5795,
+                "shipment_id": None,
+                "tracking_number": None,
+            }
+        )
 
     for shipment in pending_shipments:
         dest_city = shipment.destination.split(",")[0].strip().lower()
@@ -107,15 +136,17 @@ def optimize_route(
         else:
             lat, lon = 39.8283 + len(stops) * 0.5, -98.5795 + len(stops) * 0.5
 
-        stops.append({
-            "type": "delivery",
-            "name": f"Deliver {shipment.tracking_number}",
-            "location": shipment.destination,
-            "latitude": lat,
-            "longitude": lon,
-            "shipment_id": shipment.id,
-            "tracking_number": shipment.tracking_number,
-        })
+        stops.append(
+            {
+                "type": "delivery",
+                "name": f"Deliver {shipment.tracking_number}",
+                "location": shipment.destination,
+                "latitude": lat,
+                "longitude": lon,
+                "shipment_id": shipment.id,
+                "tracking_number": shipment.tracking_number,
+            }
+        )
 
     optimized_stops, total_distance = nearest_neighbor_route(stops)
     avg_speed_kmh = 80
@@ -139,13 +170,15 @@ def optimize_route(
 @router.get("/dispatch-summary")
 def get_dispatch_summary(db: Session = Depends(get_db)):
     """Get dispatch overview: available vehicles, pending shipments by region."""
-    available_vehicles = db.query(models.Vehicle).filter(
-        models.Vehicle.status.in_(["idle", "loading"])
-    ).all()
+    available_vehicles = (
+        db.query(models.Vehicle).filter(models.Vehicle.status.in_(["idle", "loading"])).all()
+    )
 
-    pending_shipments = db.query(models.Shipment).filter(
-        models.Shipment.status.in_(["pending", "processing"])
-    ).all()
+    pending_shipments = (
+        db.query(models.Shipment)
+        .filter(models.Shipment.status.in_(["pending", "processing"]))
+        .all()
+    )
 
     regions = {}
     for s in pending_shipments:
@@ -155,12 +188,14 @@ def get_dispatch_summary(db: Session = Depends(get_db)):
             regions[region] = {"count": 0, "total_weight_kg": 0.0, "shipments": []}
         regions[region]["count"] += 1
         regions[region]["total_weight_kg"] += s.weight_kg
-        regions[region]["shipments"].append({
-            "id": s.id,
-            "tracking_number": s.tracking_number,
-            "destination": s.destination,
-            "weight_kg": s.weight_kg,
-        })
+        regions[region]["shipments"].append(
+            {
+                "id": s.id,
+                "tracking_number": s.tracking_number,
+                "destination": s.destination,
+                "weight_kg": s.weight_kg,
+            }
+        )
 
     return {
         "available_vehicles": [

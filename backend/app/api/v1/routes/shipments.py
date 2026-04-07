@@ -16,10 +16,7 @@ router = APIRouter(prefix="/shipments", tags=["shipments"])
 
 @router.get("/", response_model=list[schemas.ShipmentWithCustomer])
 def get_shipments(
-    skip: int = 0,
-    limit: int = 100,
-    status: Optional[str] = None,
-    db: Session = Depends(get_db)
+    skip: int = 0, limit: int = 100, status: Optional[str] = None, db: Session = Depends(get_db)
 ):
     query = db.query(models.Shipment).options(joinedload(models.Shipment.customer))
     if status:
@@ -29,10 +26,12 @@ def get_shipments(
 
 @router.get("/{shipment_id}", response_model=schemas.ShipmentDetail)
 def get_shipment(shipment_id: int, db: Session = Depends(get_db)):
-    shipment = db.query(models.Shipment).options(
-        joinedload(models.Shipment.customer),
-        joinedload(models.Shipment.order)
-    ).filter(models.Shipment.id == shipment_id).first()
+    shipment = (
+        db.query(models.Shipment)
+        .options(joinedload(models.Shipment.customer), joinedload(models.Shipment.order))
+        .filter(models.Shipment.id == shipment_id)
+        .first()
+    )
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
     return shipment
@@ -40,7 +39,12 @@ def get_shipment(shipment_id: int, db: Session = Depends(get_db)):
 
 @router.get("/tracking/{tracking_number}", response_model=schemas.ShipmentWithCustomer)
 def get_shipment_by_tracking(tracking_number: str, db: Session = Depends(get_db)):
-    shipment = db.query(models.Shipment).options(joinedload(models.Shipment.customer)).filter(models.Shipment.tracking_number == tracking_number).first()
+    shipment = (
+        db.query(models.Shipment)
+        .options(joinedload(models.Shipment.customer))
+        .filter(models.Shipment.tracking_number == tracking_number)
+        .first()
+    )
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
     return shipment
@@ -65,7 +69,9 @@ def create_shipment(shipment: schemas.ShipmentCreate, db: Session = Depends(get_
 
 
 @router.put("/{shipment_id}", response_model=schemas.Shipment)
-def update_shipment(shipment_id: int, shipment: schemas.ShipmentCreate, db: Session = Depends(get_db)):
+def update_shipment(
+    shipment_id: int, shipment: schemas.ShipmentCreate, db: Session = Depends(get_db)
+):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
     if not db_shipment:
         logger.warning("shipment_not_found", shipment_id=shipment_id, action="update")
@@ -79,7 +85,9 @@ def update_shipment(shipment_id: int, shipment: schemas.ShipmentCreate, db: Sess
 
 
 @router.patch("/{shipment_id}/status")
-async def update_shipment_status(shipment_id: int, status: str = Query(...), db: Session = Depends(get_db)):
+async def update_shipment_status(
+    shipment_id: int, status: str = Query(...), db: Session = Depends(get_db)
+):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
     if not db_shipment:
         logger.warning("shipment_not_found", shipment_id=shipment_id, action="status_update")
@@ -93,13 +101,16 @@ async def update_shipment_status(shipment_id: int, status: str = Query(...), db:
         old_status=old_status,
         new_status=status,
     )
-    await ws_manager.broadcast_status_update(shipment_id, {
-        "type": "status_update",
-        "shipment_id": shipment_id,
-        "old_status": old_status,
-        "new_status": status,
-        "tracking_number": db_shipment.tracking_number,
-    })
+    await ws_manager.broadcast_status_update(
+        shipment_id,
+        {
+            "type": "status_update",
+            "shipment_id": shipment_id,
+            "old_status": old_status,
+            "new_status": status,
+            "tracking_number": db_shipment.tracking_number,
+        },
+    )
     return {"message": f"Shipment status updated to {status}"}
 
 

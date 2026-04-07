@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Download, AlertTriangle, TrendingUp, Truck, Building2, Users } from "lucide-react"
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Line,
-  LineChart,
-  Cell,
-} from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Line, LineChart, Cell } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -253,7 +244,9 @@ export default function ReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>On-Time Delivery Rate Trend</CardTitle>
-                  <CardDescription>Weekly on-time delivery rates over the last 90 days</CardDescription>
+                  <CardDescription>
+                    Weekly on-time delivery rates over the last 90 days
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={deliveryTrendConfig} className="min-h-[300px] w-full">
@@ -280,11 +273,7 @@ export default function ReportsPage() {
 
         <TabsContent value="carriers" className="space-y-4">
           <div className="flex justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleExport("carrier-performance")}
-            >
+            <Button variant="outline" size="sm" onClick={() => handleExport("carrier-performance")}>
               <Download className="mr-2 h-4 w-4" />
               Export CSV
             </Button>
@@ -442,10 +431,7 @@ export default function ReportsPage() {
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-base">{f.name}</CardTitle>
-                        <Badge
-                          variant="outline"
-                          className={facilityStatusColors[f.status] || ""}
-                        >
+                        <Badge variant="outline" className={facilityStatusColors[f.status] || ""}>
                           {f.status}
                         </Badge>
                       </div>

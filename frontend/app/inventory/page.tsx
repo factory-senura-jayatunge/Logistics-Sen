@@ -281,7 +281,7 @@ export default function InventoryPage() {
       )}
 
       {stockoutAlerts.length > 0 && (
-        <Card className="mb-6 flex-shrink-0 border-warning/30">
+        <Card className="border-warning/30 mb-6 flex-shrink-0">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <BrainCircuit className="text-warning h-5 w-5" />
@@ -294,10 +294,7 @@ export default function InventoryPage() {
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {stockoutAlerts.slice(0, 6).map((alert) => (
-                <div
-                  key={alert.item_id}
-                  className="flex items-center gap-3 rounded-lg border p-3"
-                >
+                <div key={alert.item_id} className="flex items-center gap-3 rounded-lg border p-3">
                   <div
                     className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                       alert.risk_level === "critical"
@@ -318,7 +315,7 @@ export default function InventoryPage() {
                       <Progress
                         value={Math.min(
                           (alert.current_quantity / Math.max(alert.reorder_point, 1)) * 100,
-                          100,
+                          100
                         )}
                         className="h-1.5 flex-1"
                       />
