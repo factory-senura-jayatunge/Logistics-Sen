@@ -1,0 +1,46 @@
+name: Validate AGENTS.md
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "AGENTS.md"
+      - "package.json"
+      - "backend/app/models/**"
+      - "backend/app/api/v1/routes/**"
+      - "backend/main.py"
+      - "frontend/lib/**"
+      - "frontend/app/**"
+      - "frontend/components/**"
+      - "frontend/hooks/**"
+      - "scripts/validate-agents-md.sh"
+  pull_request:
+    branches: [main]
+    paths:
+      - "AGENTS.md"
+      - "package.json"
+      - "backend/app/models/**"
+      - "backend/app/api/v1/routes/**"
+      - "backend/main.py"
+      - "frontend/lib/**"
+      - "frontend/app/**"
+      - "frontend/components/**"
+      - "frontend/hooks/**"
+      - "scripts/validate-agents-md.sh"
+
+jobs:
+  validate:
+    name: AGENTS.md Freshness Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate AGENTS.md consistency
+        run: bash scripts/validate-agents-md.sh

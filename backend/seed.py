@@ -1,8 +1,11 @@
 """Seed the database with mock data for demo purposes."""
 import random
 from datetime import datetime, timedelta
+
 from app.db.database import SessionLocal, engine, Base
 from app.models.models import Customer, Facility, Order, Shipment, InventoryItem, Vehicle, User, Notification
+
+CURRENT_YEAR = datetime.utcnow().year
 
 Base.metadata.create_all(bind=engine)
 
@@ -63,7 +66,7 @@ def seed_database():
         customer = random.choice(customers)
         created_days_ago = random.randint(0, 30)
         order = Order(
-            order_number=f"ORD-2024-{1001 + i:04d}",
+            order_number=f"ORD-{CURRENT_YEAR}-{1001 + i:04d}",
             customer_id=customer.id,
             items_count=random.randint(1, 200),
             total_value=round(random.uniform(1000, 500000), 2),
@@ -99,7 +102,7 @@ def seed_database():
             eta = datetime.utcnow() + timedelta(days=random.randint(1, 7))
 
         shipment = Shipment(
-            tracking_number=f"SHP-2024-{1001 + i:04d}",
+            tracking_number=f"SHP-{CURRENT_YEAR}-{1001 + i:04d}",
             customer_id=customer.id,
             order_id=random.choice(orders_list).id if random.random() > 0.3 else None,
             origin=origin,
