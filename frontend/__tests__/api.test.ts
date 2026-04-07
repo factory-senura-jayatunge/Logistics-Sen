@@ -40,6 +40,10 @@ import {
   bulkDeleteInventory,
   exportInventoryCSV,
   importInventoryCSV,
+  type CreateShipmentData,
+  type CreateOrderData,
+  type UpdateInventoryItemData,
+  type CreateVehicleData,
 } from "@/lib/api"
 
 vi.mock("@/lib/logger", () => ({
@@ -132,9 +136,8 @@ describe("API client", () => {
     })
 
     it("createShipment posts data", async () => {
-      const shipmentData = {
+      const shipmentData: CreateShipmentData = {
         customer_id: 1,
-        order_id: 1,
         origin: "NY",
         destination: "LA",
         carrier: "FedEx",
@@ -143,7 +146,7 @@ describe("API client", () => {
       vi.spyOn(global, "fetch").mockResolvedValue(
         mockJsonResponse({ id: 1, ...shipmentData }) as Response,
       )
-      await createShipment(shipmentData as any)
+      await createShipment(shipmentData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/shipments"),
         expect.objectContaining({ method: "POST" }),
@@ -218,9 +221,14 @@ describe("API client", () => {
     })
 
     it("createOrder posts data", async () => {
-      const orderData = { customer_id: 1, items_count: 3, total_value: 100, priority: "medium" }
+      const orderData: CreateOrderData = {
+        customer_id: 1,
+        items_count: 3,
+        total_value: 100,
+        priority: "medium",
+      }
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ id: 1 }) as Response)
-      await createOrder(orderData as any)
+      await createOrder(orderData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/orders"),
         expect.objectContaining({ method: "POST" }),
@@ -267,7 +275,17 @@ describe("API client", () => {
 
     it("updateInventoryItem sends PUT", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ id: 1 }) as Response)
-      await updateInventoryItem(1, { quantity: 50, reorder_point: 10 } as any)
+      const updateData: UpdateInventoryItemData = {
+        sku: "SKU-001",
+        name: "Test",
+        category: "Test",
+        facility_id: 1,
+        quantity: 50,
+        reorder_point: 10,
+        unit_price: 9.99,
+        status: "in_stock",
+      }
+      await updateInventoryItem(1, updateData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/inventory/1"),
         expect.objectContaining({ method: "PUT" }),
@@ -325,7 +343,16 @@ describe("API client", () => {
 
     it("createVehicle posts data", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ id: 1 }) as Response)
-      await createVehicle({ name: "Truck 1" } as any)
+      const vehicleData: CreateVehicleData = {
+        vehicle_id: "VH-001",
+        name: "Truck 1",
+        type: "truck",
+        driver: "John",
+        current_location: "NY",
+        status: "idle",
+        fuel_level: 80,
+      }
+      await createVehicle(vehicleData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/vehicles"),
         expect.objectContaining({ method: "POST" }),
@@ -334,7 +361,16 @@ describe("API client", () => {
 
     it("updateVehicle sends PUT", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ id: 1 }) as Response)
-      await updateVehicle(1, { name: "Truck Updated" } as any)
+      const vehicleData: CreateVehicleData = {
+        vehicle_id: "VH-001",
+        name: "Truck Updated",
+        type: "truck",
+        driver: "John",
+        current_location: "NY",
+        status: "idle",
+        fuel_level: 80,
+      }
+      await updateVehicle(1, vehicleData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/vehicles/1"),
         expect.objectContaining({ method: "PUT" }),

@@ -15,15 +15,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-  SelectGroup,
-  SelectLabel,
-} from "@/components/ui/select"
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Sheet,
   SheetTrigger,
@@ -373,7 +365,7 @@ beforeAll(() => {
       observe() {}
       unobserve() {}
       disconnect() {}
-    } as any
+    } as unknown as typeof globalThis.ResizeObserver
   }
   Element.prototype.scrollIntoView = Element.prototype.scrollIntoView || (() => {})
 })

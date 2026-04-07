@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 describe("useIsMobile", () => {
-  let listeners: Map<string, Function>
+  let listeners: Map<string, () => void>
 
   beforeEach(() => {
     listeners = new Map()
@@ -12,7 +12,7 @@ describe("useIsMobile", () => {
       value: vi.fn().mockImplementation((query: string) => ({
         matches: false,
         media: query,
-        addEventListener: vi.fn((event: string, handler: Function) => {
+        addEventListener: vi.fn((event: string, handler: () => void) => {
           listeners.set(event, handler)
         }),
         removeEventListener: vi.fn((event: string) => {
