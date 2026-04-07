@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import engine, Base
-from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search
+from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search, bulk
+from app.logging import logger
+import time
 
 Base.metadata.create_all(bind=engine)
 
@@ -10,6 +12,8 @@ app = FastAPI(
     description="Enterprise logistics management platform API",
     version="1.0.0",
 )
+
+logger.info("application_startup", app_name="Acme Logistics API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,6 +33,24 @@ app.include_router(vehicles.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(notifications.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
+app.include_router(bulk.router, prefix="/api/v1")
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Log all incoming HTTP requests with timing information."""
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+
+    logger.info(
+        "http_request",
+        method=request.method,
+        path=request.url.path,
+        status_code=response.status_code,
+        duration_ms=round(process_time * 1000, 2),
+    )
+    return response
 
 
 @app.get("/")
@@ -38,4 +60,5 @@ def root():
 
 @app.get("/health")
 def health_check():
+    logger.debug("health_check", status="healthy")
     return {"status": "healthy"}

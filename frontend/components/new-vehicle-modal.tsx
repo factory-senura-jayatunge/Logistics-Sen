@@ -19,7 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { createVehicle, updateVehicle, getFacilities, type Facility, type CreateVehicleData, type Vehicle } from "@/lib/api"
+import {
+  createVehicle,
+  updateVehicle,
+  getFacilities,
+  type Facility,
+  type CreateVehicleData,
+  type Vehicle,
+} from "@/lib/api"
 
 const VEHICLE_TYPES = [
   { value: "truck", label: "Truck" },
@@ -103,7 +110,9 @@ export function VehicleModal({ open, onOpenChange, onSuccess, vehicle }: Vehicle
       onSuccess()
       onOpenChange(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : `Failed to ${isEditing ? "update" : "create"} vehicle`)
+      setError(
+        err instanceof Error ? err.message : `Failed to ${isEditing ? "update" : "create"} vehicle`
+      )
     } finally {
       setLoading(false)
     }
@@ -116,12 +125,14 @@ export function VehicleModal({ open, onOpenChange, onSuccess, vehicle }: Vehicle
           <DialogHeader>
             <DialogTitle>{isEditing ? "Edit Vehicle" : "Add Vehicle"}</DialogTitle>
             <DialogDescription>
-              {isEditing ? `Update the details for ${vehicle.vehicle_id}` : "Add a new vehicle to your fleet."}
+              {isEditing
+                ? `Update the details for ${vehicle.vehicle_id}`
+                : "Add a new vehicle to your fleet."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+              <div className="text-destructive bg-destructive/10 rounded-md p-3 text-sm">
                 {error}
               </div>
             )}
@@ -191,7 +202,9 @@ export function VehicleModal({ open, onOpenChange, onSuccess, vehicle }: Vehicle
                   id="destination"
                   placeholder="e.g., New York, NY"
                   value={formData.destination || ""}
-                  onChange={(e) => setFormData({ ...formData, destination: e.target.value || undefined })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, destination: e.target.value || undefined })
+                  }
                 />
               </div>
             </div>
@@ -201,7 +214,10 @@ export function VehicleModal({ open, onOpenChange, onSuccess, vehicle }: Vehicle
                 <Select
                   value={formData.facility_id?.toString() || "none"}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, facility_id: value === "none" ? undefined : parseInt(value) })
+                    setFormData({
+                      ...formData,
+                      facility_id: value === "none" ? undefined : parseInt(value),
+                    })
                   }
                 >
                   <SelectTrigger id="facility" className="w-full [&>span]:truncate">
@@ -245,7 +261,10 @@ export function VehicleModal({ open, onOpenChange, onSuccess, vehicle }: Vehicle
                 max="100"
                 value={formData.fuel_level}
                 onChange={(e) =>
-                  setFormData({ ...formData, fuel_level: Math.min(100, Math.max(0, parseInt(e.target.value) || 0)) })
+                  setFormData({
+                    ...formData,
+                    fuel_level: Math.min(100, Math.max(0, parseInt(e.target.value) || 0)),
+                  })
                 }
               />
             </div>
@@ -255,7 +274,13 @@ export function VehicleModal({ open, onOpenChange, onSuccess, vehicle }: Vehicle
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? (isEditing ? "Saving..." : "Creating...") : (isEditing ? "Save Changes" : "Add Vehicle")}
+              {loading
+                ? isEditing
+                  ? "Saving..."
+                  : "Creating..."
+                : isEditing
+                  ? "Save Changes"
+                  : "Add Vehicle"}
             </Button>
           </DialogFooter>
         </form>

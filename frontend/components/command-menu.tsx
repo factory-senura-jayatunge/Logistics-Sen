@@ -111,10 +111,10 @@ export function CommandMenu() {
                   onSelect={() => handleSelect(result.url)}
                   className="flex items-center gap-3"
                 >
-                  <Icon className="h-4 w-4 text-muted-foreground" />
+                  <Icon className="text-muted-foreground h-4 w-4" />
                   <div className="flex flex-col">
                     <span>{result.title}</span>
-                    <span className="text-xs text-muted-foreground">{result.subtitle}</span>
+                    <span className="text-muted-foreground text-xs">{result.subtitle}</span>
                   </div>
                 </CommandItem>
               )
@@ -126,11 +126,7 @@ export function CommandMenu() {
 
         <CommandGroup heading="Navigation">
           {navigationItems.map((item) => (
-            <CommandItem
-              key={item.href}
-              value={item.name}
-              onSelect={() => handleSelect(item.href)}
-            >
+            <CommandItem key={item.href} value={item.name} onSelect={() => handleSelect(item.href)}>
               <item.icon className="mr-2 h-4 w-4" />
               {item.name}
             </CommandItem>

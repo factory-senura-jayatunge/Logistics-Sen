@@ -1,137 +1,179 @@
 # AGENTS.md
 
-This file provides guidance for AI agents working with the Acme Logistics codebase.
+This document provides essential information for AI agents working with the Acme Logistics codebase.
 
 ## Project Overview
 
-Enterprise logistics management platform - a monorepo with a Python FastAPI backend and Next.js React frontend.
+Enterprise logistics management platform with a monorepo architecture:
+- **Frontend**: Next.js 16 + React 19 (TypeScript)
+- **Backend**: FastAPI + SQLAlchemy (Python)
 
-## Architecture
+## Quick Commands
 
-```
-logistics-app/
-├── backend/          # Python FastAPI (port 8000)
-├── frontend/         # Next.js 16 + React 19 (port 3000)
-├── package.json      # Monorepo scripts (pnpm workspaces)
-└── pnpm-workspace.yaml
-```
-
-## Tech Stack
-
-### Backend
-- **Runtime**: Python 3.9+
-- **Framework**: FastAPI with uvicorn
-- **ORM**: SQLAlchemy 2.0
-- **Database**: SQLite (`backend/acme_logistics.db`)
-- **Validation**: Pydantic
-
-### Frontend
-- **Framework**: Next.js 16 (App Router), React 19
-- **Styling**: Tailwind CSS 4, shadcn/ui, Radix UI
-- **Maps**: Leaflet + react-leaflet
-- **Charts**: Recharts
-- **Icons**: Lucide React
-
-## Development Commands
-
+### Setup
 ```bash
 # Install all dependencies
 pnpm setup
 
-# Start both services
-pnpm dev
-
-# Individual services
-pnpm dev:frontend    # Next.js on :3000
-pnpm dev:backend     # FastAPI on :8000
-
-# Build & Lint
-pnpm build           # Build frontend
-pnpm lint            # ESLint frontend
-
-# Database
-pnpm seed            # Seed with demo data
-pnpm db:reset        # Reset and reseed database
+# Seed database with demo data
+pnpm seed
 ```
 
-## Key Directories
+### Development
+```bash
+# Start both frontend and backend
+pnpm dev
 
-### Backend (`backend/`)
-- `main.py` - FastAPI entry point
-- `seed.py` - Database seeder with mock data
-- `app/api/v1/routes/` - API route handlers (customers, orders, shipments, inventory, vehicles, facilities, dashboard, search, notifications, users)
-- `app/models/models.py` - SQLAlchemy ORM models
-- `app/schemas/schemas.py` - Pydantic validation schemas
-- `app/db/database.py` - Database configuration
+# Start frontend only (port 3000)
+pnpm dev:frontend
 
-### Frontend (`frontend/`)
-- `app/` - Next.js App Router pages (dashboard, orders, shipments, inventory, facilities, fleet, settings)
-- `components/` - React components
-- `components/ui/` - shadcn/ui base components
-- `lib/api.ts` - Typed API client with interfaces
-- `lib/utils.ts` - Helper utilities
+# Start backend only (port 8000)
+pnpm dev:backend
+```
 
-## API Structure
+### Build & Lint
+```bash
+# Build frontend for production
+pnpm build
 
-All backend endpoints are prefixed with `/api/v1/`. Key endpoints:
-- `/dashboard/*` - Dashboard stats, metrics, charts data
-- `/orders`, `/orders/:id` - Order CRUD
-- `/shipments`, `/shipments/:id` - Shipment tracking
-- `/inventory`, `/inventory/low-stock` - Stock management
-- `/vehicles`, `/vehicles/:id` - Fleet management
-- `/facilities`, `/facilities/:id` - Warehouse/hub management
-- `/customers` - Customer management
-- `/search` - Global search
-- `/notifications` - User notifications
+# Run frontend linting
+pnpm lint
 
-API documentation available at `http://localhost:8000/docs` when backend is running.
+# Format frontend code
+pnpm format
+```
 
-## Data Models
+### Testing
+```bash
+# Run all tests
+pnpm test
 
-Core entities: Customer, Facility, Order, Shipment, InventoryItem, Vehicle, User, Notification. See `backend/app/models/models.py` for schema details.
+# Run frontend tests
+pnpm test:frontend
+
+# Run backend tests
+pnpm test:backend
+```
+
+### Database
+```bash
+# Reset and reseed database
+pnpm db:reset
+```
+
+## Project Structure
+
+```
+acme-logistics/
+├── frontend/                 # Next.js application
+│   ├── app/                  # App router pages
+│   ├── components/           # React components
+│   │   └── ui/               # shadcn/ui components
+│   ├── lib/                  # Utilities and API client
+│   │   ├── api.ts            # Typed API client
+│   │   ├── utils.ts          # Helper functions
+│   │   └── locations.ts      # Geo coordinates
+│   └── hooks/                # Custom React hooks
+├── backend/                  # FastAPI application
+│   ├── app/
+│   │   ├── api/v1/routes/    # API route handlers
+│   │   ├── db/               # Database setup
+│   │   ├── models/           # SQLAlchemy ORM models
+│   │   └── schemas/          # Pydantic validation schemas
+│   ├── tests/                # Python tests
+│   ├── main.py               # FastAPI entry point
+│   └── seed.py               # Database seeder
+└── .github/workflows/        # CI/CD pipelines
+```
 
 ## Code Conventions
 
+### Frontend (TypeScript)
+- Use functional components with hooks
+- Styling: Tailwind CSS with shadcn/ui components
+- API calls via `lib/api.ts` typed client
+- Status colors defined in `lib/utils.ts`
+- Format with Prettier, lint with ESLint
+
 ### Backend (Python)
-- Use type hints for function parameters and returns
-- Pydantic models for request/response validation
-- SQLAlchemy ORM for database operations
-- Route handlers in separate files per resource
+- FastAPI routes in `app/api/v1/routes/`
+- SQLAlchemy 2.0 with mapped_column syntax
+- Pydantic v2 schemas for validation
+- Format with Black, lint with Ruff
+
+## Naming Conventions
+
+Naming conventions are enforced via ESLint (frontend) and Ruff (backend).
 
 ### Frontend (TypeScript/React)
-- TypeScript for all code
-- Functional components with hooks
-- shadcn/ui components for UI primitives
-- API types defined in `lib/api.ts`
-- Tailwind CSS for styling (no CSS modules)
-- App Router conventions (page.tsx, layout.tsx)
+| Element | Convention | Example |
+|---------|------------|---------|
+| Variables | camelCase | `userName`, `isLoading` |
+| Functions | camelCase or PascalCase (components) | `fetchData()`, `UserCard()` |
+| Parameters | camelCase | `userId`, `orderData` |
+| Types/Interfaces | PascalCase | `Customer`, `OrderStatus` |
+| Enums | PascalCase | `ShipmentStatus` |
+| Enum members | UPPER_CASE or PascalCase | `PENDING`, `InTransit` |
+| Constants | UPPER_CASE or camelCase | `MAX_RETRIES`, `apiBaseUrl` |
+| React components | PascalCase | `DashboardPage`, `OrderTable` |
 
-## Testing
+### Backend (Python)
+| Element | Convention | Example |
+|---------|------------|---------|
+| Variables | snake_case | `user_name`, `is_loading` |
+| Functions | snake_case | `fetch_data()`, `get_user_by_id()` |
+| Classes | PascalCase | `Customer`, `OrderService` |
+| Constants | UPPER_CASE | `MAX_RETRIES`, `API_VERSION` |
+| Module names | snake_case | `order_service.py` |
+| Private members | _snake_case | `_internal_cache` |
 
-Currently no automated tests in the repository. When adding tests:
-- Backend: Use pytest with the `.venv` virtual environment
-- Frontend: Use Jest or Vitest with React Testing Library
+Enforced via:
+- **ESLint**: `@typescript-eslint/naming-convention` rule (frontend)
+- **Ruff**: pep8-naming (`N`) rules (backend)
 
-## Environment Setup
+## API Endpoints
 
-Backend uses a Python virtual environment at `backend/.venv`. The setup script creates this automatically via `pnpm setup`.
+All endpoints prefixed with `/api/v1/`:
+- `/dashboard/*` - Dashboard stats and metrics
+- `/customers` - Customer management
+- `/facilities` - Warehouse/hub management
+- `/orders` - Order management
+- `/shipments` - Shipment tracking
+- `/inventory` - Stock management
+- `/vehicles` - Fleet management
+- `/users` - User management
+- `/notifications` - Alert system
+- `/search` - Global search
 
-No environment variables required for local development - the app uses SQLite with default configuration.
+## Data Models
 
-## Common Tasks
+| Model | Purpose |
+|-------|---------|
+| Customer | Clients with orders/shipments |
+| Facility | Warehouses, hubs, ports (with geo) |
+| Order | Customer orders with priority/status |
+| Shipment | Tracked packages linked to orders |
+| InventoryItem | Stock at facilities |
+| Vehicle | Fleet with driver, location, fuel |
+| User | System users with roles |
+| Notification | Alerts tied to entities |
 
-### Adding a new API endpoint
-1. Add route handler in `backend/app/api/v1/routes/`
-2. Register route in `backend/app/api/v1/__init__.py`
-3. Add Pydantic schemas in `backend/app/schemas/schemas.py` if needed
-4. Add TypeScript types in `frontend/lib/api.ts`
+## Environment
 
-### Adding a new frontend page
-1. Create directory in `frontend/app/`
-2. Add `page.tsx` for the route
-3. Update navigation in `frontend/components/app-sidebar.tsx`
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+- Database: SQLite (backend/acme_logistics.db)
 
-### Adding a new UI component
-1. Use shadcn CLI or create in `frontend/components/`
-2. Follow existing component patterns
-3. Use Radix UI primitives where applicable
+## Testing Strategy
+
+- **Frontend**: Vitest for unit tests, React Testing Library for components
+- **Backend**: pytest for API and unit tests
+- Run `pnpm test` to execute all tests before committing
+
+## Important Notes
+
+1. Always run `pnpm lint` before committing frontend changes
+2. Backend uses SQLite for simplicity - no external DB setup needed
+3. Seed data can be reset with `pnpm db:reset`
+4. The command palette (Cmd+K) provides quick navigation

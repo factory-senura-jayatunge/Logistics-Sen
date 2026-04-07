@@ -1,6 +1,8 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig, globalIgnores } from "eslint/config"
+import nextVitals from "eslint-config-next/core-web-vitals"
+import nextTs from "eslint-config-next/typescript"
+import tseslint from "@typescript-eslint/eslint-plugin"
+import tsparser from "@typescript-eslint/parser"
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -13,6 +15,76 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
-]);
+  // TypeScript naming conventions
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    plugins: {
+      "@typescript-eslint": tseslint,
+    },
+    languageOptions: {
+      parser: tsparser,
+    },
+    rules: {
+      "@typescript-eslint/naming-convention": [
+        "error",
+        // Variables: camelCase, UPPER_CASE (constants), PascalCase (React components)
+        {
+          selector: "variable",
+          format: ["camelCase", "UPPER_CASE", "PascalCase"],
+          leadingUnderscore: "allow",
+        },
+        // Functions: camelCase or PascalCase (React components)
+        {
+          selector: "function",
+          format: ["camelCase", "PascalCase"],
+        },
+        // Parameters: camelCase
+        {
+          selector: "parameter",
+          format: ["camelCase"],
+          leadingUnderscore: "allow",
+        },
+        // Types, interfaces, classes, enums: PascalCase
+        {
+          selector: "typeLike",
+          format: ["PascalCase"],
+        },
+        // Enum members: UPPER_CASE or PascalCase
+        {
+          selector: "enumMember",
+          format: ["UPPER_CASE", "PascalCase"],
+        },
+        // Object literal properties: allow snake_case for API compatibility
+        // Filter out CSS variables, HTTP headers, location keys, CSS class names
+        {
+          selector: "objectLiteralProperty",
+          format: ["camelCase", "UPPER_CASE", "PascalCase", "snake_case"],
+          leadingUnderscore: "allow",
+          filter: {
+            regex: "^(--|Content-|__html|.*[, ].*|[a-z]+-[a-z0-9.]+).*$",
+            match: false,
+          },
+        },
+        // Class/interface properties: camelCase
+        {
+          selector: "classProperty",
+          format: ["camelCase", "UPPER_CASE"],
+          leadingUnderscore: "allow",
+        },
+        // Type properties: allow snake_case for API types
+        {
+          selector: "typeProperty",
+          format: ["camelCase", "snake_case"],
+          leadingUnderscore: "allow",
+        },
+        // Methods: camelCase
+        {
+          selector: "method",
+          format: ["camelCase"],
+        },
+      ],
+    },
+  },
+])
 
-export default eslintConfig;
+export default eslintConfig

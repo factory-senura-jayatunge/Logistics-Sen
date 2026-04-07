@@ -10,15 +10,26 @@
     "dev:backend": "cd backend && .venv/bin/uvicorn main:app --reload --port 8000",
     "build": "pnpm --filter frontend build",
     "lint": "pnpm --filter frontend lint",
+    "format": "pnpm --filter frontend format",
+    "format:check": "pnpm --filter frontend format:check",
+    "test": "pnpm test:frontend && pnpm test:backend",
+    "test:frontend": "pnpm --filter frontend test",
+    "test:backend": "cd backend && .venv/bin/python -m pytest",
     "setup": "pnpm setup:backend && pnpm setup:frontend",
     "setup:backend": "cd backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt",
     "setup:frontend": "pnpm --filter frontend install",
     "seed": "cd backend && .venv/bin/python seed.py",
     "db:reset": "cd backend && rm -f acme_logistics.db && .venv/bin/python seed.py",
-    "test:backend": "cd backend && .venv/bin/pytest",
-    "test:backend:cov": "cd backend && .venv/bin/pytest --cov=app --cov-report=term-missing"
+    "test:backend:cov": "cd backend && .venv/bin/pytest --cov=app --cov-report=term-missing",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx,js,jsx}": "cd frontend && eslint --fix",
+    "frontend/**/*.{ts,tsx,js,jsx,json,css,md}": "cd frontend && prettier --write --ignore-unknown"
   }
 }

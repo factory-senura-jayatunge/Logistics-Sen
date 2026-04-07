@@ -32,9 +32,9 @@ const statusColors: Record<string, string> = {
 }
 
 const statusIcons: Record<string, React.ReactNode> = {
-  in_stock: <TrendingUp className="h-4 w-4 text-success" />,
-  low_stock: <AlertTriangle className="h-4 w-4 text-warning" />,
-  out_of_stock: <TrendingDown className="h-4 w-4 text-destructive" />,
+  in_stock: <TrendingUp className="text-success h-4 w-4" />,
+  low_stock: <AlertTriangle className="text-warning h-4 w-4" />,
+  out_of_stock: <TrendingDown className="text-destructive h-4 w-4" />,
 }
 
 function formatDate(dateString: string): string {
@@ -98,9 +98,9 @@ export default function InventoryDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load inventory item</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -141,9 +141,8 @@ export default function InventoryDetailPage() {
 
   if (!item) return null
 
-  const stockLevel = item.reorder_point > 0 
-    ? Math.min((item.quantity / (item.reorder_point * 2)) * 100, 100) 
-    : 100
+  const stockLevel =
+    item.reorder_point > 0 ? Math.min((item.quantity / (item.reorder_point * 2)) * 100, 100) : 100
   const stockValue = item.quantity * item.unit_price
 
   return (
@@ -159,23 +158,26 @@ export default function InventoryDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold">{item.name}</h1>
-              <Badge variant="outline" className={statusColors[item.status] || statusColors.in_stock}>
+              <Badge
+                variant="outline"
+                className={statusColors[item.status] || statusColors.in_stock}
+              >
                 {item.status.replace("_", " ")}
               </Badge>
             </div>
-            <p className="text-muted-foreground">
-              SKU: {item.sku}
-            </p>
+            <p className="text-muted-foreground">SKU: {item.sku}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => setEditModalOpen(true)}>Edit Item</Button>
+          <Button variant="outline" onClick={() => setEditModalOpen(true)}>
+            Edit Item
+          </Button>
           <Button>Reorder Stock</Button>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6 md:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -184,29 +186,29 @@ export default function InventoryDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Package className="h-3 w-3" /> Current Stock
                   </p>
                   <p className="text-2xl font-bold">{item.quantity.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">units</p>
+                  <p className="text-muted-foreground text-xs">units</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <AlertTriangle className="h-3 w-3" /> Reorder Point
                   </p>
                   <p className="text-2xl font-bold">{item.reorder_point.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">units</p>
+                  <p className="text-muted-foreground text-xs">units</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <DollarSign className="h-3 w-3" /> Unit Price
                   </p>
                   <p className="text-2xl font-bold">{formatCurrency(item.unit_price)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <TrendingUp className="h-3 w-3" /> Stock Value
                   </p>
                   <p className="text-2xl font-bold">{formatCurrency(stockValue)}</p>
@@ -220,22 +222,22 @@ export default function InventoryDetailPage() {
                   <span className="text-sm font-medium">Stock Level</span>
                   <div className="flex items-center gap-2">
                     {statusIcons[item.status]}
-                    <span className="text-sm text-muted-foreground capitalize">
+                    <span className="text-muted-foreground text-sm capitalize">
                       {item.status.replace("_", " ")}
                     </span>
                   </div>
                 </div>
-                <Progress 
-                  value={stockLevel} 
+                <Progress
+                  value={stockLevel}
                   className={`h-3 ${
-                    item.status === "out_of_stock" 
-                      ? "[&>div]:bg-destructive" 
-                      : item.status === "low_stock" 
-                        ? "[&>div]:bg-warning" 
+                    item.status === "out_of_stock"
+                      ? "[&>div]:bg-destructive"
+                      : item.status === "low_stock"
+                        ? "[&>div]:bg-warning"
                         : "[&>div]:bg-success"
                   }`}
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="text-muted-foreground flex justify-between text-xs">
                   <span>0</span>
                   <span>Reorder: {item.reorder_point}</span>
                   <span>Target: {item.reorder_point * 2}</span>
@@ -256,34 +258,38 @@ export default function InventoryDetailPage() {
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-primary" />
-                    <div className="h-full w-px bg-border" />
+                    <div className="bg-primary h-3 w-3 rounded-full" />
+                    <div className="bg-border h-full w-px" />
                   </div>
                   <div className="pb-4">
                     <p className="font-medium">Item Created</p>
-                    <p className="text-sm text-muted-foreground">{formatDateTime(item.created_at)}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {formatDateTime(item.created_at)}
+                    </p>
                   </div>
                 </div>
                 {item.updated_at !== item.created_at && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-primary" />
-                      <div className="h-full w-px bg-border" />
+                      <div className="bg-primary h-3 w-3 rounded-full" />
+                      <div className="bg-border h-full w-px" />
                     </div>
                     <div className="pb-4">
                       <p className="font-medium">Last Updated</p>
-                      <p className="text-sm text-muted-foreground">{formatDateTime(item.updated_at)}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {formatDateTime(item.updated_at)}
+                      </p>
                     </div>
                   </div>
                 )}
                 {item.status === "low_stock" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-warning" />
+                      <div className="bg-warning h-3 w-3 rounded-full" />
                     </div>
                     <div>
-                      <p className="font-medium text-warning">Low Stock Alert</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-warning font-medium">Low Stock Alert</p>
+                      <p className="text-muted-foreground text-sm">
                         Quantity ({item.quantity}) is below reorder point ({item.reorder_point})
                       </p>
                     </div>
@@ -292,11 +298,11 @@ export default function InventoryDetailPage() {
                 {item.status === "out_of_stock" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-destructive" />
+                      <div className="bg-destructive h-3 w-3 rounded-full" />
                     </div>
                     <div>
-                      <p className="font-medium text-destructive">Out of Stock</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-destructive font-medium">Out of Stock</p>
+                      <p className="text-muted-foreground text-sm">
                         Item needs immediate restocking
                       </p>
                     </div>
@@ -305,11 +311,11 @@ export default function InventoryDetailPage() {
                 {item.status === "in_stock" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-success" />
+                      <div className="bg-success h-3 w-3 rounded-full" />
                     </div>
                     <div>
-                      <p className="font-medium text-success">Stock Healthy</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-success font-medium">Stock Healthy</p>
+                      <p className="text-muted-foreground text-sm">
                         Quantity is above reorder threshold
                       </p>
                     </div>
@@ -322,7 +328,7 @@ export default function InventoryDetailPage() {
 
         <div className="space-y-6">
           <Card
-            className="cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer transition-shadow hover:shadow-md"
             onClick={() => router.push("/facilities")}
           >
             <CardHeader>
@@ -334,14 +340,14 @@ export default function InventoryDetailPage() {
             <CardContent className="space-y-3">
               <div>
                 <p className="font-medium">{item.facility?.name || "Unknown Facility"}</p>
-                <p className="text-sm text-muted-foreground">Code: {item.facility?.code || "-"}</p>
+                <p className="text-muted-foreground text-sm">Code: {item.facility?.code || "-"}</p>
               </div>
               {item.facility && (
                 <>
                   <Separator />
                   <div className="space-y-2 text-sm">
                     <div className="flex items-start gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <MapPin className="text-muted-foreground mt-0.5 h-4 w-4" />
                       <div>
                         <p>{item.facility.address}</p>
                         <p className="text-muted-foreground">
@@ -362,7 +368,9 @@ export default function InventoryDetailPage() {
                   </div>
                 </>
               )}
-              <p className="text-xs text-muted-foreground text-center pt-2">Click to view facility</p>
+              <p className="text-muted-foreground pt-2 text-center text-xs">
+                Click to view facility
+              </p>
             </CardContent>
           </Card>
 
@@ -380,7 +388,7 @@ export default function InventoryDetailPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">SKU</span>
-                <span className="font-medium font-mono">{item.sku}</span>
+                <span className="font-mono font-medium">{item.sku}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Category</span>

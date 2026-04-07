@@ -96,7 +96,7 @@ export function NewOrderModal({ open, onOpenChange, onSuccess }: NewOrderModalPr
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+              <div className="text-destructive bg-destructive/10 rounded-md p-3 text-sm">
                 {error}
               </div>
             )}

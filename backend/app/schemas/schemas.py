@@ -333,3 +333,25 @@ class CustomerDetail(Customer):
     total_orders: int = 0
     total_spent: float = 0.0
     total_shipments: int = 0
+
+
+# Bulk Operation Schemas
+class BulkDeleteRequest(BaseModel):
+    ids: list[int]
+
+
+class BulkStatusUpdateRequest(BaseModel):
+    ids: list[int]
+    status: str
+
+
+class BulkOperationResult(BaseModel):
+    success_count: int
+    failed_count: int
+    errors: list[dict] = []
+
+
+class CSVImportResult(BaseModel):
+    imported: int
+    skipped: int
+    errors: list[dict] = []
