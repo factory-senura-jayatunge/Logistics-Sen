@@ -20,8 +20,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,8 +39,8 @@ jobs:
       - name: Type check
         run: pnpm exec tsc --noEmit
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run tests with coverage
+        run: pnpm test:coverage
 
       - name: Build
         run: pnpm build
@@ -65,9 +63,7 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: |
-        run: black --check .
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Lint with ruff
         run: ruff check . --ignore I001
@@ -78,5 +74,5 @@ jobs:
       - name: Seed database
         run: python seed.py
 
-      - name: Run tests
-        run: pytest -v
+      - name: Run tests with coverage
+        run: pytest -v --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=30

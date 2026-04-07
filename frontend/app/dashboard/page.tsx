@@ -1,12 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import {
-  Package,
-  Clock,
-  AlertTriangle,
-  Truck,
-} from "lucide-react"
+import { Package, Clock, AlertTriangle, Truck } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, Pie, PieChart } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -113,46 +108,51 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load dashboard</h2>
           <p className="text-muted-foreground">{error}</p>
-          <p className="text-sm text-muted-foreground mt-2">Make sure the backend is running on port 8000</p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            Make sure the backend is running on port 8000
+          </p>
         </div>
       </div>
     )
   }
 
-  const kpiData = stats ? [
-    {
-      title: "Total Shipments",
-      value: stats.total_shipments.toLocaleString(),
-      subtitle: `${stats.shipments_in_transit} in transit`,
-      icon: Package,
-    },
-    {
-      title: "On-Time Rate",
-      value: stats.total_shipments > 0 
-        ? `${(((stats.total_shipments - stats.shipments_delayed) / stats.total_shipments) * 100).toFixed(1)}%`
-        : "N/A",
-      subtitle: `${stats.shipments_delivered} delivered`,
-      icon: Clock,
-    },
-    {
-      title: "Active Vehicles",
-      value: stats.vehicles_en_route.toString(),
-      subtitle: `of ${stats.total_vehicles} total`,
-      icon: Truck,
-    },
-    {
-      title: "Low Stock Items",
-      value: stats.low_stock_items.toString(),
-      subtitle: `of ${stats.total_inventory_items} items`,
-      icon: AlertTriangle,
-      alert: stats.low_stock_items > 0,
-    },
-  ] : []
+  const kpiData = stats
+    ? [
+        {
+          title: "Total Shipments",
+          value: stats.total_shipments.toLocaleString(),
+          subtitle: `${stats.shipments_in_transit} in transit`,
+          icon: Package,
+        },
+        {
+          title: "On-Time Rate",
+          value:
+            stats.total_shipments > 0
+              ? `${(((stats.total_shipments - stats.shipments_delayed) / stats.total_shipments) * 100).toFixed(1)}%`
+              : "N/A",
+          subtitle: `${stats.shipments_delivered} delivered`,
+          icon: Clock,
+        },
+        {
+          title: "Active Vehicles",
+          value: stats.vehicles_en_route.toString(),
+          subtitle: `of ${stats.total_vehicles} total`,
+          icon: Truck,
+        },
+        {
+          title: "Low Stock Items",
+          value: stats.low_stock_items.toString(),
+          subtitle: `of ${stats.total_inventory_items} items`,
+          icon: AlertTriangle,
+          alert: stats.low_stock_items > 0,
+        },
+      ]
+    : []
 
   const statusBreakdownData = statusBreakdown.map((item) => ({
     status: item.status,
@@ -173,35 +173,37 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {loading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-4 w-4" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-16 mb-2" />
-                <Skeleton className="h-3 w-20" />
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          kpiData.map((kpi) => (
-            <Card key={kpi.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {kpi.title}
-                </CardTitle>
-                <kpi.icon className={`h-4 w-4 ${kpi.alert ? "text-destructive" : "text-muted-foreground"}`} />
-              </CardHeader>
-              <CardContent>
-                <div className={`text-2xl font-bold ${kpi.alert ? "text-destructive" : ""}`}>{kpi.value}</div>
-                <p className="text-xs text-muted-foreground">{kpi.subtitle}</p>
-              </CardContent>
-            </Card>
-          ))
-        )}
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-4" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="mb-2 h-8 w-16" />
+                  <Skeleton className="h-3 w-20" />
+                </CardContent>
+              </Card>
+            ))
+          : kpiData.map((kpi) => (
+              <Card key={kpi.title}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">
+                    {kpi.title}
+                  </CardTitle>
+                  <kpi.icon
+                    className={`h-4 w-4 ${kpi.alert ? "text-destructive" : "text-muted-foreground"}`}
+                  />
+                </CardHeader>
+                <CardContent>
+                  <div className={`text-2xl font-bold ${kpi.alert ? "text-destructive" : ""}`}>
+                    {kpi.value}
+                  </div>
+                  <p className="text-muted-foreground text-xs">{kpi.subtitle}</p>
+                </CardContent>
+              </Card>
+            ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -214,12 +216,7 @@ export default function DashboardPage() {
             <ChartContainer config={shipmentVolumeConfig} className="min-h-[200px] w-full">
               <BarChart accessibilityLayer data={volumeChartData}>
                 <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="date"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                />
+                <XAxis dataKey="date" tickLine={false} tickMargin={10} axisLine={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="count" fill="var(--color-count)" radius={4} />
               </BarChart>
@@ -261,7 +258,10 @@ export default function DashboardPage() {
           {loading ? (
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div
+                  key={i}
+                  className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                >
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-3 w-48" />
@@ -282,22 +282,27 @@ export default function DashboardPage() {
                 >
                   <div className="space-y-1">
                     <p className="text-sm font-medium">{shipment.tracking_number}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {shipment.customer.name} → {shipment.destination}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Badge variant="outline" className={statusColors[shipment.status] || statusColors.pending}>
+                    <Badge
+                      variant="outline"
+                      className={statusColors[shipment.status] || statusColors.pending}
+                    >
                       {shipment.status.replace("_", " ")}
                     </Badge>
-                    <span className="text-xs text-muted-foreground w-20 text-right">
+                    <span className="text-muted-foreground w-20 text-right text-xs">
                       {formatTimeAgo(shipment.updated_at)}
                     </span>
                   </div>
                 </div>
               ))}
               {recentShipments.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">No recent shipments</p>
+                <p className="text-muted-foreground py-4 text-center text-sm">
+                  No recent shipments
+                </p>
               )}
             </div>
           )}

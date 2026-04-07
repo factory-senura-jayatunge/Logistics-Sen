@@ -19,7 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { updateInventoryItem, getFacilities, type InventoryItem, type Facility, type UpdateInventoryItemData } from "@/lib/api"
+import {
+  updateInventoryItem,
+  getFacilities,
+  type InventoryItem,
+  type Facility,
+  type UpdateInventoryItemData,
+} from "@/lib/api"
 
 interface EditInventoryItemModalProps {
   item: InventoryItem
@@ -28,7 +34,12 @@ interface EditInventoryItemModalProps {
   onSuccess: (updatedItem: InventoryItem) => void
 }
 
-export function EditInventoryItemModal({ item, open, onOpenChange, onSuccess }: EditInventoryItemModalProps) {
+export function EditInventoryItemModal({
+  item,
+  open,
+  onOpenChange,
+  onSuccess,
+}: EditInventoryItemModalProps) {
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -106,13 +117,11 @@ export function EditInventoryItemModal({ item, open, onOpenChange, onSuccess }: 
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Edit Inventory Item</DialogTitle>
-            <DialogDescription>
-              Update the details for {item.name}
-            </DialogDescription>
+            <DialogDescription>Update the details for {item.name}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+              <div className="text-destructive bg-destructive/10 rounded-md p-3 text-sm">
                 {error}
               </div>
             )}
@@ -127,11 +136,7 @@ export function EditInventoryItemModal({ item, open, onOpenChange, onSuccess }: 
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="sku">SKU</Label>
-                <Input
-                  id="sku"
-                  value={formData.sku}
-                  disabled
-                />
+                <Input id="sku" value={formData.sku} disabled />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

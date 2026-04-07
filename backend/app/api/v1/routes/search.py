@@ -16,7 +16,7 @@ def search(
 ):
     results = []
     search_term = f"%{q.lower()}%"
-    
+
     # Search shipments
     shipments = db.query(models.Shipment).filter(
         or_(
@@ -26,7 +26,7 @@ def search(
             models.Shipment.carrier.ilike(search_term),
         )
     ).limit(limit).all()
-    
+
     for s in shipments:
         results.append(schemas.SearchResult(
             id=s.id,
@@ -35,12 +35,12 @@ def search(
             subtitle=f"{s.origin} → {s.destination} • {s.status}",
             url=f"/shipments/{s.id}"
         ))
-    
+
     # Search orders
     orders = db.query(models.Order).filter(
         models.Order.order_number.ilike(search_term)
     ).limit(limit).all()
-    
+
     for o in orders:
         results.append(schemas.SearchResult(
             id=o.id,
@@ -49,7 +49,7 @@ def search(
             subtitle=f"{o.items_count} items • ${o.total_value:,.0f} • {o.status}",
             url=f"/orders/{o.id}"
         ))
-    
+
     # Search customers
     customers = db.query(models.Customer).filter(
         or_(
@@ -57,7 +57,7 @@ def search(
             models.Customer.email.ilike(search_term),
         )
     ).limit(limit).all()
-    
+
     for c in customers:
         results.append(schemas.SearchResult(
             id=c.id,
@@ -66,7 +66,7 @@ def search(
             subtitle=c.email,
             url=f"/customers/{c.id}"
         ))
-    
+
     # Search inventory
     inventory = db.query(models.InventoryItem).filter(
         or_(
@@ -75,7 +75,7 @@ def search(
             models.InventoryItem.category.ilike(search_term),
         )
     ).limit(limit).all()
-    
+
     for i in inventory:
         results.append(schemas.SearchResult(
             id=i.id,
@@ -84,7 +84,7 @@ def search(
             subtitle=f"{i.category} • {i.quantity} units • {i.status}",
             url=f"/inventory/{i.id}"
         ))
-    
+
     # Search vehicles
     vehicles = db.query(models.Vehicle).filter(
         or_(
@@ -93,7 +93,7 @@ def search(
             models.Vehicle.driver.ilike(search_term),
         )
     ).limit(limit).all()
-    
+
     for v in vehicles:
         results.append(schemas.SearchResult(
             id=v.id,
@@ -102,7 +102,7 @@ def search(
             subtitle=f"{v.driver} • {v.status}",
             url=f"/fleet/{v.id}"
         ))
-    
+
     # Search facilities
     facilities = db.query(models.Facility).filter(
         or_(
@@ -111,7 +111,7 @@ def search(
             models.Facility.city.ilike(search_term),
         )
     ).limit(limit).all()
-    
+
     for f in facilities:
         results.append(schemas.SearchResult(
             id=f.id,
@@ -120,7 +120,7 @@ def search(
             subtitle=f"{f.city}, {f.state} • {f.type}",
             url=f"/facilities/{f.id}"
         ))
-    
+
     # Sort by relevance (exact matches first) and limit total results
     def sort_key(r):
         title_lower = r.title.lower()
@@ -130,6 +130,6 @@ def search(
         if title_lower.startswith(q_lower):
             return 1
         return 2
-    
+
     results.sort(key=sort_key)
     return results[:limit]

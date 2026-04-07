@@ -2,11 +2,20 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Package, AlertTriangle, TrendingUp, Archive, BarChart3 } from "lucide-react"
+import {
+  Package,
+  AlertTriangle,
+  TrendingUp,
+  Archive,
+  BarChart3,
+  Download,
+  Upload,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -23,7 +32,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getInventoryItems, getFacilities, type InventoryItem, type Facility } from "@/lib/api"
+import {
+  getInventoryItems,
+  getFacilities,
+  bulkDeleteInventory,
+  exportInventoryCSV,
+  importInventoryCSV,
+  type InventoryItem,
+  type Facility,
+} from "@/lib/api"
+import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
+import { CSVImportModal } from "@/components/csv-import-modal"
 
 const statusColors: Record<string, string> = {
   in_stock: "bg-success/10 text-success border-success/20",
@@ -49,6 +68,8 @@ export default function InventoryPage() {
   const [facilityFilter, setFacilityFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [showStats, setShowStats] = useState(true)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [importModalOpen, setImportModalOpen] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
@@ -61,6 +82,7 @@ export default function InventoryPage() {
       ])
       setItems(itemsData)
       setFacilities(facilitiesData)
+      setSelectedIds([])
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load inventory")
     } finally {
@@ -89,11 +111,42 @@ export default function InventoryPage() {
     totalValue: items.reduce((sum, i) => sum + i.quantity * i.unit_price, 0),
   }
 
+  const handleSelectAll = (checked: boolean | "indeterminate") => {
+    if (checked) {
+      setSelectedIds(filteredItems.map((i) => i.id))
+    } else {
+      setSelectedIds([])
+    }
+  }
+
+  const handleSelectOne = (id: number, checked: boolean) => {
+    if (checked) {
+      setSelectedIds([...selectedIds, id])
+    } else {
+      setSelectedIds(selectedIds.filter((i) => i !== id))
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    await bulkDeleteInventory(selectedIds)
+    fetchData()
+  }
+
+  const handleExport = async () => {
+    const blob = await exportInventoryCSV()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "inventory.csv"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load inventory</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -101,9 +154,11 @@ export default function InventoryPage() {
     )
   }
 
+  const allSelected = filteredItems.length > 0 && selectedIds.length === filteredItems.length
+
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex h-full flex-col">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Inventory</h1>
           <p className="text-muted-foreground">Monitor stock levels across all warehouses</p>
@@ -130,82 +185,135 @@ export default function InventoryPage() {
           >
             <BarChart3 className="h-4 w-4" />
           </Button>
+          <Button variant="outline" onClick={() => setImportModalOpen(true)}>
+            <Upload className="mr-2 h-4 w-4" />
+            Import
+          </Button>
           <Button onClick={() => fetchData()}>Sync Inventory</Button>
         </div>
       </div>
 
+      <CSVImportModal
+        open={importModalOpen}
+        onOpenChange={setImportModalOpen}
+        onImport={importInventoryCSV}
+        onSuccess={fetchData}
+        entityName="Inventory"
+        expectedColumns={[
+          "sku",
+          "name",
+          "category",
+          "facility_id",
+          "quantity",
+          "reorder_point",
+          "unit_price",
+          "status",
+        ]}
+      />
+
       {showStats && (
-        <div className="grid gap-4 md:grid-cols-4 flex-shrink-0 mb-6">
+        <div className="mb-6 grid flex-shrink-0 gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total SKUs</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Total SKUs
+              </CardTitle>
+              <Package className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats.totalSkus.toLocaleString()}
               </div>
-              <p className="text-xs text-muted-foreground">Across all facilities</p>
+              <p className="text-muted-foreground text-xs">Across all facilities</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Items</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-warning" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Low Stock Items
+              </CardTitle>
+              <AlertTriangle className="text-warning h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.lowStock}
               </div>
-              <p className="text-xs text-muted-foreground">Require attention</p>
+              <p className="text-muted-foreground text-xs">Require attention</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Out of Stock</CardTitle>
-              <Archive className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Out of Stock
+              </CardTitle>
+              <Archive className="text-destructive h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-12" /> : stats.outOfStock}
               </div>
-              <p className="text-xs text-muted-foreground">Need immediate reorder</p>
+              <p className="text-muted-foreground text-xs">Need immediate reorder</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Inventory Value</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-muted-foreground text-sm font-medium">
+                Inventory Value
+              </CardTitle>
+              <TrendingUp className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {loading ? <Skeleton className="h-8 w-20" /> : formatCurrency(stats.totalValue)}
               </div>
-              <p className="text-xs text-muted-foreground">Total stock value</p>
+              <p className="text-muted-foreground text-xs">Total stock value</p>
             </CardContent>
           </Card>
         </div>
       )}
 
-      <Card className="flex-1 flex flex-col min-h-0">
+      {selectedIds.length > 0 && (
+        <div className="mb-4">
+          <BulkActionsToolbar
+            selectedCount={selectedIds.length}
+            onClearSelection={() => setSelectedIds([])}
+            onDelete={handleBulkDelete}
+            entityName="item"
+          />
+        </div>
+      )}
+
+      <Card className="flex min-h-0 flex-1 flex-col">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Inventory Items ({filteredItems.length})</CardTitle>
               <CardDescription>Current stock levels and status</CardDescription>
             </div>
-            <Input
-              placeholder="Search SKU, name, category..."
-              className="w-64"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Search SKU, name, category..."
+                className="w-64"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button variant="outline" size="icon" onClick={handleExport} title="Export to CSV">
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1 overflow-auto">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all"
+                  />
+                </TableHead>
                 <TableHead>SKU</TableHead>
                 <TableHead>Product Name</TableHead>
                 <TableHead>Category</TableHead>
@@ -220,19 +328,38 @@ export default function InventoryPage() {
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-4" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-12" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : filteredItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={9} className="text-muted-foreground py-8 text-center">
                     No inventory items found
                   </TableCell>
                 </TableRow>
@@ -240,18 +367,56 @@ export default function InventoryPage() {
                 filteredItems.map((item) => (
                   <TableRow
                     key={item.id}
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => router.push(`/inventory/${item.id}`)}
+                    className="hover:bg-muted/50 cursor-pointer"
+                    data-selected={selectedIds.includes(item.id)}
                   >
-                    <TableCell className="font-medium">{item.sku}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.category}</TableCell>
-                    <TableCell>{item.facility?.code || "-"}</TableCell>
-                    <TableCell className="text-right">{item.quantity.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">{item.reorder_point}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(item.unit_price)}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={statusColors[item.status] || statusColors.in_stock}>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedIds.includes(item.id)}
+                        onCheckedChange={(checked: boolean | "indeterminate") =>
+                          handleSelectOne(item.id, !!checked)
+                        }
+                        aria-label={`Select item ${item.sku}`}
+                      />
+                    </TableCell>
+                    <TableCell
+                      className="font-medium"
+                      onClick={() => router.push(`/inventory/${item.id}`)}
+                    >
+                      {item.sku}
+                    </TableCell>
+                    <TableCell onClick={() => router.push(`/inventory/${item.id}`)}>
+                      {item.name}
+                    </TableCell>
+                    <TableCell onClick={() => router.push(`/inventory/${item.id}`)}>
+                      {item.category}
+                    </TableCell>
+                    <TableCell onClick={() => router.push(`/inventory/${item.id}`)}>
+                      {item.facility?.code || "-"}
+                    </TableCell>
+                    <TableCell
+                      className="text-right"
+                      onClick={() => router.push(`/inventory/${item.id}`)}
+                    >
+                      {item.quantity.toLocaleString()}
+                    </TableCell>
+                    <TableCell
+                      className="text-right"
+                      onClick={() => router.push(`/inventory/${item.id}`)}
+                    >
+                      {item.reorder_point}
+                    </TableCell>
+                    <TableCell
+                      className="text-right"
+                      onClick={() => router.push(`/inventory/${item.id}`)}
+                    >
+                      {formatCurrency(item.unit_price)}
+                    </TableCell>
+                    <TableCell onClick={() => router.push(`/inventory/${item.id}`)}>
+                      <Badge
+                        variant="outline"
+                        className={statusColors[item.status] || statusColors.in_stock}
+                      >
                         {item.status.replace("_", " ")}
                       </Badge>
                     </TableCell>

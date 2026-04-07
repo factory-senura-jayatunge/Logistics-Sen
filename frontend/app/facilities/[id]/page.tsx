@@ -70,9 +70,9 @@ export default function FacilityDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load facility</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -146,7 +146,7 @@ export default function FacilityDetailPage() {
                 {facility.status}
               </Badge>
             </div>
-            <p className="text-muted-foreground flex items-center gap-1 mt-1">
+            <p className="text-muted-foreground mt-1 flex items-center gap-1">
               <MapPin className="h-4 w-4" />
               {facility.address}, {facility.city}, {facility.state}, {facility.country}
             </p>
@@ -157,8 +157,10 @@ export default function FacilityDetailPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Facility Code</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              Facility Code
+            </CardTitle>
+            <Building2 className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{facility.code}</div>
@@ -166,14 +168,14 @@ export default function FacilityDetailPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Capacity</CardTitle>
-            <Gauge className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">Capacity</CardTitle>
+            <Gauge className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{facility.capacity_percentage}%</div>
             <Progress
               value={facility.capacity_percentage}
-              className={`h-2 mt-2 ${
+              className={`mt-2 h-2 ${
                 facility.capacity_percentage > 80
                   ? "[&>div]:bg-destructive"
                   : facility.capacity_percentage > 60
@@ -185,8 +187,8 @@ export default function FacilityDetailPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Staff Count</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">Staff Count</CardTitle>
+            <Users className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{facility.staff_count}</div>
@@ -194,8 +196,10 @@ export default function FacilityDetailPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Inventory Value</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              Inventory Value
+            </CardTitle>
+            <Package className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(inventoryStats.totalValue)}</div>
@@ -213,12 +217,15 @@ export default function FacilityDetailPage() {
                   Inventory Items
                 </CardTitle>
                 <CardDescription>
-                  {inventoryStats.total} items • {inventoryStats.lowStock > 0 && (
+                  {inventoryStats.total} items •{" "}
+                  {inventoryStats.lowStock > 0 && (
                     <span className="text-warning">{inventoryStats.lowStock} low stock</span>
                   )}
                   {inventoryStats.lowStock > 0 && inventoryStats.outOfStock > 0 && " • "}
                   {inventoryStats.outOfStock > 0 && (
-                    <span className="text-destructive">{inventoryStats.outOfStock} out of stock</span>
+                    <span className="text-destructive">
+                      {inventoryStats.outOfStock} out of stock
+                    </span>
                   )}
                 </CardDescription>
               </div>
@@ -229,7 +236,9 @@ export default function FacilityDetailPage() {
           </CardHeader>
           <CardContent>
             {facility.inventory_items.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No inventory items at this facility</p>
+              <p className="text-muted-foreground py-8 text-center text-sm">
+                No inventory items at this facility
+              </p>
             ) : (
               <Table>
                 <TableHeader>
@@ -244,7 +253,7 @@ export default function FacilityDetailPage() {
                   {facility.inventory_items.slice(0, 5).map((item) => (
                     <TableRow
                       key={item.id}
-                      className="cursor-pointer hover:bg-muted/50"
+                      className="hover:bg-muted/50 cursor-pointer"
                       onClick={() => router.push(`/inventory/${item.id}`)}
                     >
                       <TableCell className="font-medium">{item.sku}</TableCell>
@@ -261,7 +270,7 @@ export default function FacilityDetailPage() {
               </Table>
             )}
             {facility.inventory_items.length > 5 && (
-              <p className="text-sm text-muted-foreground text-center pt-4">
+              <p className="text-muted-foreground pt-4 text-center text-sm">
                 +{facility.inventory_items.length - 5} more items
               </p>
             )}
@@ -277,7 +286,8 @@ export default function FacilityDetailPage() {
                   Vehicles
                 </CardTitle>
                 <CardDescription>
-                  {vehicleStats.total} vehicles • {vehicleStats.enRoute} en route • {vehicleStats.idle} idle
+                  {vehicleStats.total} vehicles • {vehicleStats.enRoute} en route •{" "}
+                  {vehicleStats.idle} idle
                 </CardDescription>
               </div>
               <Button variant="outline" size="sm" asChild>
@@ -287,7 +297,9 @@ export default function FacilityDetailPage() {
           </CardHeader>
           <CardContent>
             {facility.vehicles.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No vehicles assigned to this facility</p>
+              <p className="text-muted-foreground py-8 text-center text-sm">
+                No vehicles assigned to this facility
+              </p>
             ) : (
               <Table>
                 <TableHeader>
@@ -302,7 +314,7 @@ export default function FacilityDetailPage() {
                   {facility.vehicles.slice(0, 5).map((vehicle) => (
                     <TableRow
                       key={vehicle.id}
-                      className="cursor-pointer hover:bg-muted/50"
+                      className="hover:bg-muted/50 cursor-pointer"
                       onClick={() => router.push(`/fleet/${vehicle.id}`)}
                     >
                       <TableCell className="font-medium">{vehicle.vehicle_id}</TableCell>
@@ -333,14 +345,13 @@ export default function FacilityDetailPage() {
               </Table>
             )}
             {facility.vehicles.length > 5 && (
-              <p className="text-sm text-muted-foreground text-center pt-4">
+              <p className="text-muted-foreground pt-4 text-center text-sm">
                 +{facility.vehicles.length - 5} more vehicles
               </p>
             )}
           </CardContent>
         </Card>
       </div>
-
     </div>
   )
 }

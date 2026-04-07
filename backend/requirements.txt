@@ -4,7 +4,10 @@ sqlalchemy==2.0.36
 pydantic==2.10.3
 pydantic-settings==2.6.1
 python-multipart==0.0.17
+structlog==24.4.0
 pytest==8.3.4
+pytest-cov==6.1.1
+pytest-randomly==4.0.1
 httpx==0.28.1
 black==24.10.0
 ruff==0.8.2

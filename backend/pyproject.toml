@@ -23,14 +23,28 @@ line-length = 100
 target-version = "py39"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W"]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "I",      # isort
+    "W",      # pycodestyle warnings
+    "N",      # pep8-naming (naming conventions)
+]
 ignore = ["E501"]
+
+[tool.ruff.lint.pep8-naming]
+# Enforce PEP 8 naming conventions:
+# - snake_case for functions, methods, variables
+# - PascalCase for classes
+# - UPPER_CASE for constants
+classmethod-decorators = ["classmethod", "pydantic.validator", "pydantic.field_validator"]
+staticmethod-decorators = ["staticmethod"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=30 -p randomly"
 
 [tool.mypy]
 python_version = "3.9"
