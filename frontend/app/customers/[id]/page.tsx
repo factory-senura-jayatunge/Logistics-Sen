@@ -113,9 +113,9 @@ export default function CustomerDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load customer</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -180,7 +180,7 @@ export default function CustomerDetailPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+            <CardTitle className="text-muted-foreground flex items-center gap-1 text-sm font-medium">
               <ClipboardList className="h-4 w-4" /> Total Orders
             </CardTitle>
           </CardHeader>
@@ -190,7 +190,7 @@ export default function CustomerDetailPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+            <CardTitle className="text-muted-foreground flex items-center gap-1 text-sm font-medium">
               <DollarSign className="h-4 w-4" /> Total Spent
             </CardTitle>
           </CardHeader>
@@ -200,7 +200,7 @@ export default function CustomerDetailPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+            <CardTitle className="text-muted-foreground flex items-center gap-1 text-sm font-medium">
               <Truck className="h-4 w-4" /> Total Shipments
             </CardTitle>
           </CardHeader>
@@ -210,13 +210,13 @@ export default function CustomerDetailPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+            <CardTitle className="text-muted-foreground flex items-center gap-1 text-sm font-medium">
               <Package className="h-4 w-4" /> Avg Order Value
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {customer.total_orders > 0 
+              {customer.total_orders > 0
                 ? formatCurrency(customer.total_spent / customer.total_orders)
                 : formatCurrency(0)}
             </div>
@@ -232,7 +232,7 @@ export default function CustomerDetailPage() {
               <TabsTrigger value="orders">Orders ({customer.orders.length})</TabsTrigger>
               <TabsTrigger value="shipments">Shipments ({customer.shipments.length})</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="orders">
               <Card>
                 <CardHeader>
@@ -241,7 +241,7 @@ export default function CustomerDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {customer.orders.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">No orders yet</p>
+                    <p className="text-muted-foreground py-8 text-center">No orders yet</p>
                   ) : (
                     <Table>
                       <TableHeader>
@@ -258,7 +258,7 @@ export default function CustomerDetailPage() {
                         {customer.orders.map((order) => (
                           <TableRow
                             key={order.id}
-                            className="cursor-pointer hover:bg-muted/50"
+                            className="hover:bg-muted/50 cursor-pointer"
                             onClick={() => router.push(`/orders/${order.id}`)}
                           >
                             <TableCell className="font-medium">{order.order_number}</TableCell>
@@ -283,7 +283,7 @@ export default function CustomerDetailPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="shipments">
               <Card>
                 <CardHeader>
@@ -292,7 +292,7 @@ export default function CustomerDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {customer.shipments.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">No shipments yet</p>
+                    <p className="text-muted-foreground py-8 text-center">No shipments yet</p>
                   ) : (
                     <Table>
                       <TableHeader>
@@ -309,15 +309,24 @@ export default function CustomerDetailPage() {
                         {customer.shipments.map((shipment) => (
                           <TableRow
                             key={shipment.id}
-                            className="cursor-pointer hover:bg-muted/50"
+                            className="hover:bg-muted/50 cursor-pointer"
                             onClick={() => router.push(`/shipments/${shipment.id}`)}
                           >
-                            <TableCell className="font-medium">{shipment.tracking_number}</TableCell>
-                            <TableCell className="max-w-[120px] truncate">{shipment.origin}</TableCell>
-                            <TableCell className="max-w-[120px] truncate">{shipment.destination}</TableCell>
+                            <TableCell className="font-medium">
+                              {shipment.tracking_number}
+                            </TableCell>
+                            <TableCell className="max-w-[120px] truncate">
+                              {shipment.origin}
+                            </TableCell>
+                            <TableCell className="max-w-[120px] truncate">
+                              {shipment.destination}
+                            </TableCell>
                             <TableCell>{shipment.carrier}</TableCell>
                             <TableCell>
-                              <Badge variant="outline" className={shipmentStatusColors[shipment.status]}>
+                              <Badge
+                                variant="outline"
+                                className={shipmentStatusColors[shipment.status]}
+                              >
                                 {shipment.status.replace("_", " ")}
                               </Badge>
                             </TableCell>
@@ -345,35 +354,35 @@ export default function CustomerDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-start gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <Mail className="text-muted-foreground mt-0.5 h-4 w-4" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="text-muted-foreground text-sm">Email</p>
                   <p className="text-sm font-medium">{customer.email}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <Phone className="text-muted-foreground mt-0.5 h-4 w-4" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p className="text-muted-foreground text-sm">Phone</p>
                   <p className="text-sm font-medium">{customer.phone || "Not provided"}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <MapPin className="text-muted-foreground mt-0.5 h-4 w-4" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="text-muted-foreground text-sm">Address</p>
                   <p className="text-sm font-medium">{customer.address || "Not provided"}</p>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="flex items-start gap-3">
-                <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <Calendar className="text-muted-foreground mt-0.5 h-4 w-4" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Customer Since</p>
+                  <p className="text-muted-foreground text-sm">Customer Since</p>
                   <p className="text-sm font-medium">{formatLongDate(customer.created_at)}</p>
                 </div>
               </div>
@@ -386,28 +395,28 @@ export default function CustomerDetailPage() {
               <CardTitle className="text-base">Activity Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Pending Orders</span>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground text-sm">Pending Orders</span>
                 <Badge variant="outline">
-                  {customer.orders.filter(o => o.status === "pending").length}
+                  {customer.orders.filter((o) => o.status === "pending").length}
                 </Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Processing Orders</span>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground text-sm">Processing Orders</span>
                 <Badge variant="outline">
-                  {customer.orders.filter(o => o.status === "processing").length}
+                  {customer.orders.filter((o) => o.status === "processing").length}
                 </Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">In Transit</span>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground text-sm">In Transit</span>
                 <Badge variant="outline">
-                  {customer.shipments.filter(s => s.status === "in_transit").length}
+                  {customer.shipments.filter((s) => s.status === "in_transit").length}
                 </Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Delivered</span>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground text-sm">Delivered</span>
                 <Badge variant="outline" className="bg-success/10 text-success">
-                  {customer.shipments.filter(s => s.status === "delivered").length}
+                  {customer.shipments.filter((s) => s.status === "delivered").length}
                 </Badge>
               </div>
             </CardContent>

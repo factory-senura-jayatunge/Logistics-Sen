@@ -118,7 +118,7 @@ function formatETA(eta: string | null): string {
   const now = new Date()
   const diffMs = date.getTime() - now.getTime()
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays < 0) return "Overdue"
   if (diffDays === 0) return "Today"
   if (diffDays === 1) return "Tomorrow"
@@ -144,7 +144,7 @@ export default function OrderDetailPage() {
         }
         const orderData = await getOrder(id)
         setOrder(orderData)
-        
+
         const otherOrders = await getCustomerOrders(orderData.customer_id, id, 5)
         setCustomerOrders(otherOrders)
       } catch (err) {
@@ -163,9 +163,9 @@ export default function OrderDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
             <h2 className="text-lg font-semibold">Failed to load order</h2>
             <p className="text-muted-foreground">{error}</p>
           </div>
@@ -220,19 +220,23 @@ export default function OrderDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold">{order.order_number}</h1>
-              <Badge variant="outline" className={statusColors[order.status] || statusColors.pending}>
+              <Badge
+                variant="outline"
+                className={statusColors[order.status] || statusColors.pending}
+              >
                 {order.status}
               </Badge>
-              <Badge variant="outline" className={priorityColors[order.priority] || priorityColors.medium}>
+              <Badge
+                variant="outline"
+                className={priorityColors[order.priority] || priorityColors.medium}
+              >
                 {order.priority} priority
               </Badge>
             </div>
-            <p className="text-muted-foreground">
-              Created {formatDateTime(order.created_at)}
-            </p>
+            <p className="text-muted-foreground">Created {formatDateTime(order.created_at)}</p>
           </div>
         </div>
-        
+
         {/* Quick Actions */}
         <div className="flex items-center gap-2">
           <Select defaultValue={order.status}>
@@ -250,7 +254,12 @@ export default function OrderDetailPage() {
           <Button variant="outline" size="icon" title="Print Order">
             <Printer className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" title="Cancel Order" className="text-destructive hover:text-destructive">
+          <Button
+            variant="outline"
+            size="icon"
+            title="Cancel Order"
+            className="text-destructive hover:text-destructive"
+          >
             <XCircle className="h-4 w-4" />
           </Button>
           <Button>
@@ -263,17 +272,19 @@ export default function OrderDetailPage() {
       {/* Order Progress */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2 flex items-center justify-between">
             {statusSteps.map((step, index) => (
               <div key={step} className="flex flex-col items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                  statusSteps.indexOf(order.status) >= index 
-                    ? "bg-primary text-primary-foreground" 
-                    : "bg-muted text-muted-foreground"
-                }`}>
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium ${
+                    statusSteps.indexOf(order.status) >= index
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
                   {index + 1}
                 </div>
-                <span className="text-xs mt-1 capitalize">{step}</span>
+                <span className="mt-1 text-xs capitalize">{step}</span>
               </div>
             ))}
           </div>
@@ -282,7 +293,7 @@ export default function OrderDetailPage() {
       </Card>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6 md:col-span-2">
           {/* Order Summary */}
           <Card>
             <CardHeader>
@@ -292,27 +303,27 @@ export default function OrderDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Package className="h-3 w-3" /> Items
                   </p>
                   <p className="text-2xl font-bold">{order.items_count}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <DollarSign className="h-3 w-3" /> Total Value
                   </p>
                   <p className="text-2xl font-bold">{formatCurrency(order.total_value)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Truck className="h-3 w-3" /> Shipments
                   </p>
                   <p className="text-2xl font-bold">{order.shipments.length}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Calendar className="h-3 w-3" /> Last Updated
                   </p>
                   <p className="text-sm font-medium">{formatDateTime(order.updated_at)}</p>
@@ -335,42 +346,53 @@ export default function OrderDetailPage() {
                 {order.shipments.map((shipment) => (
                   <div
                     key={shipment.id}
-                    className="border rounded-lg p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                    className="hover:bg-muted/50 cursor-pointer rounded-lg border p-4 transition-colors"
                     onClick={() => router.push(`/shipments/${shipment.id}`)}
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="mb-3 flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-semibold">{shipment.tracking_number}</span>
-                          <Badge variant="outline" className={shipmentStatusColors[shipment.status] || shipmentStatusColors.pending}>
+                          <Badge
+                            variant="outline"
+                            className={
+                              shipmentStatusColors[shipment.status] || shipmentStatusColors.pending
+                            }
+                          >
                             {shipment.status.replace("_", " ")}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{shipment.carrier}</p>
+                        <p className="text-muted-foreground text-sm">{shipment.carrier}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">ETA: {formatETA(shipment.eta)}</p>
-                        <p className="text-xs text-muted-foreground">{shipment.eta ? formatShortDate(shipment.eta) : "—"}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {shipment.eta ? formatShortDate(shipment.eta) : "—"}
+                        </p>
                       </div>
                     </div>
-                    
-                    <Progress value={getShipmentProgress(shipment.status)} className="h-1.5 mb-3" />
-                    
+
+                    <Progress value={getShipmentProgress(shipment.status)} className="mb-3 h-1.5" />
+
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="truncate" title={shipment.origin}>{shipment.origin}</span>
+                        <MapPin className="text-muted-foreground h-3.5 w-3.5" />
+                        <span className="truncate" title={shipment.origin}>
+                          {shipment.origin}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5 justify-center">
-                        <Play className="h-3 w-3 text-muted-foreground" />
+                      <div className="flex items-center justify-center gap-1.5">
+                        <Play className="text-muted-foreground h-3 w-3" />
                       </div>
-                      <div className="flex items-center gap-1.5 justify-end">
-                        <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="truncate" title={shipment.destination}>{shipment.destination}</span>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <MapPin className="text-muted-foreground h-3.5 w-3.5" />
+                        <span className="truncate" title={shipment.destination}>
+                          {shipment.destination}
+                        </span>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-4 mt-3 pt-3 border-t text-xs text-muted-foreground">
+
+                    <div className="text-muted-foreground mt-3 flex items-center gap-4 border-t pt-3 text-xs">
                       <span className="flex items-center gap-1">
                         <Weight className="h-3 w-3" /> {shipment.weight_kg} kg
                       </span>
@@ -397,23 +419,25 @@ export default function OrderDetailPage() {
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-primary" />
-                    <div className="h-full w-px bg-border" />
+                    <div className="bg-primary h-3 w-3 rounded-full" />
+                    <div className="bg-border h-full w-px" />
                   </div>
                   <div className="pb-4">
                     <p className="font-medium">Order Created</p>
-                    <p className="text-sm text-muted-foreground">{formatDateTime(order.created_at)}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {formatDateTime(order.created_at)}
+                    </p>
                   </div>
                 </div>
                 {order.status !== "pending" && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-primary" />
-                      <div className="h-full w-px bg-border" />
+                      <div className="bg-primary h-3 w-3 rounded-full" />
+                      <div className="bg-border h-full w-px" />
                     </div>
                     <div className="pb-4">
                       <p className="font-medium">Status Updated</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Changed to {order.status} - {formatDateTime(order.updated_at)}
                       </p>
                     </div>
@@ -422,12 +446,12 @@ export default function OrderDetailPage() {
                 {order.shipments.length > 0 && (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-info" />
-                      <div className="h-full w-px bg-border" />
+                      <div className="bg-info h-3 w-3 rounded-full" />
+                      <div className="bg-border h-full w-px" />
                     </div>
                     <div className="pb-4">
                       <p className="font-medium">Shipments Created</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {order.shipments.length} shipment(s) linked to this order
                       </p>
                     </div>
@@ -436,21 +460,21 @@ export default function OrderDetailPage() {
                 {order.status === "delivered" ? (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-success" />
+                      <div className="bg-success h-3 w-3 rounded-full" />
                     </div>
                     <div>
-                      <p className="font-medium text-success">Delivered</p>
-                      <p className="text-sm text-muted-foreground">Order completed successfully</p>
+                      <p className="text-success font-medium">Delivered</p>
+                      <p className="text-muted-foreground text-sm">Order completed successfully</p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full border-2 border-muted-foreground/30" />
+                      <div className="border-muted-foreground/30 h-3 w-3 rounded-full border-2" />
                     </div>
                     <div>
-                      <p className="font-medium text-muted-foreground">Pending Completion</p>
-                      <p className="text-sm text-muted-foreground">Awaiting fulfillment</p>
+                      <p className="text-muted-foreground font-medium">Pending Completion</p>
+                      <p className="text-muted-foreground text-sm">Awaiting fulfillment</p>
                     </div>
                   </div>
                 )}
@@ -471,17 +495,17 @@ export default function OrderDetailPage() {
             <CardContent className="space-y-3">
               <div>
                 <p className="font-medium">{order.customer.name}</p>
-                <p className="text-sm text-muted-foreground">{order.customer.email}</p>
+                <p className="text-muted-foreground text-sm">{order.customer.email}</p>
               </div>
               {order.customer.phone && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p className="text-muted-foreground text-sm">Phone</p>
                   <p className="text-sm">{order.customer.phone}</p>
                 </div>
               )}
               {order.customer.address && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="text-muted-foreground text-sm">Address</p>
                   <p className="text-sm">{order.customer.address}</p>
                 </div>
               )}
@@ -502,19 +526,26 @@ export default function OrderDetailPage() {
                 {customerOrders.map((historyOrder) => (
                   <div
                     key={historyOrder.id}
-                    className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50 cursor-pointer transition-colors"
+                    className="hover:bg-muted/50 flex cursor-pointer items-center justify-between rounded-md p-2 transition-colors"
                     onClick={() => router.push(`/orders/${historyOrder.id}`)}
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">{historyOrder.order_number}</p>
-                      <p className="text-xs text-muted-foreground">{formatShortDate(historyOrder.created_at)}</p>
+                      <p className="truncate text-sm font-medium">{historyOrder.order_number}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {formatShortDate(historyOrder.created_at)}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className={`text-xs ${statusColors[historyOrder.status]}`}>
+                      <Badge
+                        variant="outline"
+                        className={`text-xs ${statusColors[historyOrder.status]}`}
+                      >
                         {historyOrder.status}
                       </Badge>
-                      <span className="text-sm font-medium">{formatCurrency(historyOrder.total_value)}</span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">
+                        {formatCurrency(historyOrder.total_value)}
+                      </span>
+                      <ChevronRight className="text-muted-foreground h-4 w-4" />
                     </div>
                   </div>
                 ))}

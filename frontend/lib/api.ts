@@ -78,15 +78,15 @@ export async function getCustomers() {
 }
 
 export async function getCustomer(id: number) {
-  return fetchApi<CustomerDetail>(`/api/v1/customers/${id}`);
+  return fetchApi<CustomerDetail>(`/api/v1/customers/${id}`)
 }
 
 export async function getCustomerOrders(customerId: number, excludeOrderId?: number, limit = 5) {
-  const searchParams = new URLSearchParams();
-  if (excludeOrderId) searchParams.set("exclude_order_id", excludeOrderId.toString());
-  if (limit) searchParams.set("limit", limit.toString());
-  const query = searchParams.toString();
-  return fetchApi<OrderBasic[]>(`/api/v1/customers/${customerId}/orders${query ? `?${query}` : ""}`);
+  const searchParams = new URLSearchParams()
+  if (excludeOrderId) searchParams.set("exclude_order_id", excludeOrderId.toString())
+  if (limit) searchParams.set("limit", limit.toString())
+  const query = searchParams.toString()
+  return fetchApi<OrderBasic[]>(`/api/v1/customers/${customerId}/orders${query ? `?${query}` : ""}`)
 }
 
 // Orders
@@ -332,22 +332,22 @@ export interface Customer {
 }
 
 export interface ShipmentSummary {
-  id: number;
-  tracking_number: string;
-  origin: string;
-  destination: string;
-  carrier: string;
-  status: string;
-  eta: string | null;
-  created_at: string;
+  id: number
+  tracking_number: string
+  origin: string
+  destination: string
+  carrier: string
+  status: string
+  eta: string | null
+  created_at: string
 }
 
 export interface CustomerDetail extends Customer {
-  orders: OrderBasic[];
-  shipments: ShipmentSummary[];
-  total_orders: number;
-  total_spent: number;
-  total_shipments: number;
+  orders: OrderBasic[]
+  shipments: ShipmentSummary[]
+  total_orders: number
+  total_spent: number
+  total_shipments: number
 }
 
 export interface Shipment {
@@ -396,13 +396,13 @@ export interface ShipmentBasic {
 }
 
 export interface OrderBasic {
-  id: number;
-  order_number: string;
-  items_count: number;
-  total_value: number;
-  priority: string;
-  status: string;
-  created_at: string;
+  id: number
+  order_number: string
+  items_count: number
+  total_value: number
+  priority: string
+  status: string
+  created_at: string
 }
 
 export interface OrderDetail extends Order {

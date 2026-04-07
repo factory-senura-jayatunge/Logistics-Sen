@@ -427,7 +427,7 @@ export default function VehicleDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Set Status</p>
+                <p className="text-muted-foreground mb-2 text-sm">Set Status</p>
                 <div className="flex flex-wrap gap-2">
                   <Button
                     size="sm"
@@ -457,7 +457,7 @@ export default function VehicleDetailPage() {
               </div>
               <Separator />
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Fuel</p>
+                <p className="text-muted-foreground mb-2 text-sm">Fuel</p>
                 <Button
                   size="sm"
                   variant="outline"
@@ -465,7 +465,7 @@ export default function VehicleDetailPage() {
                   disabled={actionLoading !== null || vehicle.fuel_level === 100}
                   className="w-full"
                 >
-                  <Fuel className="h-4 w-4 mr-2" />
+                  <Fuel className="mr-2 h-4 w-4" />
                   {actionLoading === "refuel" ? "Refueling..." : "Mark as Refueled"}
                 </Button>
               </div>

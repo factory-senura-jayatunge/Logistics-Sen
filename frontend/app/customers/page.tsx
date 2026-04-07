@@ -58,9 +58,9 @@ export default function CustomersPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex h-96 items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <AlertTriangle className="text-destructive mx-auto mb-4 h-12 w-12" />
           <h2 className="text-lg font-semibold">Failed to load customers</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -69,18 +69,20 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex h-full flex-col">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Customers</h1>
           <p className="text-muted-foreground">Manage customer accounts and view history</p>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 mb-6">
+      <div className="mb-6 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Customers</CardTitle>
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              Total Customers
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -90,27 +92,39 @@ export default function CustomersPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">With Contact Info</CardTitle>
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              With Contact Info
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? <Skeleton className="h-8 w-12" /> : customers.filter(c => c.phone).length}
+              {loading ? (
+                <Skeleton className="h-8 w-12" />
+              ) : (
+                customers.filter((c) => c.phone).length
+              )}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">With Address</CardTitle>
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              With Address
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? <Skeleton className="h-8 w-12" /> : customers.filter(c => c.address).length}
+              {loading ? (
+                <Skeleton className="h-8 w-12" />
+              ) : (
+                customers.filter((c) => c.address).length
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="flex-1 flex flex-col min-h-0">
+      <Card className="flex min-h-0 flex-1 flex-col">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -140,16 +154,26 @@ export default function CustomersPage() {
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-48" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : filteredCustomers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-muted-foreground py-8 text-center">
                     No customers found
                   </TableCell>
                 </TableRow>
@@ -157,19 +181,19 @@ export default function CustomersPage() {
                 filteredCustomers.map((customer) => (
                   <TableRow
                     key={customer.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="hover:bg-muted/50 cursor-pointer"
                     onClick={() => router.push(`/customers/${customer.id}`)}
                   >
                     <TableCell className="font-medium">{customer.name}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <div className="text-muted-foreground flex items-center gap-1.5">
                         <Mail className="h-3.5 w-3.5" />
                         {customer.email}
                       </div>
                     </TableCell>
                     <TableCell>
                       {customer.phone ? (
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <div className="text-muted-foreground flex items-center gap-1.5">
                           <Phone className="h-3.5 w-3.5" />
                           {customer.phone}
                         </div>
@@ -179,7 +203,7 @@ export default function CustomersPage() {
                     </TableCell>
                     <TableCell>
                       {customer.address ? (
-                        <div className="flex items-center gap-1.5 text-muted-foreground max-w-xs truncate">
+                        <div className="text-muted-foreground flex max-w-xs items-center gap-1.5 truncate">
                           <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
                           <span className="truncate">{customer.address}</span>
                         </div>
@@ -188,7 +212,7 @@ export default function CustomersPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <div className="text-muted-foreground flex items-center gap-1.5">
                         <Calendar className="h-3.5 w-3.5" />
                         {formatDate(customer.created_at)}
                       </div>
