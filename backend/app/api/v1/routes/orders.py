@@ -19,7 +19,7 @@ def get_orders(
     limit: int = 100,
     status: Optional[str] = None,
     priority: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     query = db.query(models.Order).options(joinedload(models.Order.customer))
     if status:
@@ -31,10 +31,12 @@ def get_orders(
 
 @router.get("/{order_id}", response_model=schemas.OrderDetail)
 def get_order(order_id: int, db: Session = Depends(get_db)):
-    order = db.query(models.Order).options(
-        joinedload(models.Order.customer),
-        joinedload(models.Order.shipments)
-    ).filter(models.Order.id == order_id).first()
+    order = (
+        db.query(models.Order)
+        .options(joinedload(models.Order.customer), joinedload(models.Order.shipments))
+        .filter(models.Order.id == order_id)
+        .first()
+    )
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
