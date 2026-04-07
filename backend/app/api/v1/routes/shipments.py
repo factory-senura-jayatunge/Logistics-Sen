@@ -7,6 +7,7 @@ from app.db.database import get_db
 from app.logging import get_logger
 from app.models import models
 from app.schemas import schemas
+from app.ws.manager import ws_manager
 
 logger = get_logger("shipments")
 
@@ -84,7 +85,7 @@ def update_shipment(
 
 
 @router.patch("/{shipment_id}/status")
-def update_shipment_status(
+async def update_shipment_status(
     shipment_id: int, status: str = Query(...), db: Session = Depends(get_db)
 ):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
@@ -99,6 +100,16 @@ def update_shipment_status(
         shipment_id=shipment_id,
         old_status=old_status,
         new_status=status,
+    )
+    await ws_manager.broadcast_status_update(
+        shipment_id,
+        {
+            "type": "status_update",
+            "shipment_id": shipment_id,
+            "old_status": old_status,
+            "new_status": status,
+            "tracking_number": db_shipment.tracking_number,
+        },
     )
     return {"message": f"Shipment status updated to {status}"}
 

@@ -205,6 +205,53 @@ export async function search(query: string, limit = 10) {
   return fetchApi<SearchResult[]>(`/api/v1/search?q=${encodeURIComponent(query)}&limit=${limit}`)
 }
 
+// Analytics
+export async function getDeliveryTrends(days = 90) {
+  return fetchApi<DeliveryTrend[]>(`/api/v1/analytics/delivery-trends?days=${days}`)
+}
+
+export async function getCarrierPerformance() {
+  return fetchApi<CarrierPerformance[]>("/api/v1/analytics/carrier-performance")
+}
+
+export async function getFacilityUtilization() {
+  return fetchApi<FacilityUtilization[]>("/api/v1/analytics/facility-utilization")
+}
+
+export async function getCustomerOrderFrequency(limit = 10) {
+  return fetchApi<CustomerOrderFrequency[]>(
+    `/api/v1/analytics/customer-order-frequency?limit=${limit}`
+  )
+}
+
+export function getAnalyticsCsvUrl(report: string) {
+  return `${API_BASE_URL}/api/v1/analytics/export/csv?report=${report}`
+}
+
+// Route Planning
+export async function getOptimizedRoute(vehicleId: number) {
+  return fetchApi<OptimizedRoute>(`/api/v1/routes/optimize?vehicle_id=${vehicleId}`)
+}
+
+export async function getDispatchSummary() {
+  return fetchApi<DispatchSummary>("/api/v1/routes/dispatch-summary")
+}
+
+// Forecasting
+export async function getDemandForecast(daysAhead = 30) {
+  return fetchApi<DemandForecast>(`/api/v1/forecasting/demand-forecast?days_ahead=${daysAhead}`)
+}
+
+export async function getStockoutAlerts(thresholdDays = 14) {
+  return fetchApi<StockoutAlerts>(
+    `/api/v1/forecasting/stockout-alerts?threshold_days=${thresholdDays}`
+  )
+}
+
+export async function getReorderRecommendations() {
+  return fetchApi<ReorderRecommendations>("/api/v1/forecasting/reorder-recommendations")
+}
+
 // Bulk Operations
 export interface BulkOperationResult {
   success_count: number
@@ -566,4 +613,147 @@ export interface CreateVehicleData {
   destination?: string
   status: string
   fuel_level: number
+}
+
+export interface DeliveryTrend {
+  week: string
+  total: number
+  delivered: number
+  delayed: number
+  on_time_rate: number
+}
+
+export interface CarrierPerformance {
+  carrier: string
+  total_shipments: number
+  delivered: number
+  delayed: number
+  in_transit: number
+  avg_weight: number
+  on_time_rate: number
+}
+
+export interface FacilityUtilization {
+  id: number
+  name: string
+  code: string
+  type: string
+  city: string
+  state: string
+  capacity_percentage: number
+  staff_count: number
+  status: string
+  inventory_items: number
+  total_stock: number
+  vehicles: number
+}
+
+export interface CustomerOrderFrequency {
+  customer_id: number
+  customer_name: string
+  order_count: number
+  total_value: number
+  avg_order_value: number
+}
+
+// Route Planning Types
+export interface RouteStop {
+  type: string
+  name: string
+  location: string
+  latitude: number
+  longitude: number
+  shipment_id: number | null
+  tracking_number: string | null
+  stop_order: number
+}
+
+export interface RouteVehicle {
+  id: number
+  name: string
+  vehicle_id: string
+  driver: string
+  type: string
+}
+
+export interface OptimizedRoute {
+  vehicle: RouteVehicle
+  stops: RouteStop[]
+  total_distance_km: number
+  estimated_hours: number
+  total_stops: number
+  message?: string
+}
+
+export interface DispatchRegion {
+  region: string
+  count: number
+  total_weight_kg: number
+  shipments: { id: number; tracking_number: string; destination: string; weight_kg: number }[]
+}
+
+export interface DispatchVehicle {
+  id: number
+  vehicle_id: string
+  name: string
+  type: string
+  driver: string
+  current_location: string
+  fuel_level: number
+}
+
+export interface DispatchSummary {
+  available_vehicles: DispatchVehicle[]
+  pending_shipments_count: number
+  regions: DispatchRegion[]
+}
+
+// Forecasting Types
+export interface ForecastItem {
+  item_id: number
+  sku: string
+  name: string
+  category: string
+  facility_id: number
+  current_quantity: number
+  reorder_point: number
+  daily_demand_rate: number
+  projected_demand: number
+  days_until_stockout: number
+  needs_reorder: boolean
+  suggested_reorder_qty: number
+  risk_level: string
+}
+
+export interface DemandForecast {
+  forecast_period_days: number
+  daily_order_rate: number
+  total_items_tracked: number
+  critical_items: number
+  warning_items: number
+  forecasts: ForecastItem[]
+}
+
+export interface StockoutAlerts {
+  threshold_days: number
+  total_alerts: number
+  alerts: ForecastItem[]
+}
+
+export interface ReorderRecommendation {
+  item_id: number
+  sku: string
+  name: string
+  facility_id: number
+  current_quantity: number
+  suggested_quantity: number
+  estimated_cost: number
+  urgency: string
+  days_until_stockout: number
+}
+
+export interface ReorderRecommendations {
+  total_recommendations: number
+  total_estimated_cost: number
+  recommendations: ReorderRecommendation[]
 }

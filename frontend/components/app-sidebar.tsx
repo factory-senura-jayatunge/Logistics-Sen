@@ -11,6 +11,8 @@ import {
   Warehouse,
   Building2,
   Truck,
+  BarChart3,
+  Route,
   Users,
   Settings,
   LogOut,
@@ -53,6 +55,8 @@ const navItems = [
   { title: "Inventory", href: "/inventory", icon: Warehouse },
   { title: "Facilities", href: "/facilities", icon: Building2 },
   { title: "Fleet", href: "/fleet", icon: Truck },
+  { title: "Reports", href: "/reports", icon: BarChart3 },
+  { title: "Route Planner", href: "/routes", icon: Route },
 ]
 
 const settingsItems = [{ title: "Settings", href: "/settings", icon: Settings }]
