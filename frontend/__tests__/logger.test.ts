@@ -30,7 +30,7 @@ describe("Logger", () => {
         status: 200,
         duration_ms: 50,
       }),
-      expect.stringContaining("GET /api/test"),
+      expect.stringContaining("GET /api/test")
     )
   })
 
@@ -43,7 +43,7 @@ describe("Logger", () => {
         action: "click_button",
         page: "dashboard",
       }),
-      expect.stringContaining("click_button"),
+      expect.stringContaining("click_button")
     )
   })
 
@@ -52,7 +52,7 @@ describe("Logger", () => {
     logUserAction("navigate")
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ event: "user_action", action: "navigate" }),
-      expect.any(String),
+      expect.any(String)
     )
   })
 
@@ -67,7 +67,7 @@ describe("Logger", () => {
         error_message: "Test error",
         endpoint: "/api/fail",
       }),
-      "Test error",
+      "Test error"
     )
   })
 
@@ -76,7 +76,7 @@ describe("Logger", () => {
     logError(new Error("Simple error"))
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ event: "error", error_message: "Simple error" }),
-      "Simple error",
+      "Simple error"
     )
   })
 })

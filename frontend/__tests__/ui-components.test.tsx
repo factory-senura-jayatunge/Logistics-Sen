@@ -46,7 +46,14 @@ import {
 } from "@/components/ui/command"
 import { ButtonGroup, ButtonGroupText, ButtonGroupSeparator } from "@/components/ui/button-group"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   AlertDialog,
@@ -71,7 +78,7 @@ describe("Tabs", () => {
         </TabsList>
         <TabsContent value="tab1">Content 1</TabsContent>
         <TabsContent value="tab2">Content 2</TabsContent>
-      </Tabs>,
+      </Tabs>
     )
     expect(screen.getByText("Tab 1")).toBeInTheDocument()
     expect(screen.getByText("Tab 2")).toBeInTheDocument()
@@ -89,7 +96,7 @@ describe("Tabs", () => {
         <TabsContent value="a" className="custom-content">
           Content
         </TabsContent>
-      </Tabs>,
+      </Tabs>
     )
     expect(screen.getByText("A")).toBeInTheDocument()
   })
@@ -125,7 +132,7 @@ describe("Tooltip", () => {
           <TooltipTrigger>Hover me</TooltipTrigger>
           <TooltipContent>Tooltip text</TooltipContent>
         </Tooltip>
-      </TooltipProvider>,
+      </TooltipProvider>
     )
     expect(screen.getByText("Hover me")).toBeInTheDocument()
   })
@@ -160,7 +167,7 @@ describe("Dialog", () => {
     render(
       <Dialog>
         <DialogTrigger>Open</DialogTrigger>
-      </Dialog>,
+      </Dialog>
     )
     expect(screen.getByText("Open")).toBeInTheDocument()
   })
@@ -171,7 +178,7 @@ describe("DropdownMenu", () => {
     render(
       <DropdownMenu>
         <DropdownMenuTrigger>Menu</DropdownMenuTrigger>
-      </DropdownMenu>,
+      </DropdownMenu>
     )
     expect(screen.getByText("Menu")).toBeInTheDocument()
   })
@@ -186,7 +193,7 @@ describe("DropdownMenu", () => {
           <DropdownMenuItem>Edit</DropdownMenuItem>
           <DropdownMenuItem>Delete</DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>,
+      </DropdownMenu>
     )
     expect(screen.getByText("Actions")).toBeInTheDocument()
     expect(screen.getByText("Edit")).toBeInTheDocument()
@@ -200,7 +207,7 @@ describe("DropdownMenu", () => {
         <DropdownMenuContent>
           <DropdownMenuItem inset>Inset Item</DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>,
+      </DropdownMenu>
     )
     expect(screen.getByText("Inset Item")).toBeInTheDocument()
   })
@@ -212,7 +219,7 @@ describe("DropdownMenu", () => {
         <DropdownMenuContent>
           <DropdownMenuLabel inset>Inset Label</DropdownMenuLabel>
         </DropdownMenuContent>
-      </DropdownMenu>,
+      </DropdownMenu>
     )
     expect(screen.getByText("Inset Label")).toBeInTheDocument()
   })
@@ -224,7 +231,7 @@ describe("DropdownMenu", () => {
         <DropdownMenuContent className="w-48">
           <DropdownMenuItem className="text-red-500">Custom</DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>,
+      </DropdownMenu>
     )
     expect(screen.getByText("Custom")).toBeInTheDocument()
   })
@@ -237,7 +244,7 @@ describe("Select", () => {
         <SelectTrigger>
           <SelectValue placeholder="Pick one" />
         </SelectTrigger>
-      </Select>,
+      </Select>
     )
     expect(screen.getByText("Pick one")).toBeInTheDocument()
   })
@@ -248,7 +255,7 @@ describe("Select", () => {
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select" />
         </SelectTrigger>
-      </Select>,
+      </Select>
     )
     expect(screen.getByText("Select")).toBeInTheDocument()
   })
@@ -259,7 +266,7 @@ describe("Sheet", () => {
     render(
       <Sheet>
         <SheetTrigger>Open Sheet</SheetTrigger>
-      </Sheet>,
+      </Sheet>
     )
     expect(screen.getByText("Open Sheet")).toBeInTheDocument()
   })
@@ -277,7 +284,7 @@ describe("Sheet", () => {
             <SheetClose>Close</SheetClose>
           </SheetFooter>
         </SheetContent>
-      </Sheet>,
+      </Sheet>
     )
     expect(screen.getByText("Sheet Title")).toBeInTheDocument()
     expect(screen.getByText("Sheet body")).toBeInTheDocument()
@@ -291,7 +298,7 @@ describe("Sheet", () => {
             <SheetTitle>Left Sheet</SheetTitle>
           </SheetHeader>
         </SheetContent>
-      </Sheet>,
+      </Sheet>
     )
     expect(screen.getByText("Left Sheet")).toBeInTheDocument()
   })
@@ -304,7 +311,7 @@ describe("Sheet", () => {
             <SheetTitle>Top Sheet</SheetTitle>
           </SheetHeader>
         </SheetContent>
-      </Sheet>,
+      </Sheet>
     )
     expect(screen.getByText("Top Sheet")).toBeInTheDocument()
   })
@@ -317,7 +324,7 @@ describe("Sheet", () => {
             <SheetTitle>Bottom Sheet</SheetTitle>
           </SheetHeader>
         </SheetContent>
-      </Sheet>,
+      </Sheet>
     )
     expect(screen.getByText("Bottom Sheet")).toBeInTheDocument()
   })
@@ -332,7 +339,7 @@ describe("Dialog extended", () => {
             <DialogTitle>No Close</DialogTitle>
           </DialogHeader>
         </DialogContent>
-      </Dialog>,
+      </Dialog>
     )
     expect(screen.getByText("No Close")).toBeInTheDocument()
   })
@@ -350,7 +357,7 @@ describe("Dialog extended", () => {
             <DialogClose>Close</DialogClose>
           </DialogFooter>
         </DialogContent>
-      </Dialog>,
+      </Dialog>
     )
     expect(screen.getByText("My Dialog")).toBeInTheDocument()
     expect(screen.getByText("Some description")).toBeInTheDocument()
@@ -386,7 +393,7 @@ describe("Command", () => {
             <CommandItem>Item 3</CommandItem>
           </CommandGroup>
         </CommandList>
-      </Command>,
+      </Command>
     )
     expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument()
     expect(screen.getByText("Item 1")).toBeInTheDocument()
@@ -400,7 +407,7 @@ describe("Command", () => {
         <CommandList>
           <CommandEmpty>Nothing found</CommandEmpty>
         </CommandList>
-      </Command>,
+      </Command>
     )
     expect(screen.getByPlaceholderText("Type...")).toBeInTheDocument()
   })
@@ -413,7 +420,7 @@ describe("ButtonGroup", () => {
         <Button>A</Button>
         <ButtonGroupSeparator />
         <Button>B</Button>
-      </ButtonGroup>,
+      </ButtonGroup>
     )
     expect(screen.getByText("A")).toBeInTheDocument()
     expect(screen.getByText("B")).toBeInTheDocument()
@@ -424,7 +431,7 @@ describe("ButtonGroup", () => {
       <ButtonGroup orientation="vertical">
         <Button>X</Button>
         <Button>Y</Button>
-      </ButtonGroup>,
+      </ButtonGroup>
     )
     expect(screen.getByText("X")).toBeInTheDocument()
   })
@@ -433,7 +440,7 @@ describe("ButtonGroup", () => {
     render(
       <ButtonGroup>
         <ButtonGroupText>Label</ButtonGroupText>
-      </ButtonGroup>,
+      </ButtonGroup>
     )
     expect(screen.getByText("Label")).toBeInTheDocument()
   })
@@ -444,7 +451,7 @@ describe("ButtonGroup", () => {
         <ButtonGroupText asChild>
           <span>AsChild</span>
         </ButtonGroupText>
-      </ButtonGroup>,
+      </ButtonGroup>
     )
     expect(screen.getByText("AsChild")).toBeInTheDocument()
   })
@@ -453,7 +460,7 @@ describe("ButtonGroup", () => {
     const { container } = render(
       <ButtonGroup>
         <ButtonGroupSeparator orientation="horizontal" />
-      </ButtonGroup>,
+      </ButtonGroup>
     )
     expect(container.querySelector("[data-slot='button-group-separator']")).toBeInTheDocument()
   })
@@ -509,7 +516,7 @@ describe("Button", () => {
     render(
       <Button asChild>
         <a href="#">Link Button</a>
-      </Button>,
+      </Button>
     )
     expect(screen.getByText("Link Button")).toBeInTheDocument()
   })
@@ -554,7 +561,7 @@ describe("AlertDialog", () => {
     render(
       <AlertDialog>
         <AlertDialogTrigger>Delete</AlertDialogTrigger>
-      </AlertDialog>,
+      </AlertDialog>
     )
     expect(screen.getByText("Delete")).toBeInTheDocument()
   })
@@ -572,7 +579,7 @@ describe("AlertDialog", () => {
             <AlertDialogAction>Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>,
+      </AlertDialog>
     )
     expect(screen.getByText("Are you sure?")).toBeInTheDocument()
     expect(screen.getByText("This action cannot be undone.")).toBeInTheDocument()
@@ -608,7 +615,7 @@ describe("Card", () => {
         </CardHeader>
         <CardContent>Body</CardContent>
         <CardFooter>Footer</CardFooter>
-      </Card>,
+      </Card>
     )
     expect(screen.getByText("Title")).toBeInTheDocument()
     expect(screen.getByText("Description")).toBeInTheDocument()
@@ -620,7 +627,7 @@ describe("Card", () => {
     render(
       <Card className="custom-card">
         <CardContent>Content</CardContent>
-      </Card>,
+      </Card>
     )
     expect(screen.getByText("Content")).toBeInTheDocument()
   })

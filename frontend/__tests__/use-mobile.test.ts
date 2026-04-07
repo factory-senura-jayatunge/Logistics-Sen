@@ -54,7 +54,11 @@ describe("useIsMobile", () => {
     expect(result.current).toBe(false)
 
     act(() => {
-      Object.defineProperty(window, "innerWidth", { value: 500, writable: true, configurable: true })
+      Object.defineProperty(window, "innerWidth", {
+        value: 500,
+        writable: true,
+        configurable: true,
+      })
       const handler = listeners.get("change")
       if (handler) handler()
     })

@@ -72,17 +72,14 @@ describe("API client", () => {
       expect(result).toEqual(mockData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/dashboard/stats"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
     it("getRecentShipments fetches with limit", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
       await getRecentShipments(10)
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("limit=10"),
-        expect.any(Object),
-      )
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining("limit=10"), expect.any(Object))
     })
 
     it("getShipmentStatusBreakdown fetches breakdown", async () => {
@@ -94,10 +91,7 @@ describe("API client", () => {
     it("getShipmentVolume fetches with days param", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
       await getShipmentVolume(7)
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("days=7"),
-        expect.any(Object),
-      )
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining("days=7"), expect.any(Object))
     })
   })
 
@@ -107,7 +101,7 @@ describe("API client", () => {
       await getShipments()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/shipments"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -116,17 +110,14 @@ describe("API client", () => {
       await getShipments({ status: "in_transit" })
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("status=in_transit"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
     it("getShipments with limit", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
       await getShipments({ limit: 5 })
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("limit=5"),
-        expect.any(Object),
-      )
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining("limit=5"), expect.any(Object))
     })
 
     it("getShipment fetches by id", async () => {
@@ -144,12 +135,12 @@ describe("API client", () => {
         weight_kg: 10,
       }
       vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ id: 1, ...shipmentData }) as Response,
+        mockJsonResponse({ id: 1, ...shipmentData }) as Response
       )
       await createShipment(shipmentData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/shipments"),
-        expect.objectContaining({ method: "POST" }),
+        expect.objectContaining({ method: "POST" })
       )
     })
   })
@@ -160,7 +151,7 @@ describe("API client", () => {
       await getCustomers()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/customers"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -169,7 +160,7 @@ describe("API client", () => {
       await getCustomer(5)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/customers/5"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -178,7 +169,7 @@ describe("API client", () => {
       await getCustomerOrders(1, 10, 3)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("exclude_order_id=10"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -187,7 +178,7 @@ describe("API client", () => {
       await getCustomerOrders(1)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/customers/1/orders"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
   })
@@ -198,7 +189,7 @@ describe("API client", () => {
       await getOrders()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/orders"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -207,7 +198,7 @@ describe("API client", () => {
       await getOrders({ status: "pending", priority: "high" })
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("status=pending"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -216,7 +207,7 @@ describe("API client", () => {
       await getOrder(3)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/orders/3"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -231,7 +222,7 @@ describe("API client", () => {
       await createOrder(orderData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/orders"),
-        expect.objectContaining({ method: "POST" }),
+        expect.objectContaining({ method: "POST" })
       )
     })
   })
@@ -242,7 +233,7 @@ describe("API client", () => {
       await getInventoryItems()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/inventory"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -251,7 +242,7 @@ describe("API client", () => {
       await getInventoryItems({ facility_id: 1, status: "low_stock" })
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("facility_id=1"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -260,7 +251,7 @@ describe("API client", () => {
       await getInventoryItem(1)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/inventory/1"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -269,7 +260,7 @@ describe("API client", () => {
       await getLowStockItems()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/inventory/low-stock"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -288,7 +279,7 @@ describe("API client", () => {
       await updateInventoryItem(1, updateData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/inventory/1"),
-        expect.objectContaining({ method: "PUT" }),
+        expect.objectContaining({ method: "PUT" })
       )
     })
   })
@@ -299,7 +290,7 @@ describe("API client", () => {
       await getFacilities()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/facilities"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -308,7 +299,7 @@ describe("API client", () => {
       await getFacility(1)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/facilities/1"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
   })
@@ -319,17 +310,14 @@ describe("API client", () => {
       await getVehicles()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/vehicles"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
     it("getVehicles with type and status", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
       await getVehicles({ type: "truck", status: "idle" })
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("type=truck"),
-        expect.any(Object),
-      )
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining("type=truck"), expect.any(Object))
     })
 
     it("getVehicle fetches by id", async () => {
@@ -337,7 +325,7 @@ describe("API client", () => {
       await getVehicle(1)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/vehicles/1"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -355,7 +343,7 @@ describe("API client", () => {
       await createVehicle(vehicleData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/vehicles"),
-        expect.objectContaining({ method: "POST" }),
+        expect.objectContaining({ method: "POST" })
       )
     })
 
@@ -373,7 +361,7 @@ describe("API client", () => {
       await updateVehicle(1, vehicleData)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/vehicles/1"),
-        expect.objectContaining({ method: "PUT" }),
+        expect.objectContaining({ method: "PUT" })
       )
     })
   })
@@ -384,7 +372,7 @@ describe("API client", () => {
       await getUsers()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/users"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
   })
@@ -395,7 +383,7 @@ describe("API client", () => {
       await getNotifications()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/notifications"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
@@ -404,46 +392,37 @@ describe("API client", () => {
       await getNotifications({ unread_only: true })
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("unread_only=true"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
     it("getNotifications with limit", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
       await getNotifications({ limit: 5 })
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("limit=5"),
-        expect.any(Object),
-      )
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining("limit=5"), expect.any(Object))
     })
 
     it("getUnreadCount fetches count", async () => {
-      vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ count: 3 }) as Response,
-      )
+      vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ count: 3 }) as Response)
       const result = await getUnreadCount()
       expect(result).toEqual({ count: 3 })
     })
 
     it("markNotificationAsRead sends PATCH", async () => {
-      vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ message: "ok" }) as Response,
-      )
+      vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ message: "ok" }) as Response)
       await markNotificationAsRead(1)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/notifications/1/read"),
-        expect.objectContaining({ method: "PATCH" }),
+        expect.objectContaining({ method: "PATCH" })
       )
     })
 
     it("markAllNotificationsAsRead sends PATCH", async () => {
-      vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ message: "ok" }) as Response,
-      )
+      vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ message: "ok" }) as Response)
       await markAllNotificationsAsRead()
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/notifications/read-all"),
-        expect.objectContaining({ method: "PATCH" }),
+        expect.objectContaining({ method: "PATCH" })
       )
     })
   })
@@ -454,40 +433,37 @@ describe("API client", () => {
       await search("test query")
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("q=test%20query"),
-        expect.any(Object),
+        expect.any(Object)
       )
     })
 
     it("search with custom limit", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
       await search("test", 20)
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("limit=20"),
-        expect.any(Object),
-      )
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining("limit=20"), expect.any(Object))
     })
   })
 
   describe("Bulk operations - Orders", () => {
     it("bulkDeleteOrders posts ids", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ success_count: 2, failed_count: 0, errors: [] }) as Response,
+        mockJsonResponse({ success_count: 2, failed_count: 0, errors: [] }) as Response
       )
       await bulkDeleteOrders([1, 2])
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/bulk/orders/delete"),
-        expect.objectContaining({ method: "POST" }),
+        expect.objectContaining({ method: "POST" })
       )
     })
 
     it("bulkUpdateOrderStatus patches ids and status", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ success_count: 1, failed_count: 0, errors: [] }) as Response,
+        mockJsonResponse({ success_count: 1, failed_count: 0, errors: [] }) as Response
       )
       await bulkUpdateOrderStatus([1], "shipped")
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/bulk/orders/status"),
-        expect.objectContaining({ method: "PATCH" }),
+        expect.objectContaining({ method: "PATCH" })
       )
     })
 
@@ -526,23 +502,23 @@ describe("API client", () => {
   describe("Bulk operations - Shipments", () => {
     it("bulkDeleteShipments posts ids", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ success_count: 1, failed_count: 0, errors: [] }) as Response,
+        mockJsonResponse({ success_count: 1, failed_count: 0, errors: [] }) as Response
       )
       await bulkDeleteShipments([1])
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/bulk/shipments/delete"),
-        expect.objectContaining({ method: "POST" }),
+        expect.objectContaining({ method: "POST" })
       )
     })
 
     it("bulkUpdateShipmentStatus patches", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ success_count: 1, failed_count: 0, errors: [] }) as Response,
+        mockJsonResponse({ success_count: 1, failed_count: 0, errors: [] }) as Response
       )
       await bulkUpdateShipmentStatus([1], "delivered")
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/bulk/shipments/status"),
-        expect.objectContaining({ method: "PATCH" }),
+        expect.objectContaining({ method: "PATCH" })
       )
     })
 
@@ -581,12 +557,12 @@ describe("API client", () => {
   describe("Bulk operations - Inventory", () => {
     it("bulkDeleteInventory posts ids", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse({ success_count: 2, failed_count: 0, errors: [] }) as Response,
+        mockJsonResponse({ success_count: 2, failed_count: 0, errors: [] }) as Response
       )
       await bulkDeleteInventory([1, 2])
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("/api/v1/bulk/inventory/delete"),
-        expect.objectContaining({ method: "POST" }),
+        expect.objectContaining({ method: "POST" })
       )
     })
 
@@ -624,9 +600,7 @@ describe("API client", () => {
 
   describe("Error handling", () => {
     it("throws on non-ok response", async () => {
-      vi.spyOn(global, "fetch").mockResolvedValue(
-        mockJsonResponse(null, false, 500) as Response,
-      )
+      vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse(null, false, 500) as Response)
       await expect(getDashboardStats()).rejects.toThrow("API error: 500")
     })
 
