@@ -75,4 +75,4 @@ jobs:
         run: python seed.py
 
       - name: Run tests with coverage
-        run: pytest -v --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=30
+        run: pytest -v --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=80

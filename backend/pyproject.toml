@@ -53,7 +53,7 @@ staticmethod-decorators = ["staticmethod"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=30 -p randomly"
+addopts = "-v --tb=short --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=80 -p randomly"
 
 [tool.mypy]
 python_version = "3.9"
