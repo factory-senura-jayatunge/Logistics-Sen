@@ -1,8 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
+
 from app.db.database import get_db
+from app.logging import get_logger
 from app.models import models
 from app.schemas import schemas
+
+logger = get_logger("customers")
 
 router = APIRouter(prefix="/customers", tags=["customers"])
 
@@ -20,9 +24,9 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
     ).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
-    
+
     total_spent = sum(order.total_value for order in customer.orders)
-    
+
     return schemas.CustomerDetail(
         id=customer.id,
         name=customer.name,
@@ -48,11 +52,11 @@ def get_customer_orders(
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
-    
+
     query = db.query(models.Order).filter(models.Order.customer_id == customer_id)
     if exclude_order_id:
         query = query.filter(models.Order.id != exclude_order_id)
-    
+
     return query.order_by(models.Order.created_at.desc()).limit(limit).all()
 
 
@@ -62,6 +66,7 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
     db.add(db_customer)
     db.commit()
     db.refresh(db_customer)
+    logger.info("customer_created", customer_id=db_customer.id, email=db_customer.email)
     return db_customer
 
 
@@ -69,11 +74,13 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
 def update_customer(customer_id: int, customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not db_customer:
+        logger.warning("customer_not_found", customer_id=customer_id, action="update")
         raise HTTPException(status_code=404, detail="Customer not found")
     for key, value in customer.model_dump().items():
         setattr(db_customer, key, value)
     db.commit()
     db.refresh(db_customer)
+    logger.info("customer_updated", customer_id=customer_id)
     return db_customer
 
 
@@ -81,7 +88,9 @@ def update_customer(customer_id: int, customer: schemas.CustomerCreate, db: Sess
 def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not db_customer:
+        logger.warning("customer_not_found", customer_id=customer_id, action="delete")
         raise HTTPException(status_code=404, detail="Customer not found")
     db.delete(db_customer)
     db.commit()
+    logger.info("customer_deleted", customer_id=customer_id)
     return {"message": "Customer deleted"}
