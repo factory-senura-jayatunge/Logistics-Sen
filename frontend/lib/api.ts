@@ -193,6 +193,108 @@ export async function search(query: string, limit = 10) {
   return fetchApi<SearchResult[]>(`/api/v1/search?q=${encodeURIComponent(query)}&limit=${limit}`)
 }
 
+// Bulk Operations
+export interface BulkOperationResult {
+  success_count: number
+  failed_count: number
+  errors: Array<{ id?: number; row?: number; error: string }>
+}
+
+export interface CSVImportResult {
+  imported: number
+  skipped: number
+  errors: Array<{ row: number; error: string }>
+}
+
+// Orders bulk operations
+export async function bulkDeleteOrders(ids: number[]) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/orders/delete", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  })
+}
+
+export async function bulkUpdateOrderStatus(ids: number[], status: string) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/orders/status", {
+    method: "PATCH",
+    body: JSON.stringify({ ids, status }),
+  })
+}
+
+export async function exportOrdersCSV(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/orders/export`)
+  if (!response.ok) throw new Error("Failed to export orders")
+  return response.blob()
+}
+
+export async function importOrdersCSV(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/orders/import`, {
+    method: "POST",
+    body: formData,
+  })
+  if (!response.ok) throw new Error("Failed to import orders")
+  return response.json() as Promise<CSVImportResult>
+}
+
+// Shipments bulk operations
+export async function bulkDeleteShipments(ids: number[]) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/shipments/delete", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  })
+}
+
+export async function bulkUpdateShipmentStatus(ids: number[], status: string) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/shipments/status", {
+    method: "PATCH",
+    body: JSON.stringify({ ids, status }),
+  })
+}
+
+export async function exportShipmentsCSV(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/shipments/export`)
+  if (!response.ok) throw new Error("Failed to export shipments")
+  return response.blob()
+}
+
+export async function importShipmentsCSV(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/shipments/import`, {
+    method: "POST",
+    body: formData,
+  })
+  if (!response.ok) throw new Error("Failed to import shipments")
+  return response.json() as Promise<CSVImportResult>
+}
+
+// Inventory bulk operations
+export async function bulkDeleteInventory(ids: number[]) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/inventory/delete", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  })
+}
+
+export async function exportInventoryCSV(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/inventory/export`)
+  if (!response.ok) throw new Error("Failed to export inventory")
+  return response.blob()
+}
+
+export async function importInventoryCSV(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/inventory/import`, {
+    method: "POST",
+    body: formData,
+  })
+  if (!response.ok) throw new Error("Failed to import inventory")
+  return response.json() as Promise<CSVImportResult>
+}
+
 // Types
 export interface DashboardStats {
   total_shipments: number
