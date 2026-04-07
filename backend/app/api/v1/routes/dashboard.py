@@ -21,6 +21,12 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     total_orders = db.query(models.Order).count()
     orders_pending = db.query(models.Order).filter(models.Order.status == "pending").count()
 
+    current_year = datetime.utcnow().year
+    total_orders_shipped_this_year = db.query(models.Order).filter(
+        models.Order.status == "shipped",
+        func.extract("year", models.Order.updated_at) == current_year,
+    ).count()
+
     total_inventory_items = db.query(models.InventoryItem).count()
     low_stock_items = db.query(models.InventoryItem).filter(
         models.InventoryItem.status.in_(["low_stock", "out_of_stock"])
@@ -38,6 +44,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         shipments_delayed=shipments_delayed,
         total_orders=total_orders,
         orders_pending=orders_pending,
+        total_orders_shipped_this_year=total_orders_shipped_this_year,
         total_inventory_items=total_inventory_items,
         low_stock_items=low_stock_items,
         total_vehicles=total_vehicles,

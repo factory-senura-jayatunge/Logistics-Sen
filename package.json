@@ -21,6 +21,7 @@
     "setup:frontend": "pnpm --filter frontend install",
     "seed": "cd backend && .venv/bin/python seed.py",
     "db:reset": "cd backend && rm -f acme_logistics.db && .venv/bin/python seed.py",
+    "test:backend:cov": "cd backend && .venv/bin/pytest --cov=app --cov-report=term-missing",
     "prepare": "husky"
   },
   "devDependencies": {
