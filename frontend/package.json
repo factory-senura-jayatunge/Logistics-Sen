@@ -12,7 +12,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "knip": "knip",
+    "knip:fix": "knip --fix"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -58,6 +60,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.6",
     "jsdom": "^25.0.1",
+    "knip": "^6.3.0",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^4",

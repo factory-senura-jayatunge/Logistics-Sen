@@ -1,0 +1,8 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["app/**/page.tsx", "app/**/layout.tsx", "app/globals.css"],
+  "project": ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}", "lib/**/*.ts", "hooks/**/*.ts"],
+  "next": {
+    "entry": ["next.config.ts", "app/**/page.tsx", "app/**/layout.tsx"]
+  }
+}
