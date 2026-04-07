@@ -9,7 +9,9 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./__tests__/setup.ts"],
     pool: "threads",
-    reporters: ["verbose"],
+    reporters: ["verbose", "hanging-process"],
+    logHeapUsage: true,
+    retry: 2,
     coverage: {
       provider: "v8",
       reporter: ["text", "text-summary", "lcov"],
