@@ -1,6 +1,8 @@
 from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
+
 from app.db.database import get_db
 from app.models import models
 from app.schemas import schemas
