@@ -19,7 +19,7 @@ def get_vehicles(
     limit: int = 100,
     type: Optional[str] = None,
     status: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     query = db.query(models.Vehicle)
     if type:
@@ -31,9 +31,12 @@ def get_vehicles(
 
 @router.get("/{vehicle_id}", response_model=schemas.VehicleWithFacility)
 def get_vehicle(vehicle_id: int, db: Session = Depends(get_db)):
-    vehicle = db.query(models.Vehicle).options(
-        joinedload(models.Vehicle.facility)
-    ).filter(models.Vehicle.id == vehicle_id).first()
+    vehicle = (
+        db.query(models.Vehicle)
+        .options(joinedload(models.Vehicle.facility))
+        .filter(models.Vehicle.id == vehicle_id)
+        .first()
+    )
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
     return vehicle
@@ -87,7 +90,7 @@ def update_vehicle_location(
     location: str = Query(...),
     destination: Optional[str] = None,
     eta: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     db_vehicle = db.query(models.Vehicle).filter(models.Vehicle.id == vehicle_id).first()
     if not db_vehicle:

@@ -18,10 +18,12 @@ def get_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 
 @router.get("/{customer_id}", response_model=schemas.CustomerDetail)
 def get_customer(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.query(models.Customer).options(
-        joinedload(models.Customer.orders),
-        joinedload(models.Customer.shipments)
-    ).filter(models.Customer.id == customer_id).first()
+    customer = (
+        db.query(models.Customer)
+        .options(joinedload(models.Customer.orders), joinedload(models.Customer.shipments))
+        .filter(models.Customer.id == customer_id)
+        .first()
+    )
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -38,7 +40,7 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
         shipments=sorted(customer.shipments, key=lambda x: x.created_at, reverse=True)[:10],
         total_orders=len(customer.orders),
         total_spent=total_spent,
-        total_shipments=len(customer.shipments)
+        total_shipments=len(customer.shipments),
     )
 
 
@@ -47,7 +49,7 @@ def get_customer_orders(
     customer_id: int,
     exclude_order_id: int = Query(None, description="Order ID to exclude from results"),
     limit: int = Query(5, description="Maximum number of orders to return"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not customer:
@@ -71,7 +73,9 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
 
 
 @router.put("/{customer_id}", response_model=schemas.Customer)
-def update_customer(customer_id: int, customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+def update_customer(
+    customer_id: int, customer: schemas.CustomerCreate, db: Session = Depends(get_db)
+):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not db_customer:
         logger.warning("customer_not_found", customer_id=customer_id, action="update")
