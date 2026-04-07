@@ -1,0 +1,95 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e7]:
+        - img "Acme Logistics" [ref=e9]
+        - generic [ref=e10]:
+          - generic [ref=e11]: Acme Logistics
+          - generic [ref=e12]: Enterprise
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]: Main
+          - list [ref=e17]:
+            - listitem [ref=e18]:
+              - link "Dashboard" [ref=e19] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e20]
+                - generic [ref=e25]: Dashboard
+            - listitem [ref=e26]:
+              - link "Shipments" [ref=e27] [cursor=pointer]:
+                - /url: /shipments
+                - img [ref=e28]
+                - generic [ref=e32]: Shipments
+            - listitem [ref=e33]:
+              - link "Orders" [ref=e34] [cursor=pointer]:
+                - /url: /orders
+                - img [ref=e35]
+                - generic [ref=e38]: Orders
+            - listitem [ref=e39]:
+              - link "Inventory" [ref=e40] [cursor=pointer]:
+                - /url: /inventory
+                - img [ref=e41]
+                - generic [ref=e44]: Inventory
+            - listitem [ref=e45]:
+              - link "Facilities" [ref=e46] [cursor=pointer]:
+                - /url: /facilities
+                - img [ref=e47]
+                - generic [ref=e51]: Facilities
+            - listitem [ref=e52]:
+              - link "Fleet" [ref=e53] [cursor=pointer]:
+                - /url: /fleet
+                - img [ref=e54]
+                - generic [ref=e59]: Fleet
+        - generic [ref=e60]:
+          - generic [ref=e61]: System
+          - list [ref=e63]:
+            - listitem [ref=e64]:
+              - link "Settings" [ref=e65] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e66]
+                - generic [ref=e69]: Settings
+      - list [ref=e71]:
+        - listitem [ref=e72]:
+          - button "JD John Doe Operations Manager" [ref=e73]:
+            - generic [ref=e75]: JD
+            - generic [ref=e76]:
+              - generic [ref=e77]: John Doe
+              - generic [ref=e78]: Operations Manager
+            - img [ref=e79]
+    - main [ref=e81]:
+      - generic [ref=e82]:
+        - button "Toggle Sidebar" [ref=e83]:
+          - img
+          - generic [ref=e84]: Toggle Sidebar
+        - button "Search... ⌘ K" [ref=e86]:
+          - img
+          - generic [ref=e87]: Search...
+          - generic:
+            - generic: ⌘
+            - text: K
+        - button "Notifications" [ref=e88]:
+          - img
+          - generic [ref=e89]: Notifications
+      - main [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - heading "Dashboard" [level=1] [ref=e93]
+            - paragraph [ref=e94]: Overview of your logistics operations
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - generic [ref=e127]: Shipment Volume
+                - generic [ref=e128]: Daily shipments over the last 30 days
+              - application [ref=e133]
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: Shipment Status Breakdown
+                - generic [ref=e139]: Distribution of all shipment statuses
+              - img [ref=e144]
+          - generic [ref=e146]:
+            - generic [ref=e147]: Recent Activity
+            - generic [ref=e148]: Latest shipment updates
+    - generic [ref=e186]:
+      - heading "Command Palette" [level=2] [ref=e187]
+      - paragraph [ref=e188]: Search for a command to run...
+  - alert [ref=e189]

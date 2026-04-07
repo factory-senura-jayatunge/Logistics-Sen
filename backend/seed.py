@@ -2,9 +2,19 @@
 import random
 from datetime import datetime, timedelta
 
+from app.db.database import Base, SessionLocal, engine
+from app.models.models import (
+    Customer,
+    Facility,
+    InventoryItem,
+    Notification,
+    Order,
+    Shipment,
+    User,
+    Vehicle,
+)
+
 CURRENT_YEAR = datetime.utcnow().year
-from app.db.database import SessionLocal, engine, Base
-from app.models.models import Customer, Facility, Order, Shipment, InventoryItem, Vehicle, User, Notification
 
 Base.metadata.create_all(bind=engine)
 

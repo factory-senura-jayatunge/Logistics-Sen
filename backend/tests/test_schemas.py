@@ -153,6 +153,7 @@ class TestDashboardStats:
             total_vehicles=20,
             vehicles_en_route=8,
             total_facilities=5,
+            total_orders_shipped_this_year=42,
         )
         assert stats.total_shipments == 100
         assert stats.shipments_in_transit == 25

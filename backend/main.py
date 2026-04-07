@@ -1,9 +1,23 @@
+import time
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.database import engine, Base
-from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search
+
+from app.api.v1.routes import (
+    bulk,
+    customers,
+    dashboard,
+    facilities,
+    inventory,
+    notifications,
+    orders,
+    search,
+    shipments,
+    users,
+    vehicles,
+)
+from app.db.database import Base, engine
 from app.logging import logger
-import time
 
 Base.metadata.create_all(bind=engine)
 
@@ -33,6 +47,7 @@ app.include_router(vehicles.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(notifications.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
+app.include_router(bulk.router, prefix="/api/v1")
 
 
 @app.middleware("http")
