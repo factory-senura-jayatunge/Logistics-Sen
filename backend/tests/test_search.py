@@ -58,12 +58,14 @@ def test_search_limit(client, test_db, sample_customer):
     from app.models.models import Order
 
     for i in range(20):
-        test_db.add(Order(
-            order_number=f"ORD-SEARCH-{i:04d}",
-            customer_id=sample_customer.id,
-            items_count=1,
-            total_value=100,
-        ))
+        test_db.add(
+            Order(
+                order_number=f"ORD-SEARCH-{i:04d}",
+                customer_id=sample_customer.id,
+                items_count=1,
+                total_value=100,
+            )
+        )
     test_db.commit()
 
     response = client.get("/api/v1/search/?q=ORD-SEARCH&limit=5")

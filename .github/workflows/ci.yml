@@ -69,7 +69,7 @@ jobs:
         run: ruff check . --ignore I001
 
       - name: Format check with black
-        run: black --check . || true
+        run: black --check .
 
       - name: Seed database
         run: python seed.py
