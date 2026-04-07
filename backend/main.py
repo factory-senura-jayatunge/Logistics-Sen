@@ -1,12 +1,27 @@
+import time
+
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.database import engine, Base
-from app.api.v1.routes import customers, facilities, orders, shipments, inventory, vehicles, users, dashboard, notifications, search, analytics, route_planning, forecasting
-from app.ws.manager import ws_manager
-from app.db.database import SessionLocal
-from app.models import models
+
+from app.api.v1.routes import (
+    analytics,
+    bulk,
+    customers,
+    dashboard,
+    facilities,
+    forecasting,
+    inventory,
+    notifications,
+    orders,
+    route_planning,
+    search,
+    shipments,
+    users,
+    vehicles,
+)
+from app.db.database import Base, engine
 from app.logging import logger
-import time
+from app.ws.manager import ws_manager
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,6 +51,7 @@ app.include_router(vehicles.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(notifications.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
+app.include_router(bulk.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
 app.include_router(route_planning.router, prefix="/api/v1")
 app.include_router(forecasting.router, prefix="/api/v1")

@@ -1,10 +1,15 @@
 from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
+
 from app.db.database import get_db
+from app.logging import get_logger
 from app.models import models
 from app.schemas import schemas
 from app.ws.manager import ws_manager
+
+logger = get_logger("shipments")
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
 
@@ -49,6 +54,13 @@ def create_shipment(shipment: schemas.ShipmentCreate, db: Session = Depends(get_
     db.add(db_shipment)
     db.commit()
     db.refresh(db_shipment)
+    logger.info(
+        "shipment_created",
+        shipment_id=db_shipment.id,
+        tracking_number=tracking_number,
+        origin=shipment.origin,
+        destination=shipment.destination,
+    )
     return db_shipment
 
 
@@ -56,11 +68,13 @@ def create_shipment(shipment: schemas.ShipmentCreate, db: Session = Depends(get_
 def update_shipment(shipment_id: int, shipment: schemas.ShipmentCreate, db: Session = Depends(get_db)):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
     if not db_shipment:
+        logger.warning("shipment_not_found", shipment_id=shipment_id, action="update")
         raise HTTPException(status_code=404, detail="Shipment not found")
     for key, value in shipment.model_dump().items():
         setattr(db_shipment, key, value)
     db.commit()
     db.refresh(db_shipment)
+    logger.info("shipment_updated", shipment_id=shipment_id)
     return db_shipment
 
 
@@ -68,10 +82,17 @@ def update_shipment(shipment_id: int, shipment: schemas.ShipmentCreate, db: Sess
 async def update_shipment_status(shipment_id: int, status: str = Query(...), db: Session = Depends(get_db)):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
     if not db_shipment:
+        logger.warning("shipment_not_found", shipment_id=shipment_id, action="status_update")
         raise HTTPException(status_code=404, detail="Shipment not found")
     old_status = db_shipment.status
     db_shipment.status = status
     db.commit()
+    logger.info(
+        "shipment_status_changed",
+        shipment_id=shipment_id,
+        old_status=old_status,
+        new_status=status,
+    )
     await ws_manager.broadcast_status_update(shipment_id, {
         "type": "status_update",
         "shipment_id": shipment_id,
@@ -86,7 +107,9 @@ async def update_shipment_status(shipment_id: int, status: str = Query(...), db:
 def delete_shipment(shipment_id: int, db: Session = Depends(get_db)):
     db_shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
     if not db_shipment:
+        logger.warning("shipment_not_found", shipment_id=shipment_id, action="delete")
         raise HTTPException(status_code=404, detail="Shipment not found")
     db.delete(db_shipment)
     db.commit()
+    logger.info("shipment_deleted", shipment_id=shipment_id)
     return {"message": "Shipment deleted"}
