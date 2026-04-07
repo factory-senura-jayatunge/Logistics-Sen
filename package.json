@@ -37,8 +37,14 @@
     "syncpack": "^14.3.0"
   },
   "lint-staged": {
-    "frontend/**/*.{ts,tsx,js,jsx}": "cd frontend && eslint --fix",
+    "frontend/**/*.{ts,tsx,js,jsx}": [
+      "cd frontend && eslint --fix",
+      "cd frontend && tsc --noEmit --skipLibCheck"
+    ],
     "frontend/**/*.{ts,tsx,js,jsx,json,css,md}": "cd frontend && prettier --write --ignore-unknown",
-    "backend/**/*.py": "ruff check --fix"
+    "backend/**/*.py": [
+      "ruff check --fix",
+      "black"
+    ]
   }
 }
