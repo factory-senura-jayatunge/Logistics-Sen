@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional, List
-from sqlalchemy import String, Integer, Float, DateTime, ForeignKey, Text
+from typing import List, Optional
+
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db.database import Base
 
 
@@ -34,7 +36,9 @@ class Facility(Base):
     longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     capacity_percentage: Mapped[int] = mapped_column(Integer, default=0)
     staff_count: Mapped[int] = mapped_column(Integer, default=0)
-    status: Mapped[str] = mapped_column(String(50), default="operational")  # operational, maintenance, offline
+    status: Mapped[str] = mapped_column(
+        String(50), default="operational"
+    )  # operational, maintenance, offline
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     inventory_items: Mapped[List["InventoryItem"]] = relationship(back_populates="facility")
@@ -49,10 +53,16 @@ class Order(Base):
     customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
     items_count: Mapped[int] = mapped_column(Integer)
     total_value: Mapped[float] = mapped_column(Float)
-    priority: Mapped[str] = mapped_column(String(20), default="medium")  # low, medium, high, critical
-    status: Mapped[str] = mapped_column(String(50), default="pending")  # pending, confirmed, processing, shipped, delivered
+    priority: Mapped[str] = mapped_column(
+        String(20), default="medium"
+    )  # low, medium, high, critical
+    status: Mapped[str] = mapped_column(
+        String(50), default="pending"
+    )  # pending, confirmed, processing, shipped, delivered
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     customer: Mapped["Customer"] = relationship(back_populates="orders")
     shipments: Mapped[List["Shipment"]] = relationship(back_populates="order")
@@ -69,10 +79,14 @@ class Shipment(Base):
     destination: Mapped[str] = mapped_column(String(255))
     carrier: Mapped[str] = mapped_column(String(100))
     weight_kg: Mapped[float] = mapped_column(Float)
-    status: Mapped[str] = mapped_column(String(50), default="pending")  # pending, processing, in_transit, delivered, delayed
+    status: Mapped[str] = mapped_column(
+        String(50), default="pending"
+    )  # pending, processing, in_transit, delivered, delayed
     eta: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     order: Mapped[Optional["Order"]] = relationship(back_populates="shipments")
     customer: Mapped["Customer"] = relationship(back_populates="shipments")
@@ -89,9 +103,13 @@ class InventoryItem(Base):
     quantity: Mapped[int] = mapped_column(Integer, default=0)
     reorder_point: Mapped[int] = mapped_column(Integer, default=0)
     unit_price: Mapped[float] = mapped_column(Float, default=0.0)
-    status: Mapped[str] = mapped_column(String(50), default="in_stock")  # in_stock, low_stock, out_of_stock
+    status: Mapped[str] = mapped_column(
+        String(50), default="in_stock"
+    )  # in_stock, low_stock, out_of_stock
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     facility: Mapped["Facility"] = relationship(back_populates="inventory_items")
 
@@ -107,7 +125,9 @@ class Vehicle(Base):
     facility_id: Mapped[Optional[int]] = mapped_column(ForeignKey("facilities.id"), nullable=True)
     current_location: Mapped[str] = mapped_column(String(255))
     destination: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    status: Mapped[str] = mapped_column(String(50), default="idle")  # en_route, loading, idle, maintenance, offline
+    status: Mapped[str] = mapped_column(
+        String(50), default="idle"
+    )  # en_route, loading, idle, maintenance, offline
     fuel_level: Mapped[int] = mapped_column(Integer, default=100)
     eta: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -121,7 +141,9 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(255))
-    role: Mapped[str] = mapped_column(String(50))  # admin, operations_manager, dispatcher, warehouse_staff, driver
+    role: Mapped[str] = mapped_column(
+        String(50)
+    )  # admin, operations_manager, dispatcher, warehouse_staff, driver
     status: Mapped[str] = mapped_column(String(20), default="active")  # active, inactive
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
@@ -136,9 +158,13 @@ class Notification(Base):
     title: Mapped[str] = mapped_column(String(255))
     message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     type: Mapped[str] = mapped_column(String(50), default="info")  # info, warning, error, success
-    category: Mapped[str] = mapped_column(String(50), default="system")  # shipment, order, inventory, vehicle, system
+    category: Mapped[str] = mapped_column(
+        String(50), default="system"
+    )  # shipment, order, inventory, vehicle, system
     reference_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    reference_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # shipment, order, inventory, vehicle
+    reference_type: Mapped[Optional[str]] = mapped_column(
+        String(50), nullable=True
+    )  # shipment, order, inventory, vehicle
     read: Mapped[bool] = mapped_column(Integer, default=0)  # SQLite doesn't have native boolean
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 

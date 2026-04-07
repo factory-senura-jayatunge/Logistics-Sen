@@ -1,16 +1,35 @@
+import { logApiCall, logError } from "./logger"
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  })
+  const method = options?.method || "GET"
+  const start = Date.now()
+
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+    })
+  } catch (error) {
+    logError(error instanceof Error ? error : new Error(String(error)), {
+      endpoint,
+      method,
+    })
+    throw error
+  }
+
+  const durationMs = Date.now() - start
+  logApiCall(method, endpoint, response.status, durationMs)
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`)
+    const apiError = new Error(`API error: ${response.status} ${response.statusText}`)
+    logError(apiError, { endpoint, method, status: response.status })
+    throw apiError
   }
 
   return response.json()
@@ -56,6 +75,18 @@ export async function createShipment(data: CreateShipmentData) {
 // Customers
 export async function getCustomers() {
   return fetchApi<Customer[]>("/api/v1/customers")
+}
+
+export async function getCustomer(id: number) {
+  return fetchApi<CustomerDetail>(`/api/v1/customers/${id}`)
+}
+
+export async function getCustomerOrders(customerId: number, excludeOrderId?: number, limit = 5) {
+  const searchParams = new URLSearchParams()
+  if (excludeOrderId) searchParams.set("exclude_order_id", excludeOrderId.toString())
+  if (limit) searchParams.set("limit", limit.toString())
+  const query = searchParams.toString()
+  return fetchApi<OrderBasic[]>(`/api/v1/customers/${customerId}/orders${query ? `?${query}` : ""}`)
 }
 
 // Orders
@@ -300,6 +331,25 @@ export interface Customer {
   created_at: string
 }
 
+export interface ShipmentSummary {
+  id: number
+  tracking_number: string
+  origin: string
+  destination: string
+  carrier: string
+  status: string
+  eta: string | null
+  created_at: string
+}
+
+export interface CustomerDetail extends Customer {
+  orders: OrderBasic[]
+  shipments: ShipmentSummary[]
+  total_orders: number
+  total_spent: number
+  total_shipments: number
+}
+
 export interface Shipment {
   id: number
   tracking_number: string
@@ -342,6 +392,16 @@ export interface ShipmentBasic {
   weight_kg: number
   status: string
   eta: string | null
+  created_at: string
+}
+
+export interface OrderBasic {
+  id: number
+  order_number: string
+  items_count: number
+  total_value: number
+  priority: string
+  status: string
   created_at: string
 }
 

@@ -1,70 +1,91 @@
-"""Tests for notification endpoints."""
-
-import pytest
-from fastapi.testclient import TestClient
-
-from main import app
+def test_get_notifications_empty(client):
+    response = client.get("/api/v1/notifications/")
+    assert response.status_code == 200
+    assert response.json() == []
 
 
-@pytest.fixture
-def client():
-    return TestClient(app)
+def test_get_notifications_with_data(client, sample_notification):
+    response = client.get("/api/v1/notifications/")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == "Test Notification"
 
 
-class TestNotifications:
-    def _create_notification(self, client):
-        return client.post("/api/v1/notifications", json={
-            "title": "Test Alert",
-            "message": "Something happened",
-            "type": "info",
-            "category": "system",
-        }).json()
+def test_get_notifications_unread_only(client, test_db, sample_user):
+    from app.models.models import Notification
 
-    def test_list_notifications(self, client):
-        resp = client.get("/api/v1/notifications")
-        assert resp.status_code == 200
-        assert isinstance(resp.json(), list)
+    unread = Notification(user_id=sample_user.id, title="Unread", type="info", read=False)
+    read = Notification(user_id=sample_user.id, title="Read", type="info", read=True)
+    test_db.add_all([unread, read])
+    test_db.commit()
 
-    def test_list_notifications_unread_only(self, client):
-        resp = client.get("/api/v1/notifications?unread_only=true")
-        assert resp.status_code == 200
-        assert isinstance(resp.json(), list)
+    response = client.get("/api/v1/notifications/?unread_only=true")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == "Unread"
 
-    def test_get_unread_count(self, client):
-        resp = client.get("/api/v1/notifications/unread-count")
-        assert resp.status_code == 200
-        assert "count" in resp.json()
 
-    def test_create_notification(self, client):
-        data = self._create_notification(client)
-        assert data["title"] == "Test Alert"
-        assert data["id"] > 0
+def test_get_unread_count(client, sample_notification):
+    response = client.get("/api/v1/notifications/unread-count")
+    assert response.status_code == 200
+    assert response.json()["count"] == 1
 
-    def test_get_notification_by_id(self, client):
-        created = self._create_notification(client)
-        resp = client.get(f"/api/v1/notifications/{created['id']}")
-        assert resp.status_code == 200
-        assert resp.json()["id"] == created["id"]
 
-    def test_mark_as_read(self, client):
-        created = self._create_notification(client)
-        resp = client.patch(f"/api/v1/notifications/{created['id']}/read")
-        assert resp.status_code == 200
+def test_get_notification_by_id(client, sample_notification):
+    response = client.get(f"/api/v1/notifications/{sample_notification.id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "This is a test notification"
 
-    def test_mark_all_as_read(self, client):
-        resp = client.patch("/api/v1/notifications/read-all")
-        assert resp.status_code == 200
 
-    def test_delete_notification(self, client):
-        created = self._create_notification(client)
-        resp = client.delete(f"/api/v1/notifications/{created['id']}")
-        assert resp.status_code == 200
+def test_get_notification_not_found(client):
+    response = client.get("/api/v1/notifications/99999")
+    assert response.status_code == 404
 
-    def test_get_notification_not_found(self, client):
-        assert client.get("/api/v1/notifications/99999").status_code == 404
 
-    def test_mark_as_read_not_found(self, client):
-        assert client.patch("/api/v1/notifications/99999/read").status_code == 404
+def test_create_notification(client, sample_user):
+    notification_data = {
+        "user_id": sample_user.id,
+        "title": "New Alert",
+        "message": "Something happened",
+        "type": "warning",
+        "category": "shipment",
+    }
+    response = client.post("/api/v1/notifications/", json=notification_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["title"] == "New Alert"
+    assert data["type"] == "warning"
 
-    def test_delete_notification_not_found(self, client):
-        assert client.delete("/api/v1/notifications/99999").status_code == 404
+
+def test_mark_as_read(client, sample_notification):
+    response = client.patch(f"/api/v1/notifications/{sample_notification.id}/read")
+    assert response.status_code == 200
+
+    response = client.get(f"/api/v1/notifications/{sample_notification.id}")
+    assert response.json()["read"] is True
+
+
+def test_mark_all_as_read(client, test_db, sample_user):
+    from app.models.models import Notification
+
+    n1 = Notification(user_id=sample_user.id, title="N1", type="info", read=False)
+    n2 = Notification(user_id=sample_user.id, title="N2", type="info", read=False)
+    test_db.add_all([n1, n2])
+    test_db.commit()
+
+    response = client.patch("/api/v1/notifications/read-all")
+    assert response.status_code == 200
+
+    response = client.get("/api/v1/notifications/unread-count")
+    assert response.json()["count"] == 0
+
+
+def test_delete_notification(client, sample_notification):
+    response = client.delete(f"/api/v1/notifications/{sample_notification.id}")
+    assert response.status_code == 200
+
+    response = client.get(f"/api/v1/notifications/{sample_notification.id}")
+    assert response.status_code == 404
