@@ -23,8 +23,8 @@ test.describe("Backend API Health", () => {
     expect(response.ok()).toBeTruthy();
     const body = await response.json();
     expect(body).toHaveProperty("total_shipments");
-    expect(body).toHaveProperty("pending_orders");
-    expect(body).toHaveProperty("active_alerts");
+    expect(body).toHaveProperty("orders_pending");
+    expect(body).toHaveProperty("total_vehicles");
   });
 
   test("shipments API returns list", async ({ request }) => {
@@ -59,6 +59,6 @@ test.describe("Backend API Health", () => {
     );
     expect(response.ok()).toBeTruthy();
     const body = await response.json();
-    expect(body).toHaveProperty("results");
+    expect(Array.isArray(body)).toBe(true);
   });
 });
