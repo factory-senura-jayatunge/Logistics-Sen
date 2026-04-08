@@ -1,0 +1,62 @@
+name: Auto-label Issues
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    name: Apply default triage label
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply triage labels based on issue body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = (issue.title || '').toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const text = `${title} ${body}`;
+            const labelsToAdd = [];
+
+            // Detect type
+            if (text.includes('bug') || text.includes('broken') || text.includes("doesn't work") || text.includes('error') || text.includes('crash')) {
+              labelsToAdd.push('type: bug');
+            } else if (text.includes('feature') || text.includes('add support') || text.includes('implement') || text.includes('request')) {
+              labelsToAdd.push('type: feature');
+            } else if (text.includes('refactor') || text.includes('chore') || text.includes('upgrade') || text.includes('maintenance')) {
+              labelsToAdd.push('type: chore');
+            }
+
+            // Detect area
+            if (text.includes('frontend') || text.includes('react') || text.includes('next.js') || text.includes('ui') || text.includes('component') || text.includes('page')) {
+              labelsToAdd.push('area: frontend');
+            }
+            if (text.includes('backend') || text.includes('fastapi') || text.includes('endpoint') || text.includes('python') || text.includes('rest api') || text.includes('api route')) {
+              labelsToAdd.push('area: backend');
+            }
+            if (text.includes('ci') || text.includes('deploy') || text.includes('docker') || text.includes('infra') || text.includes('pipeline')) {
+              labelsToAdd.push('area: infra');
+            }
+            if (text.includes('database') || text.includes('migration') || text.includes('schema') || text.includes('sql')) {
+              labelsToAdd.push('area: database');
+            }
+
+            // Default priority for new issues (only if no priority label already set)
+            const existingPriority = (issue.labels || []).some(l => (l.name || '').startsWith('priority:'));
+            if (!existingPriority) {
+              labelsToAdd.push('priority: P2');
+            }
+
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labelsToAdd,
+              });
+              console.log(`Applied labels: ${labelsToAdd.join(', ')}`);
+            }
