@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "minimumReleaseAge": "3 days",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchManagers": ["pip_requirements", "pip_setup", "poetry"],
+      "minimumReleaseAge": "3 days"
+    }
+  ],
+  "pip_requirements": {
+    "fileMatch": ["backend/requirements\\.txt$"]
+  }
+}
