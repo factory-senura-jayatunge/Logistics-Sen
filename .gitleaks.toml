@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+
+title = "Acme Logistics Gitleaks Config"
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''pnpm-lock\.yaml''',
+    '''\.github/workflows/.*\.yml''',
+]
