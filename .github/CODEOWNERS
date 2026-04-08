@@ -1,0 +1,33 @@
+# CODEOWNERS - Defines code ownership for the Acme Logistics monorepo
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+*                                   @Factory-Academy/logistics-app
+
+# Root configuration and workspace
+/package.json                       @Factory-Academy/logistics-app
+/pnpm-workspace.yaml                @Factory-Academy/logistics-app
+/pnpm-lock.yaml                     @Factory-Academy/logistics-app
+
+# Frontend (Next.js + React)
+/frontend/                          @Factory-Academy/logistics-app
+/frontend/app/                      @Factory-Academy/logistics-app
+/frontend/components/               @Factory-Academy/logistics-app
+/frontend/lib/                      @Factory-Academy/logistics-app
+/frontend/hooks/                    @Factory-Academy/logistics-app
+
+# Backend (FastAPI + SQLAlchemy)
+/backend/                           @Factory-Academy/logistics-app
+/backend/app/api/                   @Factory-Academy/logistics-app
+/backend/app/models/                @Factory-Academy/logistics-app
+/backend/app/schemas/               @Factory-Academy/logistics-app
+/backend/app/db/                    @Factory-Academy/logistics-app
+/backend/tests/                     @Factory-Academy/logistics-app
+
+# CI/CD and GitHub configuration
+/.github/                           @Factory-Academy/logistics-app
+/.github/workflows/                 @Factory-Academy/logistics-app
+
+# Documentation
+/AGENTS.md                          @Factory-Academy/logistics-app
+/README.md                          @Factory-Academy/logistics-app
