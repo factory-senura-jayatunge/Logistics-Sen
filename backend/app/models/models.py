@@ -90,6 +90,27 @@ class Shipment(Base):
 
     order: Mapped[Optional["Order"]] = relationship(back_populates="shipments")
     customer: Mapped["Customer"] = relationship(back_populates="shipments")
+    checkpoints: Mapped[List["ShipmentCheckpoint"]] = relationship(
+        back_populates="shipment",
+        order_by="ShipmentCheckpoint.timestamp",
+        cascade="all, delete-orphan",
+    )
+
+
+class ShipmentCheckpoint(Base):
+    __tablename__ = "shipment_checkpoints"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    shipment_id: Mapped[int] = mapped_column(ForeignKey("shipments.id"), index=True)
+    facility_id: Mapped[Optional[int]] = mapped_column(ForeignKey("facilities.id"), nullable=True)
+    location_name: Mapped[str] = mapped_column(String(255))
+    latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    status: Mapped[str] = mapped_column(String(50))
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    shipment: Mapped["Shipment"] = relationship(back_populates="checkpoints")
 
 
 class InventoryItem(Base):

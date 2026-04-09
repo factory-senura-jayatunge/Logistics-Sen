@@ -11,13 +11,150 @@ from app.models.models import (
     Notification,
     Order,
     Shipment,
+    ShipmentCheckpoint,
     User,
     Vehicle,
 )
 
 CURRENT_YEAR = datetime.utcnow().year
+LOCATION_COORDINATES = {
+    "Atlanta, GA": (33.7490, -84.3880),
+    "Boston, MA": (42.3601, -71.0589),
+    "Chicago, IL": (41.8781, -87.6298),
+    "Dallas, TX": (32.7767, -96.7970),
+    "Denver, CO": (39.7392, -104.9903),
+    "Detroit, MI": (42.3314, -83.0458),
+    "Houston, TX": (29.7604, -95.3698),
+    "Los Angeles, CA": (34.0522, -118.2437),
+    "Miami, FL": (25.7617, -80.1918),
+    "Nashville, TN": (36.1627, -86.7816),
+    "New York, NY": (40.7128, -74.0060),
+    "Philadelphia, PA": (39.9526, -75.1652),
+    "Phoenix, AZ": (33.4484, -112.0740),
+    "Portland, OR": (45.5152, -122.6784),
+    "San Francisco, CA": (37.7749, -122.4194),
+    "Seattle, WA": (47.6062, -122.3321),
+}
 
 Base.metadata.create_all(bind=engine)
+
+
+def get_location_coordinates(location_name, facility=None):
+    if facility and facility.latitude is not None and facility.longitude is not None:
+        return facility.latitude, facility.longitude
+    return LOCATION_COORDINATES.get(location_name)
+
+
+def build_shipment_checkpoints(shipment, facilities):
+    facility_lookup = {f"{facility.city}, {facility.state}": facility for facility in facilities}
+    origin_facility = facility_lookup.get(shipment.origin)
+    destination_facility = facility_lookup.get(shipment.destination)
+    available_stops = [
+        facility
+        for facility in facilities
+        if f"{facility.city}, {facility.state}" not in {shipment.origin, shipment.destination}
+    ]
+
+    created_at = shipment.created_at or datetime.utcnow()
+    completed_at = shipment.eta or created_at + timedelta(days=random.randint(2, 6))
+    if shipment.status in {"delivered", "delayed"}:
+        completed_at = created_at + timedelta(days=random.randint(2, 6))
+    elif shipment.status == "pending":
+        completed_at = created_at + timedelta(hours=6)
+    elif shipment.status == "processing":
+        completed_at = created_at + timedelta(hours=18)
+    else:
+        completed_at = min(datetime.utcnow(), completed_at)
+
+    checkpoints = [
+        {
+            "location_name": shipment.origin,
+            "status": "received",
+            "notes": "Shipment information received.",
+            "facility": origin_facility,
+        }
+    ]
+
+    if shipment.status in {"processing", "in_transit", "delivered", "delayed"}:
+        checkpoints.append(
+            {
+                "location_name": shipment.origin,
+                "status": "processing",
+                "notes": "Shipment processed at origin facility.",
+                "facility": origin_facility,
+            }
+        )
+
+    if shipment.status in {"in_transit", "delivered", "delayed"}:
+        checkpoints.append(
+            {
+                "location_name": shipment.origin,
+                "status": "departed",
+                "notes": "Shipment departed origin facility.",
+                "facility": origin_facility,
+            }
+        )
+
+        stop_count = 1 if shipment.status == "delayed" else random.randint(1, 2)
+        intermediate_stops = random.sample(available_stops, k=min(stop_count, len(available_stops)))
+        for stop in intermediate_stops:
+            checkpoints.append(
+                {
+                    "location_name": f"{stop.city}, {stop.state}",
+                    "status": "in_transit",
+                    "notes": f"Arrived at {stop.name}.",
+                    "facility": stop,
+                }
+            )
+
+    if shipment.status == "delivered":
+        checkpoints.extend(
+            [
+                {
+                    "location_name": shipment.destination,
+                    "status": "out_for_delivery",
+                    "notes": "Shipment is out for final delivery.",
+                    "facility": destination_facility,
+                },
+                {
+                    "location_name": shipment.destination,
+                    "status": "delivered",
+                    "notes": "Shipment delivered successfully.",
+                    "facility": destination_facility,
+                },
+            ]
+        )
+    elif shipment.status == "delayed":
+        checkpoints.append(
+            {
+                "location_name": shipment.destination,
+                "status": "delayed",
+                "notes": "Unexpected transit delay due to operational constraints.",
+                "facility": destination_facility,
+            }
+        )
+
+    total_steps = max(len(checkpoints) - 1, 1)
+    seeded_checkpoints = []
+    for index, checkpoint in enumerate(checkpoints):
+        location = checkpoint["location_name"]
+        facility = checkpoint["facility"]
+        coordinates = get_location_coordinates(location, facility)
+        timestamp = created_at + ((completed_at - created_at) * index / total_steps)
+        seeded_checkpoints.append(
+            ShipmentCheckpoint(
+                shipment_id=shipment.id,
+                facility_id=facility.id if facility else None,
+                location_name=location,
+                latitude=coordinates[0] if coordinates else None,
+                longitude=coordinates[1] if coordinates else None,
+                status=checkpoint["status"],
+                notes=checkpoint["notes"],
+                timestamp=timestamp,
+            )
+        )
+
+    return seeded_checkpoints
 
 
 def seed_database():
@@ -302,6 +439,12 @@ def seed_database():
         )
         shipments_list.append(shipment)
     db.add_all(shipments_list)
+    db.flush()
+
+    shipment_checkpoints = []
+    for shipment in shipments_list:
+        shipment_checkpoints.extend(build_shipment_checkpoints(shipment, facilities))
+    db.add_all(shipment_checkpoints)
 
     products = [
         ("Industrial Motor Unit", "Machinery"),
@@ -636,6 +779,7 @@ def seed_database():
     print(f"  - {len(facilities)} facilities")
     print(f"  - {len(orders_list)} orders")
     print(f"  - {len(shipments_list)} shipments")
+    print(f"  - {len(shipment_checkpoints)} shipment checkpoints")
     print(f"  - {len(inventory_items)} inventory items")
     print(f"  - {len(vehicles_list)} vehicles")
     print(f"  - {len(notifications_list)} notifications")
