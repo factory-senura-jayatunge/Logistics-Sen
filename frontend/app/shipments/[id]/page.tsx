@@ -140,8 +140,7 @@ function buildFallbackTimeline(shipment: ShipmentDetail): TimelineItem[] {
   if (shipment.status !== "pending") {
     items.push({
       key: "updated",
-      location_name:
-        shipment.status === "delivered" ? shipment.destination : shipment.origin,
+      location_name: shipment.status === "delivered" ? shipment.destination : shipment.origin,
       status: shipment.status,
       notes: `Status changed to ${formatStatusLabel(shipment.status)}.`,
       timestamp: shipment.updated_at,
@@ -250,15 +249,16 @@ export default function ShipmentDetailPage() {
 
   if (!shipment) return null
 
-  const timelineItems = (shipment.checkpoints?.length
-    ? shipment.checkpoints.map((checkpoint) => ({
-        key: checkpoint.id.toString(),
-        location_name: checkpoint.location_name,
-        status: checkpoint.status,
-        notes: checkpoint.notes,
-        timestamp: checkpoint.timestamp,
-      }))
-    : buildFallbackTimeline(shipment)
+  const timelineItems = (
+    shipment.checkpoints?.length
+      ? shipment.checkpoints.map((checkpoint) => ({
+          key: checkpoint.id.toString(),
+          location_name: checkpoint.location_name,
+          status: checkpoint.status,
+          notes: checkpoint.notes,
+          timestamp: checkpoint.timestamp,
+        }))
+      : buildFallbackTimeline(shipment)
   ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
 
   const checkpointPoints = (shipment.checkpoints || [])
