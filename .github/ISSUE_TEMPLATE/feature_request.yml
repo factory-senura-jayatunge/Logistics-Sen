@@ -1,0 +1,70 @@
+name: Feature Request
+description: Suggest a new feature or improvement for Acme Logistics
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement! Please describe the feature you'd like to see.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature Area
+      description: Which part of the platform does this relate to?
+      options:
+        - Dashboard & Analytics
+        - Order Management
+        - Shipment Tracking
+        - Inventory Management
+        - Fleet / Vehicle Management
+        - Customer Management
+        - Notifications & Alerts
+        - Search
+        - API
+        - Developer Experience / Tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What pain point or gap exists today?
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or change you'd like to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to your workflow?
+      options:
+        - Nice to have
+        - Important - improves efficiency
+        - Critical - blocking a workflow
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any mockups, screenshots, links, or extra context.
