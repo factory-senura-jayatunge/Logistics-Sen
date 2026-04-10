@@ -16,7 +16,7 @@ router = APIRouter(prefix="/inventory", tags=["inventory"])
 @router.get("/", response_model=list[schemas.InventoryItemWithFacility])
 def get_inventory_items(
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 1000,
     facility_id: Optional[int] = None,
     status: Optional[str] = None,
     category: Optional[str] = None,

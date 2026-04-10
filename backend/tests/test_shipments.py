@@ -29,6 +29,16 @@ def test_get_shipment_by_id(client, sample_shipment):
     data = response.json()
     assert data["tracking_number"] == "TRK-TEST-0001"
     assert "customer" in data
+    assert data["checkpoints"] == []
+
+
+def test_get_shipment_by_id_with_checkpoints(client, sample_shipment_checkpoint):
+    response = client.get(f"/api/v1/shipments/{sample_shipment_checkpoint.shipment_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["checkpoints"]) == 1
+    assert data["checkpoints"][0]["location_name"] == "Chicago, IL"
+    assert data["checkpoints"][0]["status"] == "in_transit"
 
 
 def test_get_shipment_not_found(client):
@@ -48,6 +58,19 @@ def test_get_shipment_by_tracking_not_found(client):
     assert response.status_code == 404
 
 
+def test_get_shipment_checkpoints(client, sample_shipment_checkpoint):
+    response = client.get(f"/api/v1/shipments/{sample_shipment_checkpoint.shipment_id}/checkpoints")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["location_name"] == "Chicago, IL"
+
+
+def test_get_shipment_checkpoints_not_found(client):
+    response = client.get("/api/v1/shipments/99999/checkpoints")
+    assert response.status_code == 404
+
+
 def test_create_shipment(client, sample_customer):
     shipment_data = {
         "customer_id": sample_customer.id,
@@ -62,6 +85,35 @@ def test_create_shipment(client, sample_customer):
     data = response.json()
     assert data["tracking_number"].startswith("SHP-2024-")
     assert data["carrier"] == "UPS"
+
+
+def test_create_shipment_checkpoint(client, sample_shipment):
+    checkpoint_data = {
+        "location_name": "Denver, CO",
+        "latitude": 39.7392,
+        "longitude": -104.9903,
+        "status": "in_transit",
+        "notes": "Loaded onto outbound truck",
+        "facility_id": None,
+    }
+    response = client.post(
+        f"/api/v1/shipments/{sample_shipment.id}/checkpoints",
+        json=checkpoint_data,
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["shipment_id"] == sample_shipment.id
+    assert data["location_name"] == "Denver, CO"
+    assert data["status"] == "in_transit"
+
+
+def test_create_shipment_checkpoint_not_found(client):
+    checkpoint_data = {
+        "location_name": "Denver, CO",
+        "status": "in_transit",
+    }
+    response = client.post("/api/v1/shipments/99999/checkpoints", json=checkpoint_data)
+    assert response.status_code == 404
 
 
 def test_update_shipment(client, sample_shipment):

@@ -114,6 +114,24 @@ def sample_shipment(test_db, sample_customer, sample_order):
 
 
 @pytest.fixture
+def sample_shipment_checkpoint(test_db, sample_shipment):
+    from app.models.models import ShipmentCheckpoint
+
+    checkpoint = ShipmentCheckpoint(
+        shipment_id=sample_shipment.id,
+        location_name="Chicago, IL",
+        latitude=41.8781,
+        longitude=-87.6298,
+        status="in_transit",
+        notes="Arrived at sorting facility",
+    )
+    test_db.add(checkpoint)
+    test_db.commit()
+    test_db.refresh(checkpoint)
+    return checkpoint
+
+
+@pytest.fixture
 def sample_inventory(test_db, sample_facility):
     from app.models.models import InventoryItem
 

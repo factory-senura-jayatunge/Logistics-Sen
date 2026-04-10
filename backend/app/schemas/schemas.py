@@ -129,9 +129,32 @@ class ShipmentWithCustomer(Shipment):
     customer: Customer
 
 
+class ShipmentCheckpointBase(BaseModel):
+    location_name: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    status: str
+    notes: Optional[str] = None
+    facility_id: Optional[int] = None
+
+
+class ShipmentCheckpointCreate(ShipmentCheckpointBase):
+    pass
+
+
+class ShipmentCheckpoint(ShipmentCheckpointBase):
+    id: int
+    shipment_id: int
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class ShipmentDetail(Shipment):
     customer: Customer
     order: Optional[Order] = None
+    checkpoints: list[ShipmentCheckpoint] = []
 
 
 # Inventory Schemas
@@ -321,7 +344,7 @@ class ShipmentSummary(BaseModel):
     destination: str
     carrier: str
     status: str
-    eta: datetime | None = None
+    eta: Optional[datetime] = None
     created_at: datetime
 
     class Config:

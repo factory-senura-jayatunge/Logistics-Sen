@@ -28,13 +28,58 @@ def get_shipments(
 def get_shipment(shipment_id: int, db: Session = Depends(get_db)):
     shipment = (
         db.query(models.Shipment)
-        .options(joinedload(models.Shipment.customer), joinedload(models.Shipment.order))
+        .options(
+            joinedload(models.Shipment.customer),
+            joinedload(models.Shipment.order),
+            joinedload(models.Shipment.checkpoints),
+        )
         .filter(models.Shipment.id == shipment_id)
         .first()
     )
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
     return shipment
+
+
+@router.get("/{shipment_id}/checkpoints", response_model=list[schemas.ShipmentCheckpoint])
+def get_shipment_checkpoints(shipment_id: int, db: Session = Depends(get_db)):
+    shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
+    if not shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+
+    return (
+        db.query(models.ShipmentCheckpoint)
+        .filter(models.ShipmentCheckpoint.shipment_id == shipment_id)
+        .order_by(models.ShipmentCheckpoint.timestamp.asc())
+        .all()
+    )
+
+
+@router.post("/{shipment_id}/checkpoints", response_model=schemas.ShipmentCheckpoint)
+def create_shipment_checkpoint(
+    shipment_id: int,
+    checkpoint: schemas.ShipmentCheckpointCreate,
+    db: Session = Depends(get_db),
+):
+    shipment = db.query(models.Shipment).filter(models.Shipment.id == shipment_id).first()
+    if not shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+
+    db_checkpoint = models.ShipmentCheckpoint(
+        shipment_id=shipment_id,
+        **checkpoint.model_dump(),
+    )
+    db.add(db_checkpoint)
+    db.commit()
+    db.refresh(db_checkpoint)
+    logger.info(
+        "shipment_checkpoint_created",
+        shipment_id=shipment_id,
+        checkpoint_id=db_checkpoint.id,
+        status=db_checkpoint.status,
+        location_name=db_checkpoint.location_name,
+    )
+    return db_checkpoint
 
 
 @router.get("/tracking/{tracking_number}", response_model=schemas.ShipmentWithCustomer)

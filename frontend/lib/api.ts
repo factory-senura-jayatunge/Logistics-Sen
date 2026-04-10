@@ -413,8 +413,21 @@ export interface Shipment {
   customer: Customer
 }
 
+export interface ShipmentCheckpoint {
+  id: number
+  shipment_id: number
+  facility_id: number | null
+  location_name: string
+  latitude: number | null
+  longitude: number | null
+  status: string
+  notes: string | null
+  timestamp: string
+}
+
 export interface ShipmentDetail extends Shipment {
   order: Order | null
+  checkpoints: ShipmentCheckpoint[]
 }
 
 export interface Order {
