@@ -10,6 +10,8 @@ from app.schemas.schemas import (
     FacilityBase,
     OrderBase,
     ShipmentBase,
+    ShipmentCheckpointBase,
+    ShipmentCheckpointCreate,
 )
 
 
@@ -136,6 +138,36 @@ class TestShipmentSchemas:
         assert shipment.status == "in_transit"
 
 
+class TestShipmentCheckpointSchemas:
+    """Tests for shipment checkpoint schemas."""
+
+    def test_shipment_checkpoint_base_valid(self):
+        """ShipmentCheckpointBase should accept valid data."""
+        checkpoint = ShipmentCheckpointBase(
+            location_name="Chicago, IL",
+            latitude=41.8781,
+            longitude=-87.6298,
+            status="in_transit",
+            notes="Arrived at sorting facility",
+        )
+        assert checkpoint.location_name == "Chicago, IL"
+        assert checkpoint.notes == "Arrived at sorting facility"
+
+    def test_shipment_checkpoint_create_minimal(self):
+        """ShipmentCheckpointCreate should work with required fields only."""
+        checkpoint = ShipmentCheckpointCreate(
+            location_name="New York, NY",
+            status="delivered",
+        )
+        assert checkpoint.location_name == "New York, NY"
+        assert checkpoint.latitude is None
+
+    def test_shipment_checkpoint_base_missing_required(self):
+        """ShipmentCheckpointBase should reject missing required fields."""
+        with pytest.raises(ValidationError):
+            ShipmentCheckpointBase(status="in_transit")
+
+
 class TestDashboardStats:
     """Tests for DashboardStats schema."""
 
@@ -153,6 +185,7 @@ class TestDashboardStats:
             total_vehicles=20,
             vehicles_en_route=8,
             total_facilities=5,
+            total_orders_shipped_this_year=42,
         )
         assert stats.total_shipments == 100
         assert stats.shipments_in_transit == 25

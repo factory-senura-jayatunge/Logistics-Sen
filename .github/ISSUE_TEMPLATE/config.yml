@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: API Documentation
+    url: http://localhost:8000/docs
+    about: View the interactive API docs (Swagger UI) when the backend is running.

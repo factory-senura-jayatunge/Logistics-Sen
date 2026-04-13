@@ -14,13 +14,28 @@ import {
   AlertTriangle,
   Clock,
   FileText,
+  Navigation,
+  Wifi,
+  WifiOff,
 } from "lucide-react"
+import type { LatLngExpression } from "leaflet"
+import { useMap } from "react-leaflet"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { getShipment, type ShipmentDetail } from "@/lib/api"
+import {
+  Map,
+  MapMarker,
+  MapPopup,
+  MapPolyline,
+  MapTileLayer,
+  MapZoomControl,
+} from "@/components/ui/map"
+import { getShipment, type ShipmentCheckpoint, type ShipmentDetail } from "@/lib/api"
+import { useShipmentWebSocket } from "@/hooks/use-shipment-ws"
+import { getCoordinatesForLocation } from "@/lib/locations"
 
 const statusColors: Record<string, string> = {
   delivered: "bg-success/10 text-success border-success/20",
@@ -35,6 +50,45 @@ const priorityColors: Record<string, string> = {
   medium: "bg-info/10 text-info border-info/20",
   high: "bg-warning/10 text-warning border-warning/20",
   critical: "bg-destructive/10 text-destructive border-destructive/20",
+}
+
+const checkpointToneMap: Record<string, { badge: string; dot: string }> = {
+  delivered: {
+    badge: "bg-success/10 text-success border-success/20",
+    dot: "bg-success",
+  },
+  delayed: {
+    badge: "bg-destructive/10 text-destructive border-destructive/20",
+    dot: "bg-destructive",
+  },
+  in_transit: {
+    badge: "bg-info/10 text-info border-info/20",
+    dot: "bg-info",
+  },
+  out_for_delivery: {
+    badge: "bg-info/10 text-info border-info/20",
+    dot: "bg-info",
+  },
+  departed: {
+    badge: "bg-info/10 text-info border-info/20",
+    dot: "bg-info",
+  },
+  processing: {
+    badge: "bg-warning/10 text-warning border-warning/20",
+    dot: "bg-warning",
+  },
+  received: {
+    badge: "bg-neutral/10 text-neutral border-neutral/20",
+    dot: "bg-neutral",
+  },
+  pending: {
+    badge: "bg-neutral/10 text-neutral border-neutral/20",
+    dot: "bg-neutral",
+  },
+}
+
+type TimelineItem = Pick<ShipmentCheckpoint, "location_name" | "status" | "notes" | "timestamp"> & {
+  key: string
 }
 
 function formatDate(dateString: string | null): string {
@@ -64,12 +118,66 @@ function formatCurrency(value: number): string {
   }).format(value)
 }
 
+function formatStatusLabel(status: string): string {
+  return status.replace(/_/g, " ")
+}
+
+function getCheckpointTone(status: string) {
+  return checkpointToneMap[status] || checkpointToneMap.pending
+}
+
+function buildFallbackTimeline(shipment: ShipmentDetail): TimelineItem[] {
+  const items: TimelineItem[] = [
+    {
+      key: "created",
+      location_name: shipment.origin,
+      status: "received",
+      notes: "Shipment created.",
+      timestamp: shipment.created_at,
+    },
+  ]
+
+  if (shipment.status !== "pending") {
+    items.push({
+      key: "updated",
+      location_name: shipment.status === "delivered" ? shipment.destination : shipment.origin,
+      status: shipment.status,
+      notes: `Status changed to ${formatStatusLabel(shipment.status)}.`,
+      timestamp: shipment.updated_at,
+    })
+  }
+
+  return items
+}
+
+function ShipmentMapBounds({ points }: { points: [number, number][] }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (points.length === 0) return
+    if (points.length === 1) {
+      map.setView(points[0], 7)
+      return
+    }
+    map.fitBounds(points, { padding: [24, 24] })
+  }, [map, points])
+
+  return null
+}
+
 export default function ShipmentDetailPage() {
   const params = useParams()
   const router = useRouter()
   const [shipment, setShipment] = useState<ShipmentDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { lastUpdate, isConnected } = useShipmentWebSocket(shipment?.id ?? null)
+
+  useEffect(() => {
+    if (lastUpdate) {
+      setShipment((prev) => (prev ? { ...prev, status: lastUpdate.new_status } : prev))
+    }
+  }, [lastUpdate])
 
   useEffect(() => {
     async function fetchShipment() {
@@ -141,6 +249,36 @@ export default function ShipmentDetailPage() {
 
   if (!shipment) return null
 
+  const timelineItems = (
+    shipment.checkpoints?.length
+      ? shipment.checkpoints.map((checkpoint) => ({
+          key: checkpoint.id.toString(),
+          location_name: checkpoint.location_name,
+          status: checkpoint.status,
+          notes: checkpoint.notes,
+          timestamp: checkpoint.timestamp,
+        }))
+      : buildFallbackTimeline(shipment)
+  ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+
+  const checkpointPoints = (shipment.checkpoints || [])
+    .map((checkpoint) => {
+      const coords =
+        checkpoint.latitude != null && checkpoint.longitude != null
+          ? ([checkpoint.latitude, checkpoint.longitude] as [number, number])
+          : getCoordinatesForLocation(checkpoint.location_name)
+
+      return coords ? { checkpoint, coords } : null
+    })
+    .filter((item): item is { checkpoint: ShipmentCheckpoint; coords: [number, number] } =>
+      Boolean(item)
+    )
+
+  const mapCenter =
+    checkpointPoints[0]?.coords ||
+    getCoordinatesForLocation(shipment.origin) ||
+    ([39.8283, -98.5795] as [number, number])
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -161,7 +299,18 @@ export default function ShipmentDetailPage() {
                 {shipment.status.replace("_", " ")}
               </Badge>
             </div>
-            <p className="text-muted-foreground">Created {formatDateTime(shipment.created_at)}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground">Created {formatDateTime(shipment.created_at)}</p>
+              {isConnected ? (
+                <span className="text-success flex items-center gap-1 text-xs">
+                  <Wifi className="h-3 w-3" /> Live
+                </span>
+              ) : (
+                <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <WifiOff className="h-3 w-3" /> Offline
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -218,6 +367,82 @@ export default function ShipmentDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Journey Map
+              </CardTitle>
+              <CardDescription>Checkpoint route across the shipment journey</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {checkpointPoints.length > 0 ? (
+                <Map center={mapCenter satisfies LatLngExpression} zoom={5} className="h-[320px]">
+                  <MapTileLayer />
+                  <MapZoomControl />
+                  <ShipmentMapBounds points={checkpointPoints.map((item) => item.coords)} />
+                  {checkpointPoints.length > 1 && (
+                    <MapPolyline
+                      positions={checkpointPoints.map((item) => item.coords) as LatLngExpression[]}
+                      pathOptions={{
+                        color: "var(--color-info)",
+                        weight: 3,
+                        opacity: 0.8,
+                      }}
+                    />
+                  )}
+                  {checkpointPoints.map(({ checkpoint, coords }, index) => {
+                    const isFirst = index === 0
+                    const isLast = index === checkpointPoints.length - 1
+                    const tone = getCheckpointTone(checkpoint.status)
+
+                    return (
+                      <MapMarker
+                        key={checkpoint.id}
+                        position={coords satisfies LatLngExpression}
+                        icon={
+                          <div
+                            className={`border-background flex h-7 w-7 items-center justify-center rounded-full border-2 shadow-md ${tone.dot}`}
+                          >
+                            {isFirst ? (
+                              <Truck className="text-background h-3.5 w-3.5" />
+                            ) : isLast ? (
+                              <Navigation className="text-background h-3.5 w-3.5" />
+                            ) : (
+                              <MapPin className="text-background h-3.5 w-3.5" />
+                            )}
+                          </div>
+                        }
+                        iconAnchor={[14, 14]}
+                      >
+                        <MapPopup>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="font-semibold">{checkpoint.location_name}</p>
+                              <Badge variant="outline" className={tone.badge}>
+                                {formatStatusLabel(checkpoint.status)}
+                              </Badge>
+                            </div>
+                            <p className="text-muted-foreground text-sm">
+                              {formatDateTime(checkpoint.timestamp)}
+                            </p>
+                            {checkpoint.notes && (
+                              <p className="text-muted-foreground text-sm">{checkpoint.notes}</p>
+                            )}
+                          </div>
+                        </MapPopup>
+                      </MapMarker>
+                    )
+                  })}
+                </Map>
+              ) : (
+                <div className="text-muted-foreground flex h-[320px] items-center justify-center rounded-md border border-dashed text-sm">
+                  Location data unavailable for this shipment.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
                 Timeline
               </CardTitle>
@@ -225,57 +450,33 @@ export default function ShipmentDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="bg-primary h-3 w-3 rounded-full" />
-                    <div className="bg-border h-full w-px" />
-                  </div>
-                  <div className="pb-4">
-                    <p className="font-medium">Shipment Created</p>
-                    <p className="text-muted-foreground text-sm">
-                      {formatDateTime(shipment.created_at)}
-                    </p>
-                  </div>
-                </div>
-                {shipment.status !== "pending" && (
-                  <div className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="bg-primary h-3 w-3 rounded-full" />
-                      <div className="bg-border h-full w-px" />
+                {timelineItems.map((item, index) => {
+                  const tone = getCheckpointTone(item.status)
+                  const isLast = index === timelineItems.length - 1
+
+                  return (
+                    <div key={item.key} className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className={`h-3 w-3 rounded-full ${tone.dot}`} />
+                        {!isLast && <div className="bg-border h-full w-px" />}
+                      </div>
+                      <div className={isLast ? "" : "pb-4"}>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="font-medium">{item.location_name}</p>
+                          <Badge variant="outline" className={tone.badge}>
+                            {formatStatusLabel(item.status)}
+                          </Badge>
+                        </div>
+                        <p className="text-muted-foreground text-sm">
+                          {formatDateTime(item.timestamp)}
+                        </p>
+                        {item.notes && (
+                          <p className="text-muted-foreground mt-1 text-sm">{item.notes}</p>
+                        )}
+                      </div>
                     </div>
-                    <div className="pb-4">
-                      <p className="font-medium">Status Updated</p>
-                      <p className="text-muted-foreground text-sm">
-                        Changed to {shipment.status.replace("_", " ")} -{" "}
-                        {formatDateTime(shipment.updated_at)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {shipment.status === "delivered" && (
-                  <div className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="bg-success h-3 w-3 rounded-full" />
-                    </div>
-                    <div>
-                      <p className="text-success font-medium">Delivered</p>
-                      <p className="text-muted-foreground text-sm">
-                        Package delivered successfully
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {shipment.status !== "delivered" && (
-                  <div className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="border-muted-foreground/30 h-3 w-3 rounded-full border-2" />
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground font-medium">Pending Delivery</p>
-                      <p className="text-muted-foreground text-sm">Awaiting delivery</p>
-                    </div>
-                  </div>
-                )}
+                  )
+                })}
               </div>
             </CardContent>
           </Card>

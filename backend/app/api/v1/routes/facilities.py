@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
+
 from app.db.database import get_db
 from app.models import models
 from app.schemas import schemas
@@ -14,10 +15,12 @@ def get_facilities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 
 @router.get("/{facility_id}", response_model=schemas.FacilityDetail)
 def get_facility(facility_id: int, db: Session = Depends(get_db)):
-    facility = db.query(models.Facility).options(
-        joinedload(models.Facility.inventory_items),
-        joinedload(models.Facility.vehicles)
-    ).filter(models.Facility.id == facility_id).first()
+    facility = (
+        db.query(models.Facility)
+        .options(joinedload(models.Facility.inventory_items), joinedload(models.Facility.vehicles))
+        .filter(models.Facility.id == facility_id)
+        .first()
+    )
     if not facility:
         raise HTTPException(status_code=404, detail="Facility not found")
     return facility
@@ -33,7 +36,9 @@ def create_facility(facility: schemas.FacilityCreate, db: Session = Depends(get_
 
 
 @router.put("/{facility_id}", response_model=schemas.Facility)
-def update_facility(facility_id: int, facility: schemas.FacilityCreate, db: Session = Depends(get_db)):
+def update_facility(
+    facility_id: int, facility: schemas.FacilityCreate, db: Session = Depends(get_db)
+):
     db_facility = db.query(models.Facility).filter(models.Facility.id == facility_id).first()
     if not db_facility:
         raise HTTPException(status_code=404, detail="Facility not found")

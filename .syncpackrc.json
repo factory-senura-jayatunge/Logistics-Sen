@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/syncpack@14/dist/schema.json",
+  "sortFirst": ["name", "version", "description", "private", "packageManager", "scripts"],
+  "versionGroups": [
+    {
+      "label": "Ensure consistent versions across workspace packages",
+      "packages": ["**"],
+      "dependencies": ["**"],
+      "dependencyTypes": ["prod", "dev"]
+    }
+  ],
+  "semverGroups": [
+    {
+      "label": "Pin framework packages to exact versions",
+      "range": "",
+      "dependencies": ["next", "react", "react-dom", "recharts", "eslint-config-next"],
+      "packages": ["**"],
+      "dependencyTypes": ["prod", "dev"]
+    },
+    {
+      "label": "Use caret ranges for all other dependencies",
+      "range": "^",
+      "packages": ["**"],
+      "dependencies": ["**"],
+      "dependencyTypes": ["prod", "dev"]
+    }
+  ]
+}

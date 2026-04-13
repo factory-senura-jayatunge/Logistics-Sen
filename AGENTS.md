@@ -171,6 +171,16 @@ All endpoints prefixed with `/api/v1/`:
 - **Backend**: pytest for API and unit tests
 - Run `pnpm test` to execute all tests before committing
 
+## Operational Runbooks
+
+Incident response playbooks are maintained in [`docs/runbooks/`](./docs/runbooks/README.md):
+
+- [Backend API Outage](./docs/runbooks/backend-api-outage.md) — API unreachable or returning 5xx
+- [Database Issues](./docs/runbooks/database-issues.md) — SQLite corruption, locks, or missing data
+- [Frontend Deployment Failure](./docs/runbooks/frontend-deployment-failure.md) — Build or deploy failures
+- [High API Latency](./docs/runbooks/high-api-latency.md) — Slow API responses
+- [CI Pipeline Failure](./docs/runbooks/ci-pipeline-failure.md) — GitHub Actions workflow failures
+
 ## Important Notes
 
 1. Always run `pnpm lint` before committing frontend changes

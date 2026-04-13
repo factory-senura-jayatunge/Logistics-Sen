@@ -105,6 +105,27 @@ describe("formatTimeAgo", () => {
     const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
     expect(formatTimeAgo(twoDaysAgo)).toBe("2 days ago")
   })
+
+  it("returns singular hour for 1 hour ago", () => {
+    const oneHourAgo = new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
+    expect(formatTimeAgo(oneHourAgo)).toBe("1 hour ago")
+  })
+
+  it("returns singular day for 1 day ago", () => {
+    const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+    expect(formatTimeAgo(oneDayAgo)).toBe("1 day ago")
+  })
+
+  it("handles timestamps without Z suffix", () => {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+    const noZ = fiveMinutesAgo.toISOString().replace("Z", "")
+    expect(formatTimeAgo(noZ)).toBe("5 min ago")
+  })
+
+  it("handles timestamps with + timezone offset", () => {
+    const recent = new Date(Date.now() - 30 * 1000).toISOString().replace("Z", "+00:00")
+    expect(formatTimeAgo(recent)).toBe("Just now")
+  })
 })
 
 describe("status color maps", () => {

@@ -1,16 +1,35 @@
+import { logApiCall, logError } from "./logger"
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  })
+  const method = options?.method || "GET"
+  const start = Date.now()
+
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+    })
+  } catch (error) {
+    logError(error instanceof Error ? error : new Error(String(error)), {
+      endpoint,
+      method,
+    })
+    throw error
+  }
+
+  const durationMs = Date.now() - start
+  logApiCall(method, endpoint, response.status, durationMs)
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`)
+    const apiError = new Error(`API error: ${response.status} ${response.statusText}`)
+    logError(apiError, { endpoint, method, status: response.status })
+    throw apiError
   }
 
   return response.json()
@@ -56,6 +75,18 @@ export async function createShipment(data: CreateShipmentData) {
 // Customers
 export async function getCustomers() {
   return fetchApi<Customer[]>("/api/v1/customers")
+}
+
+export async function getCustomer(id: number) {
+  return fetchApi<CustomerDetail>(`/api/v1/customers/${id}`)
+}
+
+export async function getCustomerOrders(customerId: number, excludeOrderId?: number, limit = 5) {
+  const searchParams = new URLSearchParams()
+  if (excludeOrderId) searchParams.set("exclude_order_id", excludeOrderId.toString())
+  if (limit) searchParams.set("limit", limit.toString())
+  const query = searchParams.toString()
+  return fetchApi<OrderBasic[]>(`/api/v1/customers/${customerId}/orders${query ? `?${query}` : ""}`)
 }
 
 // Orders
@@ -174,6 +205,155 @@ export async function search(query: string, limit = 10) {
   return fetchApi<SearchResult[]>(`/api/v1/search?q=${encodeURIComponent(query)}&limit=${limit}`)
 }
 
+// Analytics
+export async function getDeliveryTrends(days = 90) {
+  return fetchApi<DeliveryTrend[]>(`/api/v1/analytics/delivery-trends?days=${days}`)
+}
+
+export async function getCarrierPerformance() {
+  return fetchApi<CarrierPerformance[]>("/api/v1/analytics/carrier-performance")
+}
+
+export async function getFacilityUtilization() {
+  return fetchApi<FacilityUtilization[]>("/api/v1/analytics/facility-utilization")
+}
+
+export async function getCustomerOrderFrequency(limit = 10) {
+  return fetchApi<CustomerOrderFrequency[]>(
+    `/api/v1/analytics/customer-order-frequency?limit=${limit}`
+  )
+}
+
+export function getAnalyticsCsvUrl(report: string) {
+  return `${API_BASE_URL}/api/v1/analytics/export/csv?report=${report}`
+}
+
+// Route Planning
+export async function getOptimizedRoute(vehicleId: number) {
+  return fetchApi<OptimizedRoute>(`/api/v1/routes/optimize?vehicle_id=${vehicleId}`)
+}
+
+export async function getDispatchSummary() {
+  return fetchApi<DispatchSummary>("/api/v1/routes/dispatch-summary")
+}
+
+// Forecasting
+export async function getDemandForecast(daysAhead = 30) {
+  return fetchApi<DemandForecast>(`/api/v1/forecasting/demand-forecast?days_ahead=${daysAhead}`)
+}
+
+export async function getStockoutAlerts(thresholdDays = 14) {
+  return fetchApi<StockoutAlerts>(
+    `/api/v1/forecasting/stockout-alerts?threshold_days=${thresholdDays}`
+  )
+}
+
+export async function getReorderRecommendations() {
+  return fetchApi<ReorderRecommendations>("/api/v1/forecasting/reorder-recommendations")
+}
+
+// Bulk Operations
+export interface BulkOperationResult {
+  success_count: number
+  failed_count: number
+  errors: Array<{ id?: number; row?: number; error: string }>
+}
+
+export interface CSVImportResult {
+  imported: number
+  skipped: number
+  errors: Array<{ row: number; error: string }>
+}
+
+// Orders bulk operations
+export async function bulkDeleteOrders(ids: number[]) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/orders/delete", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  })
+}
+
+export async function bulkUpdateOrderStatus(ids: number[], status: string) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/orders/status", {
+    method: "PATCH",
+    body: JSON.stringify({ ids, status }),
+  })
+}
+
+export async function exportOrdersCSV(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/orders/export`)
+  if (!response.ok) throw new Error("Failed to export orders")
+  return response.blob()
+}
+
+export async function importOrdersCSV(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/orders/import`, {
+    method: "POST",
+    body: formData,
+  })
+  if (!response.ok) throw new Error("Failed to import orders")
+  return response.json() as Promise<CSVImportResult>
+}
+
+// Shipments bulk operations
+export async function bulkDeleteShipments(ids: number[]) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/shipments/delete", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  })
+}
+
+export async function bulkUpdateShipmentStatus(ids: number[], status: string) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/shipments/status", {
+    method: "PATCH",
+    body: JSON.stringify({ ids, status }),
+  })
+}
+
+export async function exportShipmentsCSV(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/shipments/export`)
+  if (!response.ok) throw new Error("Failed to export shipments")
+  return response.blob()
+}
+
+export async function importShipmentsCSV(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/shipments/import`, {
+    method: "POST",
+    body: formData,
+  })
+  if (!response.ok) throw new Error("Failed to import shipments")
+  return response.json() as Promise<CSVImportResult>
+}
+
+// Inventory bulk operations
+export async function bulkDeleteInventory(ids: number[]) {
+  return fetchApi<BulkOperationResult>("/api/v1/bulk/inventory/delete", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  })
+}
+
+export async function exportInventoryCSV(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/inventory/export`)
+  if (!response.ok) throw new Error("Failed to export inventory")
+  return response.blob()
+}
+
+export async function importInventoryCSV(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+  const response = await fetch(`${API_BASE_URL}/api/v1/bulk/inventory/import`, {
+    method: "POST",
+    body: formData,
+  })
+  if (!response.ok) throw new Error("Failed to import inventory")
+  return response.json() as Promise<CSVImportResult>
+}
+
 // Types
 export interface DashboardStats {
   total_shipments: number
@@ -198,6 +378,25 @@ export interface Customer {
   created_at: string
 }
 
+export interface ShipmentSummary {
+  id: number
+  tracking_number: string
+  origin: string
+  destination: string
+  carrier: string
+  status: string
+  eta: string | null
+  created_at: string
+}
+
+export interface CustomerDetail extends Customer {
+  orders: OrderBasic[]
+  shipments: ShipmentSummary[]
+  total_orders: number
+  total_spent: number
+  total_shipments: number
+}
+
 export interface Shipment {
   id: number
   tracking_number: string
@@ -214,8 +413,21 @@ export interface Shipment {
   customer: Customer
 }
 
+export interface ShipmentCheckpoint {
+  id: number
+  shipment_id: number
+  facility_id: number | null
+  location_name: string
+  latitude: number | null
+  longitude: number | null
+  status: string
+  notes: string | null
+  timestamp: string
+}
+
 export interface ShipmentDetail extends Shipment {
   order: Order | null
+  checkpoints: ShipmentCheckpoint[]
 }
 
 export interface Order {
@@ -240,6 +452,16 @@ export interface ShipmentBasic {
   weight_kg: number
   status: string
   eta: string | null
+  created_at: string
+}
+
+export interface OrderBasic {
+  id: number
+  order_number: string
+  items_count: number
+  total_value: number
+  priority: string
+  status: string
   created_at: string
 }
 
@@ -404,4 +626,147 @@ export interface CreateVehicleData {
   destination?: string
   status: string
   fuel_level: number
+}
+
+export interface DeliveryTrend {
+  week: string
+  total: number
+  delivered: number
+  delayed: number
+  on_time_rate: number
+}
+
+export interface CarrierPerformance {
+  carrier: string
+  total_shipments: number
+  delivered: number
+  delayed: number
+  in_transit: number
+  avg_weight: number
+  on_time_rate: number
+}
+
+export interface FacilityUtilization {
+  id: number
+  name: string
+  code: string
+  type: string
+  city: string
+  state: string
+  capacity_percentage: number
+  staff_count: number
+  status: string
+  inventory_items: number
+  total_stock: number
+  vehicles: number
+}
+
+export interface CustomerOrderFrequency {
+  customer_id: number
+  customer_name: string
+  order_count: number
+  total_value: number
+  avg_order_value: number
+}
+
+// Route Planning Types
+export interface RouteStop {
+  type: string
+  name: string
+  location: string
+  latitude: number
+  longitude: number
+  shipment_id: number | null
+  tracking_number: string | null
+  stop_order: number
+}
+
+export interface RouteVehicle {
+  id: number
+  name: string
+  vehicle_id: string
+  driver: string
+  type: string
+}
+
+export interface OptimizedRoute {
+  vehicle: RouteVehicle
+  stops: RouteStop[]
+  total_distance_km: number
+  estimated_hours: number
+  total_stops: number
+  message?: string
+}
+
+export interface DispatchRegion {
+  region: string
+  count: number
+  total_weight_kg: number
+  shipments: { id: number; tracking_number: string; destination: string; weight_kg: number }[]
+}
+
+export interface DispatchVehicle {
+  id: number
+  vehicle_id: string
+  name: string
+  type: string
+  driver: string
+  current_location: string
+  fuel_level: number
+}
+
+export interface DispatchSummary {
+  available_vehicles: DispatchVehicle[]
+  pending_shipments_count: number
+  regions: DispatchRegion[]
+}
+
+// Forecasting Types
+export interface ForecastItem {
+  item_id: number
+  sku: string
+  name: string
+  category: string
+  facility_id: number
+  current_quantity: number
+  reorder_point: number
+  daily_demand_rate: number
+  projected_demand: number
+  days_until_stockout: number
+  needs_reorder: boolean
+  suggested_reorder_qty: number
+  risk_level: string
+}
+
+export interface DemandForecast {
+  forecast_period_days: number
+  daily_order_rate: number
+  total_items_tracked: number
+  critical_items: number
+  warning_items: number
+  forecasts: ForecastItem[]
+}
+
+export interface StockoutAlerts {
+  threshold_days: number
+  total_alerts: number
+  alerts: ForecastItem[]
+}
+
+export interface ReorderRecommendation {
+  item_id: number
+  sku: string
+  name: string
+  facility_id: number
+  current_quantity: number
+  suggested_quantity: number
+  estimated_cost: number
+  urgency: string
+  days_until_stockout: number
+}
+
+export interface ReorderRecommendations {
+  total_recommendations: number
+  total_estimated_cost: number
+  recommendations: ReorderRecommendation[]
 }

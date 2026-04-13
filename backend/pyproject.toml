@@ -3,6 +3,15 @@ name = "acme-logistics-backend"
 version = "0.1.0"
 description = "Enterprise logistics management platform API"
 requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.115.6",
+    "uvicorn[standard]>=0.32.1",
+    "sqlalchemy>=2.0.36",
+    "pydantic>=2.10.3",
+    "pydantic-settings>=2.6.1",
+    "python-multipart>=0.0.17",
+    "structlog>=24.4.0",
+]
 
 [tool.black]
 line-length = 100
@@ -44,7 +53,7 @@ staticmethod-decorators = ["staticmethod"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --durations=10 --cov=app --cov-report=term-missing --cov-fail-under=80 -p randomly"
 
 [tool.mypy]
 python_version = "3.9"
