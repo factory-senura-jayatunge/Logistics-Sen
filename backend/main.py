@@ -72,9 +72,7 @@ def run_inventory_scan_once():
     db = SessionLocal()
     try:
         items = (
-            db.query(models.InventoryItem)
-            .options(joinedload(models.InventoryItem.facility))
-            .all()
+            db.query(models.InventoryItem).options(joinedload(models.InventoryItem.facility)).all()
         )
 
         created_notifications = 0

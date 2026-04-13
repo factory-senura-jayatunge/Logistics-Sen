@@ -134,10 +134,14 @@ def test_update_item_quantity_out_of_stock(client, sample_inventory):
 
 
 def test_update_item_quantity_marks_notification_resolved(client, sample_inventory):
-    low_stock_response = client.patch(f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=5")
+    low_stock_response = client.patch(
+        f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=5"
+    )
     assert low_stock_response.status_code == 200
 
-    resolved_response = client.patch(f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=25")
+    resolved_response = client.patch(
+        f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=25"
+    )
     assert resolved_response.status_code == 200
     assert resolved_response.json()["status"] == "in_stock"
 

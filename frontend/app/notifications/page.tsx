@@ -7,7 +7,13 @@ import { Check, ChevronRight, Inbox } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   getNotificationCountByCategory,
@@ -113,7 +119,9 @@ export default function NotificationsPage() {
       await markAllNotificationsAsRead()
       await fetchNotifications()
     } catch (updateError) {
-      setError(updateError instanceof Error ? updateError.message : "Failed to update notifications")
+      setError(
+        updateError instanceof Error ? updateError.message : "Failed to update notifications"
+      )
     }
   }
 
