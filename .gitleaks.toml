@@ -7,5 +7,4 @@ title = "Acme Logistics Gitleaks Config"
 description = "Global allowlist"
 paths = [
     '''pnpm-lock\.yaml''',
-    '''\.github/workflows/.*\.yml''',
 ]
