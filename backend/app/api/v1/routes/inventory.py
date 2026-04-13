@@ -7,10 +7,19 @@ from app.db.database import get_db
 from app.logging import get_logger
 from app.models import models
 from app.schemas import schemas
+from app.services.inventory_alerts import sync_low_stock_notification
 
 logger = get_logger("inventory")
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
+
+
+def get_inventory_status(quantity: int, reorder_point: int) -> str:
+    if quantity == 0:
+        return "out_of_stock"
+    if quantity <= reorder_point:
+        return "low_stock"
+    return "in_stock"
 
 
 @router.get("/", response_model=list[schemas.InventoryItemWithFacility])
@@ -57,7 +66,9 @@ def get_inventory_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=schemas.InventoryItem)
 def create_inventory_item(item: schemas.InventoryItemCreate, db: Session = Depends(get_db)):
-    db_item = models.InventoryItem(**item.model_dump())
+    payload = item.model_dump()
+    payload["status"] = get_inventory_status(payload["quantity"], payload["reorder_point"])
+    db_item = models.InventoryItem(**payload)
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
@@ -73,8 +84,11 @@ def update_inventory_item(
     if not db_item:
         logger.warning("inventory_item_not_found", item_id=item_id, action="update")
         raise HTTPException(status_code=404, detail="Inventory item not found")
-    for key, value in item.model_dump().items():
+    payload = item.model_dump()
+    payload["status"] = get_inventory_status(payload["quantity"], payload["reorder_point"])
+    for key, value in payload.items():
         setattr(db_item, key, value)
+    sync_low_stock_notification(db, db_item)
     db.commit()
     db.refresh(db_item)
     logger.info("inventory_item_updated", item_id=item_id)
@@ -89,12 +103,8 @@ def update_item_quantity(item_id: int, quantity: int = Query(...), db: Session =
         raise HTTPException(status_code=404, detail="Inventory item not found")
     old_quantity = db_item.quantity
     db_item.quantity = quantity
-    if quantity == 0:
-        db_item.status = "out_of_stock"
-    elif quantity <= db_item.reorder_point:
-        db_item.status = "low_stock"
-    else:
-        db_item.status = "in_stock"
+    db_item.status = get_inventory_status(quantity, db_item.reorder_point)
+    sync_low_stock_notification(db, db_item)
     db.commit()
     logger.info(
         "inventory_quantity_changed",

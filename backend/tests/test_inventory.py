@@ -111,12 +111,43 @@ def test_update_item_quantity(client, sample_inventory):
     data = response.json()
     assert data["status"] == "low_stock"
 
+    notification_response = client.get("/api/v1/notifications/?category=inventory&unread_only=true")
+    assert notification_response.status_code == 200
+    notifications = notification_response.json()
+    assert len(notifications) == 1
+    assert notifications[0]["reference_id"] == sample_inventory.id
+    assert notifications[0]["type"] == "warning"
+
 
 def test_update_item_quantity_out_of_stock(client, sample_inventory):
     response = client.patch(f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=0")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "out_of_stock"
+
+    notification_response = client.get("/api/v1/notifications/?category=inventory&unread_only=true")
+    assert notification_response.status_code == 200
+    notifications = notification_response.json()
+    assert len(notifications) == 1
+    assert notifications[0]["reference_id"] == sample_inventory.id
+    assert notifications[0]["type"] == "error"
+
+
+def test_update_item_quantity_marks_notification_resolved(client, sample_inventory):
+    low_stock_response = client.patch(
+        f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=5"
+    )
+    assert low_stock_response.status_code == 200
+
+    resolved_response = client.patch(
+        f"/api/v1/inventory/{sample_inventory.id}/quantity?quantity=25"
+    )
+    assert resolved_response.status_code == 200
+    assert resolved_response.json()["status"] == "in_stock"
+
+    notification_response = client.get("/api/v1/notifications/?category=inventory&read=false")
+    assert notification_response.status_code == 200
+    assert notification_response.json() == []
 
 
 def test_delete_inventory_item(client, sample_inventory):

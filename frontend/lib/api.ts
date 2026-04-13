@@ -176,9 +176,18 @@ export async function getUsers() {
 }
 
 // Notifications
-export async function getNotifications(params?: { unread_only?: boolean; limit?: number }) {
+export async function getNotifications(params?: {
+  unread_only?: boolean
+  read?: boolean
+  category?: string
+  type?: string
+  limit?: number
+}) {
   const searchParams = new URLSearchParams()
   if (params?.unread_only) searchParams.set("unread_only", "true")
+  if (params?.read !== undefined) searchParams.set("read", String(params.read))
+  if (params?.category) searchParams.set("category", params.category)
+  if (params?.type) searchParams.set("type", params.type)
   if (params?.limit) searchParams.set("limit", params.limit.toString())
   const query = searchParams.toString()
   return fetchApi<Notification[]>(`/api/v1/notifications${query ? `?${query}` : ""}`)
@@ -186,6 +195,10 @@ export async function getNotifications(params?: { unread_only?: boolean; limit?:
 
 export async function getUnreadCount() {
   return fetchApi<{ count: number }>("/api/v1/notifications/unread-count")
+}
+
+export async function getNotificationCountByCategory() {
+  return fetchApi<NotificationCountByCategory>("/api/v1/notifications/count-by-category")
 }
 
 export async function markNotificationAsRead(id: number) {
@@ -586,6 +599,8 @@ export interface Notification {
   read: boolean
   created_at: string
 }
+
+export type NotificationCountByCategory = Record<string, number>
 
 export interface SearchResult {
   id: number
