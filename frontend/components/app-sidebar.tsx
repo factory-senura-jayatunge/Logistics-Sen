@@ -3,8 +3,10 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import {
+  Bell,
   LayoutDashboard,
   Package,
   ClipboardList,
@@ -31,6 +33,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
@@ -46,6 +49,7 @@ import {
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getUnreadCount } from "@/lib/api"
 
 const navItems = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -57,6 +61,7 @@ const navItems = [
   { title: "Fleet", href: "/fleet", icon: Truck },
   { title: "Reports", href: "/reports", icon: BarChart3 },
   { title: "Route Planner", href: "/routes", icon: Route },
+  { title: "Notifications", href: "/notifications", icon: Bell },
 ]
 
 const settingsItems = [{ title: "Settings", href: "/settings", icon: Settings }]
@@ -64,6 +69,22 @@ const settingsItems = [{ title: "Settings", href: "/settings", icon: Settings }]
 export function AppSidebar() {
   const pathname = usePathname()
   const { setTheme } = useTheme()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    async function fetchUnreadCount() {
+      try {
+        const response = await getUnreadCount()
+        setUnreadCount(response.count)
+      } catch {
+        setUnreadCount(0)
+      }
+    }
+
+    fetchUnreadCount()
+    const interval = setInterval(fetchUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <Sidebar>
@@ -104,6 +125,9 @@ export function AppSidebar() {
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
+                  {item.href === "/notifications" && unreadCount > 0 && (
+                    <SidebarMenuBadge>{unreadCount > 99 ? "99+" : unreadCount}</SidebarMenuBadge>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

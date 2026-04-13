@@ -1,4 +1,7 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
@@ -10,11 +13,23 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 @router.get("/", response_model=list[schemas.Notification])
 def get_notifications(
-    skip: int = 0, limit: int = 50, unread_only: bool = False, db: Session = Depends(get_db)
+    skip: int = 0,
+    limit: int = 50,
+    unread_only: bool = False,
+    read: Optional[bool] = None,
+    category: Optional[str] = None,
+    type: Optional[str] = None,
+    db: Session = Depends(get_db),
 ):
     query = db.query(models.Notification).order_by(models.Notification.created_at.desc())
     if unread_only:
         query = query.filter(models.Notification.read == 0)
+    elif read is not None:
+        query = query.filter(models.Notification.read == int(read))
+    if category:
+        query = query.filter(models.Notification.category == category)
+    if type:
+        query = query.filter(models.Notification.type == type)
     return query.offset(skip).limit(limit).all()
 
 
@@ -22,6 +37,20 @@ def get_notifications(
 def get_unread_count(db: Session = Depends(get_db)):
     count = db.query(models.Notification).filter(models.Notification.read == 0).count()
     return {"count": count}
+
+
+@router.get("/count-by-category")
+def get_notification_count_by_category(db: Session = Depends(get_db)):
+    results = (
+        db.query(
+            models.Notification.category,
+            func.count(models.Notification.id),
+        )
+        .filter(models.Notification.read == 0)
+        .group_by(models.Notification.category)
+        .all()
+    )
+    return {category: count for category, count in results}
 
 
 @router.patch("/read-all")

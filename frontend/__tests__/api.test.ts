@@ -26,6 +26,7 @@ import {
   getUsers,
   getNotifications,
   getUnreadCount,
+  getNotificationCountByCategory,
   markNotificationAsRead,
   markAllNotificationsAsRead,
   search,
@@ -402,10 +403,27 @@ describe("API client", () => {
       expect(fetch).toHaveBeenCalledWith(expect.stringContaining("limit=5"), expect.any(Object))
     })
 
+    it("getNotifications with category, type, and read filters", async () => {
+      vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse([]) as Response)
+      await getNotifications({ category: "inventory", type: "warning", read: false })
+      const [url] = vi.mocked(fetch).mock.calls[0]
+      expect(String(url)).toContain("category=inventory")
+      expect(String(url)).toContain("type=warning")
+      expect(String(url)).toContain("read=false")
+    })
+
     it("getUnreadCount fetches count", async () => {
       vi.spyOn(global, "fetch").mockResolvedValue(mockJsonResponse({ count: 3 }) as Response)
       const result = await getUnreadCount()
       expect(result).toEqual({ count: 3 })
+    })
+
+    it("getNotificationCountByCategory fetches counts", async () => {
+      vi.spyOn(global, "fetch").mockResolvedValue(
+        mockJsonResponse({ inventory: 2, shipment: 1 }) as Response
+      )
+      const result = await getNotificationCountByCategory()
+      expect(result).toEqual({ inventory: 2, shipment: 1 })
     })
 
     it("markNotificationAsRead sends PATCH", async () => {

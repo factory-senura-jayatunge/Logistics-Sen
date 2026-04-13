@@ -199,7 +199,10 @@ export function Header() {
             ))
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-muted-foreground justify-center text-sm">
+          <DropdownMenuItem
+            className="text-muted-foreground justify-center text-sm"
+            onClick={() => router.push("/notifications")}
+          >
             View all notifications
           </DropdownMenuItem>
         </DropdownMenuContent>

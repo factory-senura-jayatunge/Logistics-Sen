@@ -27,6 +27,75 @@ def test_get_notifications_unread_only(client, test_db, sample_user):
     assert data[0]["title"] == "Unread"
 
 
+def test_get_notifications_with_filters(client, test_db, sample_user):
+    from app.models.models import Notification
+
+    inventory_warning = Notification(
+        user_id=sample_user.id,
+        title="Low Stock",
+        type="warning",
+        category="inventory",
+        read=False,
+    )
+    shipment_info = Notification(
+        user_id=sample_user.id,
+        title="Shipment Update",
+        type="info",
+        category="shipment",
+        read=True,
+    )
+    test_db.add_all([inventory_warning, shipment_info])
+    test_db.commit()
+
+    response = client.get("/api/v1/notifications/?category=inventory&type=warning&read=false")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == "Low Stock"
+
+
+def test_get_notification_count_by_category(client, test_db, sample_user):
+    from app.models.models import Notification
+
+    test_db.add_all(
+        [
+            Notification(
+                user_id=sample_user.id,
+                title="Inventory 1",
+                type="warning",
+                category="inventory",
+                read=False,
+            ),
+            Notification(
+                user_id=sample_user.id,
+                title="Inventory 2",
+                type="error",
+                category="inventory",
+                read=False,
+            ),
+            Notification(
+                user_id=sample_user.id,
+                title="Shipment 1",
+                type="info",
+                category="shipment",
+                read=False,
+            ),
+            Notification(
+                user_id=sample_user.id,
+                title="Read Inventory",
+                type="warning",
+                category="inventory",
+                read=True,
+            ),
+        ]
+    )
+    test_db.commit()
+
+    response = client.get("/api/v1/notifications/count-by-category")
+    assert response.status_code == 200
+    assert response.json() == {"inventory": 2, "shipment": 1}
+
+
 def test_get_unread_count(client, sample_notification):
     response = client.get("/api/v1/notifications/unread-count")
     assert response.status_code == 200
