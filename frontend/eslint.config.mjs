@@ -15,6 +15,29 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // File-size limits: flag modules that have grown too large to be easily
+  // understood or reviewed. Kept above the current largest file to avoid
+  // breaking the existing codebase; tighten over time as files are refactored.
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs", "**/*.cjs"],
+    rules: {
+      "max-lines": [
+        "warn",
+        {
+          max: 1500,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+    },
+  },
+  // Relax the limit for test files, which can legitimately be longer.
+  {
+    files: ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"],
+    rules: {
+      "max-lines": "off",
+    },
+  },
   // TypeScript naming conventions
   {
     files: ["**/*.ts", "**/*.tsx"],

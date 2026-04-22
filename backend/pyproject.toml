@@ -38,8 +38,23 @@ select = [
     "I",      # isort
     "W",      # pycodestyle warnings
     "N",      # pep8-naming (naming conventions)
+    "PLR0915", # pylint: too-many-statements (large functions)
 ]
 ignore = ["E501"]
+
+[tool.ruff.lint.pylint]
+# Flag functions that have grown beyond ~100 statements (pylint default is 50).
+# This keeps individual units small enough for humans and AI agents to reason
+# about. Complements the repo-level byte/line-count check in
+# scripts/check-file-size.sh.
+max-statements = 100
+
+[tool.ruff.lint.per-file-ignores]
+# seed.py is a one-shot database seeder that inherently contains many
+# sequential insert statements. Splitting it purely to appease the linter
+# would hurt readability, so the rule is disabled for that file only.
+"seed.py" = ["PLR0915"]
+"tests/**" = ["PLR0915"]
 
 [tool.ruff.lint.pep8-naming]
 # Enforce PEP 8 naming conventions:
