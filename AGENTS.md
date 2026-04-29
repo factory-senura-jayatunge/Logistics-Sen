@@ -171,6 +171,19 @@ All endpoints prefixed with `/api/v1/`:
 - **Backend**: pytest for API and unit tests
 - Run `pnpm test` to execute all tests before committing
 
+## Architecture Documentation
+
+Architecture diagrams, service dependency maps, entity-relationship diagrams,
+and request-flow sequence diagrams live in [`docs/architecture/`](./docs/architecture/README.md):
+
+- [System Overview](./docs/architecture/system-overview.md)
+- [Service Dependencies](./docs/architecture/service-dependencies.md)
+- [Data Model](./docs/architecture/data-model.md)
+- [Request Flows](./docs/architecture/request-flows.md)
+
+When adding new routes, models, or external integrations, keep the diagrams in
+these documents in sync with the code under `backend/app/` and `frontend/`.
+
 ## Operational Runbooks
 
 Incident response playbooks are maintained in [`docs/runbooks/`](./docs/runbooks/README.md):

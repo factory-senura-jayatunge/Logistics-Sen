@@ -11,6 +11,15 @@ Enterprise logistics management platform demo application.
 - **Backend**: Python FastAPI (port 8000)
 - **Frontend**: Next.js 16 with React 19 (port 3000)
 
+For detailed architecture diagrams, service dependencies, entity-relationship
+diagrams, and sequence diagrams of key request flows, see
+[`docs/architecture/`](./docs/architecture/README.md):
+
+- [System Overview](./docs/architecture/system-overview.md) — component diagram and deployment topology
+- [Service Dependencies](./docs/architecture/service-dependencies.md) — external services, data stores, and module dependencies
+- [Data Model](./docs/architecture/data-model.md) — ER diagram and schema reference
+- [Request Flows](./docs/architecture/request-flows.md) — sequence diagrams for dashboard load, order creation, shipment status updates, low-stock alerts, and more
+
 ## Tech Stack
 
 ### Frontend
