@@ -1,1 +1,2 @@
+./scripts/check-file-size.sh
 pnpm lint-staged
